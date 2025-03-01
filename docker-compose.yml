@@ -1,13 +1,8 @@
 services:
-  nextjs:
-    image: node:20-alpine
-    container_name: nextjs
-    working_dir: /app
-    volumes:
-      - .:/app
+  nextjs-app:
+    build: .
     ports:
       - "3000:3000"
-    restart: unless-stopped
-    command: npm run dev
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
+    command: ["npm", "run", "start"]
