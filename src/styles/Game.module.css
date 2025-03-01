@@ -30,6 +30,10 @@
     margin-top: 20px;
     text-align: left;
   }
+
+  .history {
+    margin: 2px;
+  }
   
   .highlight {
     background-color: yellow;

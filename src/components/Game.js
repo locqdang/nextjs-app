@@ -27,7 +27,7 @@ export default function Game() {
         {" "}
         <ol>
           {history.map((_, move) => (
-            <li key={move}>
+            <li className={styles.history} key={move}>
               <button onClick={() => jumpTo(move)}>
                 {move ? `Go to move #${move}` : "Go to start"}
               </button>
