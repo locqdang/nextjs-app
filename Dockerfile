@@ -1,5 +1,5 @@
 # Use official Node.js image
-FROM node:18-alpine  
+FROM node:20-alpine  
 
 # Set working directory
 WORKDIR /app  
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build  
 
 # Expose port 3000
-EXPOSE 3000  
+# EXPOSE 3000  
 
 # Start the app in production mode
-CMD ["npm", "run", "start"]
+# CMD ["npm", "run", "start"]

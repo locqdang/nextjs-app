@@ -1,6 +1,8 @@
 services:
   nextjs-app:
     build: .
+    container_name: nextjs
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
