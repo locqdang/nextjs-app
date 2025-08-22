@@ -19,7 +19,7 @@ export default function Game() {
   }
 
   return (
-    <div className="game">
+    <div className={styles.game}>
       <div>
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>

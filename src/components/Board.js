@@ -25,7 +25,7 @@ function Board({ xIsNext, squares, onPlay }) {
 
   return (
     <>
-      <div className={styles.status}>{status}</div>
+      <div className={styles.gameInfo}>{status}</div>
       <div className={styles.board}>
         {[0, 1, 2].map((row) => (
           <div key={row} className={styles.boardRow}>
