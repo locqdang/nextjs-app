@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
-export default function Navbar() {
+export default function Navbar({data}) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);
@@ -41,17 +41,37 @@ export default function Navbar() {
   // Close after navigating
   const closeAndScroll = () => setOpen(false);
 
+    // normalize possible Strapi shapes (v4 vs v5 vs already-normalized)
+  const src =
+    data?.attributes ??
+    data?.data?.attributes ??
+    data?.data ??
+    data ??
+    {};
+
+  const brandLabel = src.brand ?? "Site";
+  const links =
+    Array.isArray(src.menuItems) && src.menuItems.length
+      ? src.menuItems
+      : [
+          { id: "def-1", label: "Projects", url: "/#projects" },
+          { id: "def-2", label: "Contact",  url: "/#contact"  },
+        ];
+
   return (
     <header className="nav">
       <nav className="nav__inner" aria-label="Primary">
         <Link href="/" className="nav__brand" onClick={closeAndScroll}>
-          Vietpolyglots
+          {brandLabel}
         </Link>
 
         {/* Desktop links */}
         <div className="nav__links" aria-hidden={open ? "true" : "false"}>
-          <Link href="/#projects">Projects</Link>
-          <Link href="/#contact">Contact</Link>
+          {links.map((l) => (
+            <Link key={l.id ?? `${l.url}|${l.label}`} href={l.url} onClick={closeAndScroll}>
+              {l.label}
+            </Link>
+          ))}
         </div>
 
         {/* Mobile toggle */}
@@ -61,7 +81,7 @@ export default function Navbar() {
           aria-controls="mobile-menu"
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(v => !v)}
         >
           <span className="nav__bar" />
           <span className="nav__bar" />
@@ -70,22 +90,15 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile menu */}
-      <div
-        id="mobile-menu"
-        ref={menuRef}
-        className={`nav__drawer ${open ? "is-open" : ""}`}
-      >
+      <div id="mobile-menu" ref={menuRef} className={`nav__drawer ${open ? "is-open" : ""}`}>
         <ul className="nav__drawer-list" role="menu">
-          <li role="none">
-            <Link role="menuitem" href="/#projects" onClick={closeAndScroll}>
-              Projects
-            </Link>
-          </li>
-          <li role="none">
-            <Link role="menuitem" href="/#contact" onClick={closeAndScroll}>
-              Contact
-            </Link>
-          </li>
+          {links.map((l) => (
+            <li role="none" key={`m|${l.id ?? `${l.url}|${l.label}`}`}>
+              <Link role="menuitem" href={l.url} onClick={closeAndScroll}>
+                {l.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </header>
