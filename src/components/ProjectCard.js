@@ -39,7 +39,7 @@ export default function ProjectCard({ project }) {
 
       {href && (
         <div className="card__footer">
-          <Link className="btn btn--sm" href={href}>View</Link>
+          <Link className="btn btn--sm" href={href} rel="nofollow">View</Link>
         </div>
       )}
     </article>
