@@ -4,6 +4,7 @@ import ProjectCard from "../components/ProjectCard";
 import { fetchHomepage } from "../lib/homepage";
 import { fetchNavbar } from "../lib/navbar";
 import Footer from "../components/Footer";
+import { formatMediaURL } from "../lib/strapi";
 
 export default function Home(props) {
   const heroData = props.homepage?.hero ?? null;
@@ -13,14 +14,12 @@ export default function Home(props) {
   featuredProjects.push(props.homepage.project2);
 
   // fix project photo url
-  const BASE = process.env.STRAPI_URL || "https://strapi.vietpolyglots.com";
-  const abs = (u) => (u?.startsWith("/") ? BASE + u : u);
   featuredProjects.forEach((p) => {
     if (p.logo) {
-      if (p.logo.url) p.logo.url = abs(p.logo.url);
+      if (p.logo.url) p.logo.url = formatMediaURL(p.logo.url);
       for (const k of Object.keys(p.logo.formats || {})) {
         if (p.logo.formats[k]?.url)
-          p.logo.formats[k].url = abs(p.logo.formats[k].url);
+          p.logo.formats[k].url = formatMediaURL(p.logo.formats[k].url);
       }
     }
   });
@@ -60,11 +59,11 @@ export default function Home(props) {
 }
 
 export async function getServerSideProps() {
-  const homepageJson = await fetchHomepage();
-  const homepage = homepageJson?.data?.attributes ?? homepageJson?.data ?? {};
+  const fetchedHomePage = await fetchHomepage();
+  const homepage = fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
 
-  const navbarJson = await fetchNavbar();
-  const navbar = navbarJson?.data?.attributes ?? navbarJson?.data ?? {};
+  const fetchedNavbar = await fetchNavbar();
+  const navbar = fetchedNavbar?.data?.attributes ?? fetchedNavbar?.data ?? {};
 
   return { props: { homepage, navbar } };
 }
