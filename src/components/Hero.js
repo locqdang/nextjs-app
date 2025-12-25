@@ -14,12 +14,12 @@ export default function Hero({ data }) {
         {(b1?.label || b2?.label) && (
           <div className="hero__cta">
             {b1?.label && (
-              <a className="btn" href={b1?.href ?? "#projects"}>
+              <a className="btn" href={b1?.url ?? "projects"}>
                 {b1.label}
               </a>
             )}
             {b2?.label && (
-              <a className="btn btn--ghost" href={b2?.href ?? "#contact"}>
+              <a className="btn btn--ghost" url={b2?.href ?? "#contact"}>
                 {b2.label}
               </a>
             )}
