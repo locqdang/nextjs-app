@@ -1,16 +1,16 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import ProjectCard from "../components/ProjectCard";
-import { fetchHomepage } from "../../lib/homepage";
-import { fetchNavbar } from "../../lib/navbar";
+import { fetchHomepage } from "../lib/homepage";
+import { fetchNavbar } from "../lib/navbar";
 import Footer from "../components/Footer";
 
-export default function Home({ entry, navbar }) {
-  const heroData = entry?.hero ?? null;
+export default function Home(props) {
+  const heroData = props.homepage?.hero ?? null;
   const featuredProjects = [];
-  featuredProjects.push(entry.project0);
-  featuredProjects.push(entry.project1);
-  featuredProjects.push(entry.project2);
+  featuredProjects.push(props.homepage.project0);
+  featuredProjects.push(props.homepage.project1);
+  featuredProjects.push(props.homepage.project2);
 
   // fix project photo url
   const BASE = process.env.STRAPI_URL || "https://strapi.vietpolyglots.com";
@@ -27,7 +27,7 @@ export default function Home({ entry, navbar }) {
 
   return (
     <>
-      <Navbar data={navbar} />
+      {/* <Navbar data={props.navbar} /> */}
       <main>
         <Hero data={heroData} />
 
@@ -54,17 +54,17 @@ export default function Home({ entry, navbar }) {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
 
 export async function getServerSideProps() {
-  const homepage = await fetchHomepage();
-  const entry = homepage?.data?.attributes ?? homepage?.data ?? {};
+  const homepageJson = await fetchHomepage();
+  const homepage = homepageJson?.data?.attributes ?? homepageJson?.data ?? {};
 
   const navbarJson = await fetchNavbar();
   const navbar = navbarJson?.data?.attributes ?? navbarJson?.data ?? {};
 
-  return { props: { entry, navbar } };
+  return { props: { homepage, navbar } };
 }
