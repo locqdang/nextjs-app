@@ -1,4 +1,4 @@
-const STRAPI_URL = process.env.STRAPI_URL || "http://10.0.0.61:9930";
+const STRAPI_URL = process.env.STRAPI_URL;
 const STRAPI_API_KEY = process.env.STRAPI_API_TOKEN;
 
 export async function fetchHomepage() {

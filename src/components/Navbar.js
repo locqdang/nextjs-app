@@ -49,7 +49,7 @@ export default function Navbar({data}) {
     data ??
     {};
 
-  const brandLabel = src.brand ?? "Site";
+  const brandLabel = src.brand ?? "";
   const links =
     Array.isArray(src.menuItems) && src.menuItems.length
       ? src.menuItems

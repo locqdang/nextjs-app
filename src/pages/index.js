@@ -26,7 +26,6 @@ export default function Home(props) {
 
   return (
     <>
-      {/* <Navbar data={props.navbar} /> */}
       <main>
         <Hero data={heroData} />
 
@@ -53,7 +52,6 @@ export default function Home(props) {
         </section>
       </main>
 
-      {/* <Footer /> */}
     </>
   );
 }

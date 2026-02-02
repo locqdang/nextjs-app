@@ -5,7 +5,6 @@ import { fetchNavbar } from "../../lib/navbar";
 export default function Home(props) {
   return (
     <>
-        < Navbar data={props.navbar}/>
         <div className="container">
             <h1>Tic-Tac-Toe</h1>
             <Game />
