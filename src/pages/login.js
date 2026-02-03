@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useAuth } from '../lib/auth';
 
 export default function Login() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,12 +32,14 @@ export default function Login() {
         return;
       }
 
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Store token via auth context
+      login(data.token, data.user);
 
-      // Redirect to dashboard or home
-      router.push('/');
+      // Redirect to original page if provided
+      const redirectPath = typeof router.query.redirect === 'string'
+        ? router.query.redirect
+        : '/';
+      router.push(redirectPath);
     } catch (err) {
       setError('Network error. Please try again.');
       console.error('Login error:', err);

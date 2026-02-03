@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "../lib/auth";
 
 const NAVBAR = {
   brand: "Vietpolyglots",
@@ -9,10 +11,13 @@ const NAVBAR = {
   ],
 };
 
+
 export default function Navbar({data = NAVBAR}) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
   // Close on ESC
   useEffect(() => {
@@ -66,6 +71,16 @@ export default function Navbar({data = NAVBAR}) {
           { id: "def-2", label: "Contact",  url: "/#contact"  },
         ];
 
+  const linksWithAuth = user
+    ? [...links, { id: "auth-logout", label: "Logout", action: "logout" }]
+    : [...links, { id: "auth-login", label: "Login", url: "/login" }];
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    router.push("/");
+  };
+
   return (
     <header className="nav">
       <nav className="nav__inner" aria-label="Primary">
@@ -75,11 +90,20 @@ export default function Navbar({data = NAVBAR}) {
 
         {/* Desktop links */}
         <div className="nav__links" aria-hidden={open ? "true" : "false"}>
-          {links.map((l) => (
-            <Link key={l.id ?? `${l.url}|${l.label}`} href={l.url} onClick={closeAndScroll}>
-              {l.label}
-            </Link>
-          ))}
+          {user?.name && (
+            <span className="nav__greeting">Hi, {user.name}</span>
+          )}
+          {linksWithAuth.map((l) =>
+            l.action === "logout" ? (
+              <button key={l.id} type="button" className="nav__action" onClick={handleLogout}>
+                {l.label}
+              </button>
+            ) : (
+              <Link key={l.id ?? `${l.url}|${l.label}`} href={l.url} onClick={closeAndScroll}>
+                {l.label}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -100,11 +124,22 @@ export default function Navbar({data = NAVBAR}) {
       {/* Mobile menu */}
       <div id="mobile-menu" ref={menuRef} className={`nav__drawer ${open ? "is-open" : ""}`}>
         <ul className="nav__drawer-list" role="menu">
-          {links.map((l) => (
+          {user?.name && (
+            <li role="none" className="nav__greeting">
+              Hi, {user.name}
+            </li>
+          )}
+          {linksWithAuth.map((l) => (
             <li role="none" key={`m|${l.id ?? `${l.url}|${l.label}`}`}>
-              <Link role="menuitem" href={l.url} onClick={closeAndScroll}>
-                {l.label}
-              </Link>
+              {l.action === "logout" ? (
+                <button type="button" className="nav__action" onClick={handleLogout}>
+                  {l.label}
+                </button>
+              ) : (
+                <Link role="menuitem" href={l.url} onClick={closeAndScroll}>
+                  {l.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const AuthContext = createContext();
 
@@ -46,4 +47,27 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+export function RequireAuth({ children, privatePages = [] }) {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const isPrivatePage = privatePages.includes(router.pathname);
+
+  useEffect(() => {
+    if (!loading && !user && isPrivatePage) {
+      const redirect = encodeURIComponent(router.asPath || '/');
+      router.replace(`/login?redirect=${redirect}`);
+    }
+  }, [loading, user, router, isPrivatePage]);
+
+  if (loading) {
+    return null;
+  }
+
+  if (isPrivatePage && !user) {
+    return null;
+  }
+
+  return children;
 }
