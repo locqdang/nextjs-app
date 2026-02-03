@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../lib/auth';
+import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
 
 export default function Login() {
   const router = useRouter();
@@ -12,61 +13,11 @@ export default function Login() {
   const [error, setError] = useState('');
 
   // Initialize Google One Tap
-  useEffect(() => {
-    if (!window.google) {
-      console.error('Google SDK not loaded');
-      return;
-    }
-
-    window.google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      callback: handleGoogleLogin,
-    });
-
-    window.google.accounts.id.renderButton(
-      document.getElementById('google-signin-button'),
-      { theme: 'outline', size: 'large', width: 320 }
-    );
-
-    // Optional: Show One Tap prompt
-    window.google.accounts.id.prompt();
-  }, []);
-
-  const handleGoogleLogin = async (response) => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ credential: response.credential }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Google login failed');
-        return;
-      }
-
-      // Store token via auth context
-      login(data.token, data.user);
-
-      // Redirect to original page if provided
-      const redirectPath = typeof router.query.redirect === 'string'
-        ? router.query.redirect
-        : '/';
-      router.push(redirectPath);
-    } catch (err) {
-      setError('Network error. Please try again.');
-      console.error('Google login error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useGoogleOneTap({
+    onError: (errorMessage) => {
+      setError(errorMessage);
+    },
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
