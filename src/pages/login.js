@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../lib/auth';
@@ -10,6 +10,63 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Initialize Google One Tap
+  useEffect(() => {
+    if (!window.google) {
+      console.error('Google SDK not loaded');
+      return;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin,
+    });
+
+    window.google.accounts.id.renderButton(
+      document.getElementById('google-signin-button'),
+      { theme: 'outline', size: 'large', width: 320 }
+    );
+
+    // Optional: Show One Tap prompt
+    window.google.accounts.id.prompt();
+  }, []);
+
+  const handleGoogleLogin = async (response) => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Google login failed');
+        return;
+      }
+
+      // Store token via auth context
+      login(data.token, data.user);
+
+      // Redirect to original page if provided
+      const redirectPath = typeof router.query.redirect === 'string'
+        ? router.query.redirect
+        : '/';
+      router.push(redirectPath);
+    } catch (err) {
+      setError('Network error. Please try again.');
+      console.error('Google login error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,6 +118,21 @@ export default function Login() {
             {error}
           </div>
         )}
+
+        {/* Google One Tap Button */}
+        <div className="mb-6 flex justify-center">
+          <div id="google-signin-button"></div>
+        </div>
+
+        {/* Divider */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

@@ -1,12 +1,13 @@
 /**
  * Passport Configuration
- * Sets up Passport with Local Strategy for authentication
+ * Sets up Passport with Local Strategy and Google OAuth Strategy for authentication
  */
 
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import bcryptjs from 'bcryptjs';
-import { findOne } from './data/mongodb.js';
+import { findOne, insertOne } from './data/mongodb.js';
 
 // Configure Local Strategy
 passport.use(
@@ -59,5 +60,44 @@ passport.deserializeUser(async (id, done) => {
     done(error);
   }
 });
+
+// Configure Google OAuth Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user exists
+        let user = await findOne('users', { googleId: profile.id });
+
+        if (user) {
+          // Update existing user
+          const { password: _, ...userWithoutPassword } = user;
+          return done(null, userWithoutPassword);
+        }
+
+        // Create new user if doesn't exist
+        const newUser = {
+          googleId: profile.id,
+          email: profile.emails[0].value.toLowerCase(),
+          name: profile.displayName,
+          picture: profile.photos[0]?.value || null,
+          createdAt: new Date(),
+          provider: 'google',
+        };
+
+        const result = await insertOne('users', newUser);
+        const { password: _, ...userWithoutPassword } = { ...newUser, _id: result.insertedId };
+        return done(null, userWithoutPassword);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
 
 export default passport;
