@@ -6,7 +6,7 @@ import { useAuth } from "../lib/auth";
 const NAVBAR = {
   brand: "Vietpolyglots",
   menuItems: [
-    { id: "1", label: "Projects", url: "/projects" },
+    { id: "1", label: "Projects", url: "/#projects" },
     { id: "2", label: "Contact", url: "/#contact" },
   ],
 };
