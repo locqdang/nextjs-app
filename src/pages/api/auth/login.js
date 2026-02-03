@@ -1,14 +1,13 @@
 /**
- * Login API Route
+ * Login API Route with Passport
  * POST /api/auth/login
  * 
  * Body: { email, password }
  * Response: { success, token, user } or { error }
  */
 
-import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findOne } from '../../../lib/data/mongodb.js';
+import { runPassportAuth } from '../../../lib/passportMiddleware.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -25,19 +24,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Find user in MongoDB
-    const user = await findOne('users', { email: email.toLowerCase() });
+    // Authenticate using Passport
+    const authResult = await runPassportAuth(req, res);
 
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    if (!authResult.success) {
+      return res.status(401).json({ error: authResult.message });
     }
 
-    // Compare password
-    const passwordMatch = await bcryptjs.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid email or password' });
-    }
+    const user = authResult.user;
 
     // Create JWT token
     const token = jwt.sign(
@@ -50,13 +44,10 @@ export default async function handler(req, res) {
       { expiresIn: '7d' }
     );
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
-
     res.status(200).json({
       success: true,
       token,
-      user: userWithoutPassword,
+      user,
     });
   } catch (error) {
     console.error('Login error:', error);

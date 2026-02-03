@@ -1,20 +1,15 @@
-import Navbar from "../../components/Navbar";
 import Game from "../../components/Game";
-import { fetchNavbar } from "../../lib/navbar";
+import styles from "../../styles/Game.module.css";
 
 export default function Home(props) {
   return (
     <>
-        <div className="container">
-            <h1>Tic-Tac-Toe</h1>
+        <div className={styles.container}>
+          <h1 className={styles.title}>Tic-Tac-Toe</h1>
             <Game />
         </div>
     </>
   );
 }
 
-export async function getServerSideProps(){
-  const navbarJson = await fetchNavbar();
-  const navbar = navbarJson?.data;
-  return {props: {navbar}};
-}
+

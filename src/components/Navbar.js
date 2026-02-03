@@ -1,7 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
-export default function Navbar({data}) {
+const NAVBAR = {
+  brand: "Vietpolyglots",
+  menuItems: [
+    { id: "1", label: "Projects", url: "/#projects" },
+    { id: "2", label: "Contact", url: "/#contact" },
+  ],
+};
+
+export default function Navbar({data = NAVBAR}) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);

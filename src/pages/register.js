@@ -1,5 +1,4 @@
 import RegisterForm from "../components/RegisterForm";
-import { fetchNavbar } from "../lib/navbar";    
 
 export default function Register(){
     return (
@@ -10,10 +9,3 @@ export default function Register(){
 }
 
 
-export async function getServerSideProps() {
-  
-  const fetchedNavbar = await fetchNavbar();
-  const navbar = fetchedNavbar?.data?.attributes ?? fetchedNavbar?.data ?? {};
-
-  return { props: {  navbar } };
-}

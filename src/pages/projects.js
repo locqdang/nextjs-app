@@ -1,7 +1,6 @@
 import ProjectCard from "../components/ProjectCard";
 import { fetchProjects } from "../lib/projects";
 import { formatMediaURL } from "../lib/strapi";
-import { fetchNavbar } from "../lib/navbar";
 
 
 export default function ProjectsPage({ projects }) {
@@ -34,12 +33,9 @@ export default function ProjectsPage({ projects }) {
 
 }
 
-export async function getServerSideProps(){
+export async function getStaticProps(){
     const fetchedProjects = await fetchProjects();
     const projects = fetchedProjects?.data?? fetchedProjects.data ?? [];
 
-    const ferchedNavbar = await fetchNavbar();
-    const navbar = ferchedNavbar?.data ?? ferchedNavbar ?? {};
-
-    return {props:{projects, navbar}};
+    return {props:{projects}, revalidate: 3600};
 }

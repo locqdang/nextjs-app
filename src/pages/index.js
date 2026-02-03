@@ -2,8 +2,6 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import ProjectCard from "../components/ProjectCard";
 import { fetchHomepage } from "../lib/homepage";
-import { fetchNavbar } from "../lib/navbar";
-import Footer from "../components/Footer";
 import { formatMediaURL } from "../lib/strapi";
 
 export default function Home(props) {
@@ -29,8 +27,8 @@ export default function Home(props) {
       <main>
         <Hero data={heroData} />
 
-        <section id="projects" class="section">
-          <div class="section__header">
+        <section id="projects" className="section">
+          <div className="section__header">
             <h2> Featured Projects </h2>
             <p> My recent projects</p>
           </div>
@@ -56,12 +54,9 @@ export default function Home(props) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const fetchedHomePage = await fetchHomepage();
   const homepage = fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
 
-  const fetchedNavbar = await fetchNavbar();
-  const navbar = fetchedNavbar?.data?.attributes ?? fetchedNavbar?.data ?? {};
-
-  return { props: { homepage, navbar } };
+  return { props: { homepage }, revalidate: 3600 };
 }
