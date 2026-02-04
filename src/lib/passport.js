@@ -25,6 +25,10 @@ passport.use(
           return done(null, false, { message: 'Invalid email or password' });
         }
 
+        if (!user.password) {
+          return done(null, false, { message: 'This account uses Google sign-in. Please use Google to log in.' });
+        }
+
         // Verify password
         const passwordMatch = await bcryptjs.compare(password, user.password);
 
@@ -61,43 +65,45 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Configure Google OAuth Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback',
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        // Check if user exists
-        let user = await findOne('users', { googleId: profile.id });
+// Configure Google OAuth Strategy (only if credentials are available)
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback',
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          // Check if user exists
+          let user = await findOne('users', { googleId: profile.id });
 
-        if (user) {
-          // Update existing user
-          const { password: _, ...userWithoutPassword } = user;
+          if (user) {
+            // Update existing user
+            const { password: _, ...userWithoutPassword } = user;
+            return done(null, userWithoutPassword);
+          }
+
+          // Create new user if doesn't exist
+          const newUser = {
+            googleId: profile.id,
+            email: profile.emails[0].value.toLowerCase(),
+            name: profile.displayName,
+            picture: profile.photos[0]?.value || null,
+            createdAt: new Date(),
+            provider: 'google',
+          };
+
+          const result = await insertOne('users', newUser);
+          const { password: _, ...userWithoutPassword } = { ...newUser, _id: result.insertedId };
           return done(null, userWithoutPassword);
+        } catch (error) {
+          return done(error);
         }
-
-        // Create new user if doesn't exist
-        const newUser = {
-          googleId: profile.id,
-          email: profile.emails[0].value.toLowerCase(),
-          name: profile.displayName,
-          picture: profile.photos[0]?.value || null,
-          createdAt: new Date(),
-          provider: 'google',
-        };
-
-        const result = await insertOne('users', newUser);
-        const { password: _, ...userWithoutPassword } = { ...newUser, _id: result.insertedId };
-        return done(null, userWithoutPassword);
-      } catch (error) {
-        return done(error);
       }
-    }
-  )
-);
+    )
+  );
+}
 
 export default passport;
