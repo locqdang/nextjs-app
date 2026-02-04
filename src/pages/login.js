@@ -6,6 +6,7 @@ import { useAuth } from '../lib/auth';
 export default function Login() {
   const router = useRouter();
   const { login } = useAuth();
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,12 @@ export default function Login() {
   useEffect(() => {
     if (!window.google) {
       console.error('Google SDK not loaded');
+      return;
+    }
+
+    // If already logged in, redirect to home
+    if(user){
+      router.push('/');
       return;
     }
 
@@ -28,8 +35,10 @@ export default function Login() {
       { theme: 'outline', size: 'large', width: 320 }
     );
 
-    // Optional: Show One Tap prompt
-    window.google.accounts.id.prompt();
+    // Show One Tap prompt if not logged in
+    if (!user){
+      window.google.accounts.id.prompt();
+    }
   }, []);
 
   const handleGoogleLogin = async (response) => {
