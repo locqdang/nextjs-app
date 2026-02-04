@@ -5,7 +5,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-      - .env.local
     ports:
       - "27018:27017" # Expose MongoDB port to the host
     volumes:
@@ -13,7 +12,7 @@ services:
       - ./mongo-config/mongod.conf:/etc/mongod.conf # Mount custom config file
     command: ["mongod", "--config", "/etc/mongod.conf"] # Use custom config file
     healthcheck:
-      test: ["CMD-SHELL", "mongo --eval \"db.adminCommand('ping')\" || exit 1"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,6 +24,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+      - .env.local
     ports:
       - "3002:3000"
     depends_on:
