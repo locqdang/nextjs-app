@@ -2,80 +2,34 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../lib/auth';
+import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth();
-  const { user } = useAuth();
+  const { login, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Initialize Google One Tap
-  useEffect(() => {
-    if (!window.google) {
-      console.error('Google SDK not loaded');
-      return;
-    }
+  // If already logged in, redirect to home
+  if (user){ 
+    router.push('/');
+  }
 
-    // If already logged in, redirect to home
-    if(user){
-      router.push('/');
-      return;
-    }
-
-    window.google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-      callback: handleGoogleLogin,
-    });
-
-    window.google.accounts.id.renderButton(
-      document.getElementById('google-signin-button'),
-      { theme: 'outline', size: 'large', width: 320 }
-    );
-
-    // Show One Tap prompt if not logged in
-    if (!user){
-      window.google.accounts.id.prompt();
-    }
-  }, []);
-
-  const handleGoogleLogin = async (response) => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ credential: response.credential }),
+  // Render Google SSO button
+  const googleBtnId = 'google-signin-button';
+  useEffect(()=>{
+    if (!window.google) return;
+    const el = document.getElementById(googleBtnId);
+    if (el) {
+      window.google.accounts.id.renderButton(el, {
+        theme: "outline",
+        size: "large",
+        width: 320,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Google login failed');
-        return;
-      }
-
-      // Store token via auth context
-      login(data.token, data.user);
-
-      // Redirect to original page if provided
-      const redirectPath = typeof router.query.redirect === 'string'
-        ? router.query.redirect
-        : '/';
-      router.push(redirectPath);
-    } catch (err) {
-      setError('Network error. Please try again.');
-      console.error('Google login error:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  },[])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,7 +84,7 @@ export default function Login() {
 
         {/* Google One Tap Button */}
         <div className="mb-6 flex justify-center">
-          <div id="google-signin-button"></div>
+          <div id={googleBtnId}></div>
         </div>
 
         {/* Divider */}

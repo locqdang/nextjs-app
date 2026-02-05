@@ -2,17 +2,33 @@ import "../styles/globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { AuthProvider, RequireAuth } from "../lib/auth";
+import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
 
-export default function App({ Component, pageProps }) {
+function AppContent({Component, pageProps}){
   const privatePages = ["/secret"];
 
+  // use google one tap
+  useGoogleOneTap();
+
   return (
-    <AuthProvider>
+    <>
       <Navbar />
       <RequireAuth privatePages={privatePages}>
-        <Component {...pageProps} />
+      <Component {...pageProps} />
       </RequireAuth>
       <Footer />
-    </AuthProvider>
+    </>
   );
+}
+
+export default function App({ Component, pageProps }) {
+  return (
+    <>
+      <AuthProvider>
+        <AppContent Component={Component} pageProps={pageProps}/>
+      </AuthProvider>
+    </>
+  
+  )
+  
 }

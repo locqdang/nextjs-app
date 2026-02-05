@@ -14,7 +14,7 @@ import { findOne, insertOne } from '../../../lib/data/mongodb.js';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export default async function handler(req, res) {
+export default async function handleGoogleLogin(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

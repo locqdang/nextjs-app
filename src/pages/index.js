@@ -1,8 +1,8 @@
-import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import ProjectCard from "../components/ProjectCard";
 import { fetchHomepage } from "../lib/homepage";
 import { formatMediaURL } from "../lib/strapi";
+import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
 
 export default function Home(props) {
   const heroData = props.homepage?.hero ?? null;
