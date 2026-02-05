@@ -34,7 +34,7 @@ export function useGoogleOneTap(googleReady){
             } 
         };
 
-        const trifferOneTap = ()=>{
+        const triggerOneTap = ()=>{
             // Initialize Google One Tap
             window.google.accounts.id.initialize({
                 client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -56,12 +56,12 @@ export function useGoogleOneTap(googleReady){
             window.google.accounts.id.prompt();
         };
 
-        trifferOneTap();
+        triggerOneTap();
 
-        router.events.on('routeChangeComplete', trifferOneTap);
+        router.events.on('routeChangeComplete', triggerOneTap);
 
         return ()=>{
-            router.events.off('routeChangeComplete', trifferOneTap);
+            router.events.off('routeChangeComplete', triggerOneTap);
         }
 
     },[googleReady, user, loading, router.asPath]);
