@@ -11,13 +11,13 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const redirectPath = typeof router.query.redirect === 'string'
+    ? router.query.redirect
+    : '/';
 
   // If already logged in, redirect
   if (user){ 
-    const dest = router.query.redirect
-    ? router.query.redirect
-    : '/';
-    router.push(dest);
+    router.push(redirectPath);
   }
 
   // Render Google SSO button
@@ -63,9 +63,6 @@ export default function Login() {
       login(data.token, data.user);
 
       // Redirect to original page if provided
-      const redirectPath = typeof router.query.redirect === 'string'
-        ? router.query.redirect
-        : '/';
       router.push(redirectPath);
     } catch (err) {
       setError('Network error. Please try again.');
