@@ -78,7 +78,7 @@ export default function Navbar({data = NAVBAR}) {
   const handleLogout = () => {
     logout();
     setOpen(false);
-    router.push("/");
+    // router.push("/");
   };
 
   return (
