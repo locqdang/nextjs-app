@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { useAuth } from "../lib/auth";
 import { useRouter } from "next/router";
 
-export function useGoogleOneTap(){
+export function useGoogleOneTap(googleReady){
     const {user, login, loading} = useAuth();
     const router = useRouter();
 
     useEffect(()=>{
         // Don't show if user is already logged in
-        if(user || loading){
+        if(!googleReady || user || loading){
             return;
         }
 
@@ -50,5 +50,5 @@ export function useGoogleOneTap(){
 
         // Show prompt
         window.google.accounts.id.prompt();
-    },[user, loading]);
+    },[googleReady, user, loading]);
 }

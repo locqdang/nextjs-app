@@ -1,3 +1,5 @@
+import Script from "next/script";
+import { useState } from "react";
 import "../styles/globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -7,11 +9,17 @@ import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
 function AppContent({Component, pageProps}){
   const privatePages = ["/secret"];
 
-  // use google one tap
-  useGoogleOneTap();
+  // Use google one tap
+  const [googleReady, setGoogleReady] = useState(false);
+  useGoogleOneTap(googleReady);
 
   return (
     <>
+      <Script
+        src="https://accounts.google.com/gsi/client"
+        strategy="afterInteractive"
+        onLoad={()=>setGoogleReady(true)}
+      />
       <Navbar />
       <RequireAuth privatePages={privatePages}>
       <Component {...pageProps} />
