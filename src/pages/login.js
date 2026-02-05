@@ -30,10 +30,9 @@ export default function Login() {
       window.google.accounts.id.renderButton(el, {
         theme: "outline",
         size: "large",
-        width: 320,
       });
     }
-  }, 100); // Wait 0.1 second
+  }, 500); // Wait 0.5 second
 
   return () => clearTimeout(timer); // Cleanup
 }, []);
