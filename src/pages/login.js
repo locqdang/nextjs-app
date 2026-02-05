@@ -12,9 +12,12 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If already logged in, redirect to home
+  // If already logged in, redirect
   if (user){ 
-    router.push('/');
+    const dest = router.query.redirect
+    ? router.query.redirect
+    : '/';
+    router.push(dest);
   }
 
   // Render Google SSO button
