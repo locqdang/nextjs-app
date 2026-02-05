@@ -7,19 +7,12 @@ export function useGoogleOneTap(googleReady){
     const router = useRouter();
 
     useEffect(()=>{
-        // Don't show if user is already logged in
-        if(!googleReady || user || loading){
-            return;
-        }
-
-        // Check if Google SDK is loaded
-        if(!window.google){
-            console.error("Google SDK not loaded");
+        // Don't show if user is already logged in or google SDK is not ready
+        if(!googleReady || user || loading || !window.google){
             return;
         }
 
         const handleGoogleLogin = async (response) => {
-           
             try {
                 const res = await fetch('/api/auth/google', {
                 method: 'POST',
@@ -41,14 +34,35 @@ export function useGoogleOneTap(googleReady){
             } 
         };
 
-        // Initialize Google One Tap
-        window.google.accounts.id.initialize({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-            callback: handleGoogleLogin,
-        })
-        console.log(`Google Login Initialized`)
+        const trifferOneTap = ()=>{
+            // Initialize Google One Tap
+            window.google.accounts.id.initialize({
+                client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                callback: handleGoogleLogin,
+            })
+            console.log(`Google Login Initialized`)
 
-        // Show prompt
-        window.google.accounts.id.prompt();
-    },[googleReady, user, loading]);
+            // Render Google SSO button
+            const googleBtnId = 'google-signin-button';
+            const el = document.getElementById(googleBtnId);
+            if (el) {
+                window.google.accounts.id.renderButton(el, {
+                    theme: "outline",
+                    size: "large",
+                });
+            }
+
+            // Show prompt
+            window.google.accounts.id.prompt();
+        };
+
+        trifferOneTap();
+
+        router.events.on('routeChangeComplete', trifferOneTap);
+
+        return ()=>{
+            router.events.off('routeChangeComplete', trifferOneTap);
+        }
+
+    },[googleReady, user, loading, router.asPath]);
 }

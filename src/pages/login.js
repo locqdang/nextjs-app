@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '../lib/auth';
-import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
 
 export default function Login() {
   const router = useRouter();
@@ -19,23 +18,6 @@ export default function Login() {
   if (user){ 
     router.push(redirectPath);
   }
-
-  // Render Google SSO button
-  const googleBtnId = 'google-signin-button';
- useEffect(() => {
-  const timer = setTimeout(() => {
-    if (!window.google) return;
-    const el = document.getElementById(googleBtnId);
-    if (el) {
-      window.google.accounts.id.renderButton(el, {
-        theme: "outline",
-        size: "large",
-      });
-    }
-  }, 500); // Wait 0.5 second
-
-  return () => clearTimeout(timer); // Cleanup
-}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,7 +69,7 @@ export default function Login() {
 
         {/* Google One Tap Button */}
         <div className="mb-6 flex justify-center">
-          <div id={googleBtnId}></div>
+          <div id='google-signin-button'></div>
         </div>
 
         {/* Divider */}
