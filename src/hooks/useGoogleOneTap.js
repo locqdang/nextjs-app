@@ -46,6 +46,7 @@ export function useGoogleOneTap(){
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
             callback: handleGoogleLogin,
         })
+        console.log(`Google Login Initialized`)
 
         // Show prompt
         window.google.accounts.id.prompt();
