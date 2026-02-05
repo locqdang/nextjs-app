@@ -19,7 +19,8 @@ export default function Login() {
 
   // Render Google SSO button
   const googleBtnId = 'google-signin-button';
-  useEffect(()=>{
+ useEffect(() => {
+  const timer = setTimeout(() => {
     if (!window.google) return;
     const el = document.getElementById(googleBtnId);
     if (el) {
@@ -29,7 +30,10 @@ export default function Login() {
         width: 320,
       });
     }
-  },[])
+  }, 100); // Wait 0.1 second
+
+  return () => clearTimeout(timer); // Cleanup
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
