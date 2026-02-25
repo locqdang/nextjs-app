@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { useAuth } from '../lib/auth';
 
 export default function Login() {
   const router = useRouter();
-  const { login, user } = useAuth();
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [buttonText, setButtonText] = useState('Send login link');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const redirectPath = typeof router.query.redirect === 'string'
@@ -25,12 +24,12 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/email-login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
@@ -40,11 +39,8 @@ export default function Login() {
         return;
       }
 
-      // Store token via auth context
-      login(data.token, data.user);
-
-      // Redirect to original page if provided
-      router.push(redirectPath);
+      setButtonText(data.message);
+      
     } catch (err) {
       setError('Network error. Please try again.');
       console.error('Login error:', err);
@@ -58,7 +54,6 @@ export default function Login() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Login</h2>
-          <p className="text-gray-600 mt-2">Welcome back to your account</p>
         </div>
 
         {error && (
@@ -98,38 +93,15 @@ export default function Login() {
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-              placeholder="••••••••"
-            />
-          </div>
-
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Getting Login Link...' : buttonText}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 text-sm">
-            Don't have an account?{' '}
-            <Link href="/register" className="text-indigo-600 font-medium hover:text-indigo-700">
-              Sign up
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );
