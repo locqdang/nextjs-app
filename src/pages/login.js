@@ -29,7 +29,9 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(
+         { email, redirectPath },
+        ),
       });
 
       const data = await response.json();

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, firstName, lastName } = req.body;
+  const { email, redirectPath } = req.body;
 
   // Validate input
   if (!email || !email.includes('@')) {
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     });
 
     // Create login link
-    const loginLink = `${FRONTEND_URL}/verify-login?token=${token}`;
+    const loginLink = `${FRONTEND_URL}/verify-login?token=${token}&redirect=${redirectPath}`;
 
     // Call n8n webhook to send email
     if (N8N_WEBHOOK_URL) {

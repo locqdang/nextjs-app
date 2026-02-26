@@ -2,9 +2,6 @@ import { userAgent } from "next/server";
 import { RequireAuth } from "../lib/auth";
 import { useAuth } from "../lib/auth";
 
-// Extract user email
-const {user} = useAuth();
-const userEmail = user?.userEmail;
 
 export default function haroPitches() {
 
