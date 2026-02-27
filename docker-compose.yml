@@ -1,23 +1,4 @@
 services:
-  nextjs-db:
-    image: mongo:latest
-    container_name: nextjs-db
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - "27018:27017" # Expose MongoDB port to the host
-    volumes:
-      - ./mongodb_data:/data/db # Persist MongoDB data
-      - ./mongo-config/mongod.conf:/etc/mongod.conf # Mount custom config file
-    command: ["mongod", "--config", "/etc/mongod.conf"] # Use custom config file
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-
   nextjs-app:
     build: .
     container_name: nextjs
@@ -27,6 +8,4 @@ services:
       - .env.local
     ports:
       - "3002:3000"
-    depends_on:
-      - nextjs-db
     command: ["npm", "run", "start"]

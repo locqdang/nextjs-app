@@ -55,17 +55,17 @@ export default function Navbar({data = NAVBAR}) {
   const closeAndScroll = () => setOpen(false);
 
     // normalize possible Strapi shapes (v4 vs v5 vs already-normalized)
-  const src =
-    data?.attributes ??
-    data?.data?.attributes ??
-    data?.data ??
-    data ??
-    {};
+  // const src =
+  //   data?.attributes ??
+  //   data?.data?.attributes ??
+  //   data?.data ??
+  //   data ??
+  //   {};
 
-  const brandLabel = src.brand ?? "";
+  const brandLabel = NAVBAR.brand ?? "";
   const links =
-    Array.isArray(src.menuItems) && src.menuItems.length
-      ? src.menuItems
+    Array.isArray(NAVBAR.menuItems) && NAVBAR.menuItems.length
+      ? NAVBAR.menuItems
       : [
           { id: "def-1", label: "Projects", url: "/#projects" },
           { id: "def-2", label: "Contact",  url: "/#contact"  },

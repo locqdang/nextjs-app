@@ -10,7 +10,7 @@ import crypto from 'crypto';
 import { connectToMongoDB } from '../../../lib/data/mongodb';
 
 const N8N_WEBHOOK_URL = process.env.N8N_LOGIN_WEBHOOK_URL;
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://192.168.0.61:3000';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
