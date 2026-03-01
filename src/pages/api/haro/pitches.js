@@ -4,6 +4,10 @@ import { findMany, countDocuments } from "../../../lib/data/haro";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export default async function handler(req, res){
+
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+
     if (req.method !== 'GET'){
         return res.stasus(405).json({error: "Method not allowed"})
     }
@@ -15,9 +19,9 @@ export default async function handler(req, res){
         if (!token) return res.status(401).json({error: "Missing token"});
 
         
-        const page = req.query.page || 1;
-        const noItems = req.query.noItems || 10;
-        const skip = (page -1 ) * noItems;
+        const page = Number(req.query.page) ;
+        const limit = Number(req.query.limit) ;
+        const skip = (page -1 ) * limit;
         
         const decoded = jwt.verify(token, JWT_SECRET);
         const filter = {
@@ -29,14 +33,14 @@ export default async function handler(req, res){
         };
 
         const total = await countDocuments("requests", filter);
-        const totalPages = Math.ceil(total/noItems)
+        const totalPages = Math.ceil(total/limit)
         
         const pitches = await findMany(
             "requests", 
             filter,
             {
                 sort: { "pitch_time": -1 },
-                limit: noItems,
+                limit: limit,
                 skip: skip
             }
         );
@@ -45,9 +49,8 @@ export default async function handler(req, res){
             success: true, 
             pitches,
             pagination: {
-                page,
-                noItems,
-                total,
+                currentPage: page,
+                limit,
                 totalPages
             }
         });
