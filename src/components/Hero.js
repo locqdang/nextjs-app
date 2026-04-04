@@ -19,7 +19,7 @@ export default function Hero({ data }) {
               </a>
             )}
             {b2?.label && (
-              <a className="btn btn--ghost" href={b2?.href ?? "#contact"}>
+              <a className="btn btn--ghost" href={b2?.url ?? "/video-meeting"}>
                 {b2.label}
               </a>
             )}

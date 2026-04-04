@@ -10,7 +10,7 @@ export default function Pagination({
 
     const isPrevDisabled = loading || currentPage <= 1;
     const isNextDisabled = loading || currentPage >= totalPages;
-    const btnClasses = "btn btn--sm"
+    const btnClasses = "btn--sm border border-gray-500 rounded-lg hover:cursor-pointer"
 
     const handleLimitChange = (e) =>{
         setLimit(e.target.value);
@@ -19,6 +19,14 @@ export default function Pagination({
 
     return (
         <div className="flex justify-center gap-2 flex-wrap">
+            {/* First Btn */}
+            <button
+                className={btnClasses}
+                disabled={loading}
+                onClick={()=>{onPageSelect(1)}}
+            >
+                First
+            </button>
             {/* Prev Btn */}
             <button
                 className={btnClasses}
@@ -37,7 +45,7 @@ export default function Pagination({
                             return '.'
                         }
                         return  <button 
-                                    className={`${btnClasses} ${isActive? 'bg-slate-200' :''}`}
+                                    className={`${isActive ? 'btn' :''} ${btnClasses} `}
                                     key={pageNo}
                                     onClick={()=>{onPageSelect(pageNo)}}>
                                     {pageNo}
@@ -54,6 +62,16 @@ export default function Pagination({
                 onClick={()=>onPageSelect(currentPage+1)}
             >
                 next
+            </button>
+
+            {/* Last Btn */}
+                {/* First Btn */}
+            <button
+                className={btnClasses}
+                disabled={loading}
+                onClick={()=>{onPageSelect(totalPages)}}
+            >
+                Last
             </button>
 
             {/* Set no items per page */}

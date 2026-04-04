@@ -1,9 +1,9 @@
 export default function HaroPitch({pitch}){
     if (!pitch) return null;
-
+    console.log({pitch})
     const question = pitch.query ?? "N/A";
     const expertPitch = pitch.expert_pitch || pitch.humanized_pitch || pitch.proposed_pitch || "N/A";
-    const matchTime = pitch.match_time ?? "N/A";
+    const matchTime = pitch.createdAt ?? "N/A";
     const deadline = pitch.deadline_original || pitch.deadline || pitch.deadline_iso || "N/A";
     const mediaOutlet = pitch.media_outlet ?? "N/A";
     const journalistName = pitch.journalist_name ?? "N/A";

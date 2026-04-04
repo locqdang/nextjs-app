@@ -11,7 +11,7 @@ export default function haroPitches() {
   const [ pagination, setPagination ] = useState(null);
   const [ loading, setLoading ] = useState(false);
   const [ currentPage, setCurrentPage] = useState(1);
-  const [ limit, setLimit] = useState(10);
+  const [ limit, setLimit] = useState(2);
 
   useEffect(()=>{
     const loadPitches = async () =>{

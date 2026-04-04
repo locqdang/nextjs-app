@@ -7,7 +7,7 @@ import { AuthProvider, RequireAuth } from "../lib/auth";
 import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
 
 function AppContent({Component, pageProps}){
-  const privatePages = ["/haro"];
+  const privatePages = ["/haro", ];
 
   // Use google one tap
   const [googleReady, setGoogleReady] = useState(false);
