@@ -43,7 +43,7 @@ export function useGoogleOneTap(googleReady){
             console.log(`Google Login Initialized`)
 
             // Render Google SSO button
-            const googleBtnId = 'google-signin-button';
+            const googleBtnId = 'google-signin-button';     // This is hardcoded
             const el = document.getElementById(googleBtnId);
             if (el) {
                 window.google.accounts.id.renderButton(el, {
