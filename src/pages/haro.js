@@ -48,6 +48,7 @@ export default function haroPitches() {
         {error && <p>{error}</p>}
         {loading && <p>loading...</p>}
         <div>
+          {(!pitches || pitches.length === 0) && <p class="text-center p-6">No pitch has been done on your behalf.</p>}
           {pitches && pitches.map((p)=>(<HaroPitch key={p.match_id} pitch={p}/>))}
         </div>
         <Pagination 
