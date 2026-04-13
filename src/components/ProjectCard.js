@@ -1,26 +1,27 @@
 // components/ProjectCard.jsx
-import Link from "next/link";
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ProjectCard({ project }) {
   const img =
-    project.logo?.formats?.thumbnail ??
-    project.logo?.formats?.small ??
-    project.logo ?? null;
+    project.logo?.formats?.thumbnail ?? project.logo?.formats?.small ?? project.logo ?? null;
 
   const logoUrl = img?.url ?? null;
-  const logoAlt = project.logo?.alternativeText || project.name || "Logo";
-  const href = project.url || "";
+  const logoAlt = project.logo?.alternativeText || project.name || 'Logo';
+  const href = project.url || '';
+  const logoWidth = img?.width ?? 200;
+  const logoHeight = img?.height ?? 80;
 
   return (
     <article className="card">
       {logoUrl && (
-        <div className="card__media">
-          <img
+        <div className="card__media" style={{ position: 'relative' }}>
+          <Image
             src={logoUrl}
             alt={logoAlt}
             className="card__image"
-            loading="lazy"
-            decoding="async"
+            width={logoWidth}
+            height={logoHeight}
           />
         </div>
       )}
@@ -31,7 +32,9 @@ export default function ProjectCard({ project }) {
         {!!project.skillTags?.length && (
           <ul className="card__tags">
             {project.skillTags.map((t) => (
-              <li key={t.id ?? t.name} className="tag">{t.name}</li>
+              <li key={t.id ?? t.name} className="tag">
+                {t.name}
+              </li>
             ))}
           </ul>
         )}
@@ -39,7 +42,9 @@ export default function ProjectCard({ project }) {
 
       {href && (
         <div className="card__footer">
-          <Link className="btn btn--sm" href={href} rel="nofollow">View</Link>
+          <Link className="btn btn--sm" href={href} rel="nofollow">
+            View
+          </Link>
         </div>
       )}
     </article>

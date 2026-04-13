@@ -1,68 +1,68 @@
-import { useEffect } from "react";
-import { useAuth } from "../lib/auth";
-import { useRouter } from "next/router";
+import { useEffect } from 'react';
+import { useAuth } from '../lib/auth';
+import { useRouter } from 'next/router';
 
-export function useGoogleOneTap(googleReady){
-    const {user, login, loading} = useAuth();
-    const router = useRouter();
+export function useGoogleOneTap(googleReady) {
+  const { user, login, loading } = useAuth();
+  const router = useRouter();
 
-    useEffect(()=>{
-        // Don't show if user is already logged in or google SDK is not ready
-        if(!googleReady || user || loading || !window.google){
-            return;
+  useEffect(() => {
+    // Don't show if user is already logged in or google SDK is not ready
+    if (!googleReady || user || loading || !window.google) {
+      return;
+    }
+
+    const handleGoogleLogin = async (response) => {
+      try {
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: response.credential }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          console.error('Google login error:', err);
+          return;
         }
 
-        const handleGoogleLogin = async (response) => {
-            try {
-                const res = await fetch('/api/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ credential: response.credential }),
-                });
+        login(data.token, data.user);
+        const redirectPath =
+          typeof router.query.redirect === 'string' ? router.query.redirect : router.asPath;
+        router.push(redirectPath);
+      } catch (err) {
+        console.error('Google login error:', err);
+      }
+    };
 
-                const data = await res.json();
-                if (!res.ok) {
-                    console.error('Google login error:', err)
-                    return;
-                }
+    const triggerOneTap = () => {
+      // Initialize Google One Tap
+      window.google.accounts.id.initialize({
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+        callback: handleGoogleLogin,
+      });
+      console.log(`Google Login Initialized`);
 
-                login(data.token, data.user);
-                const redirectPath = typeof router.query.redirect === 'string' ? router.query.redirect : router.asPath;
-                router.push(redirectPath);
-            } catch (err) {
-                console.error('Google login error:', err);
-            } 
-        };
+      // Render Google SSO button
+      const googleBtnId = 'google-signin-button'; // This is hardcoded
+      const el = document.getElementById(googleBtnId);
+      if (el) {
+        window.google.accounts.id.renderButton(el, {
+          theme: 'outline',
+          size: 'large',
+        });
+      }
 
-        const triggerOneTap = ()=>{
-            // Initialize Google One Tap
-            window.google.accounts.id.initialize({
-                client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-                callback: handleGoogleLogin,
-            })
-            console.log(`Google Login Initialized`)
+      // Show prompt
+      window.google.accounts.id.prompt();
+    };
 
-            // Render Google SSO button
-            const googleBtnId = 'google-signin-button';     // This is hardcoded
-            const el = document.getElementById(googleBtnId);
-            if (el) {
-                window.google.accounts.id.renderButton(el, {
-                    theme: "outline",
-                    size: "large",
-                });
-            }
+    triggerOneTap();
 
-            // Show prompt
-            window.google.accounts.id.prompt();
-        };
+    router.events.on('routeChangeComplete', triggerOneTap);
 
-        triggerOneTap();
-
-        router.events.on('routeChangeComplete', triggerOneTap);
-
-        return ()=>{
-            router.events.off('routeChangeComplete', triggerOneTap);
-        }
-
-    },[googleReady, user, loading, router.asPath]);
+    return () => {
+      router.events.off('routeChangeComplete', triggerOneTap);
+    };
+  }, [googleReady, user, loading, router, login]);
 }
