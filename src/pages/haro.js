@@ -1,57 +1,58 @@
-import { useEffect, useState } from "react";
-import { RequireAuth, useAuth } from "../lib/auth";
-import HaroPitch from "../components/HaroPitch";
-import Pagination from "../components/Pagination";
+import { useEffect, useState } from 'react';
+import { RequireAuth, useAuth } from '../lib/auth';
+import HaroPitch from '../components/HaroPitch';
+import Pagination from '../components/Pagination';
 
-export default function haroPitches() {
-
+export default function HaroPitches() {
   const { user } = useAuth();
-  const [ error, setError ] = useState(null);
-  const [ pitches, setPitches ] = useState(null);
-  const [ pagination, setPagination ] = useState(null);
-  const [ loading, setLoading ] = useState(false);
-  const [ currentPage, setCurrentPage] = useState(1);
-  const [ limit, setLimit] = useState(2);
+  const [error, setError] = useState(null);
+  const [pitches, setPitches] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
-  useEffect(()=>{
-    const loadPitches = async () =>{
+  useEffect(() => {
+    const loadPitches = async () => {
       try {
         setLoading(true);
 
-        const token = localStorage.getItem("token");
-        // console.log({token})
-        const res = await fetch(`/api/haro/pitches?page=${currentPage}&limit=${limit}`,{
-          headers:{
-            authorization: `Bearer ${token}`
-          }
-        })
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/haro/pitches?page=${currentPage}&limit=${limit}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
-        if(!res.ok){ throw new Error(data.error || "Failed to load pitches")}
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load pitches');
+        }
         setPitches(data.pitches);
         setPagination(data.pagination);
         setLoading(false);
-      } catch(e) {
-        setError(e.message)
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
       }
-    }
-    
+    };
+
     if (user?.email) loadPitches();
-
-},[user?.email, currentPage, limit])
-
-  
+  }, [user?.email, currentPage, limit]);
 
   return (
     <RequireAuth>
       <main>
         <h1 className="h1">Haro Pitches</h1>
-        {error && <p class="text-center p-6">{error}</p>}
-        {loading && <p class="text-center p-6">loading...</p>}
+        {error && <p className="text-center p-6">{error}</p>}
+        {loading && <p className="text-center p-6">loading...</p>}
         <div>
-          {(!pitches || pitches.length === 0) && <p class="text-center p-6">No pitch has been done on your behalf.</p>}
-          {pitches && pitches.map((p)=>(<HaroPitch key={p.match_id} pitch={p}/>))}
+          {(!pitches || pitches.length === 0) && (
+            <p className="text-center p-6">No pitch has been done on your behalf.</p>
+          )}
+          {pitches && pitches.map((p) => <HaroPitch key={p.match_id} pitch={p} />)}
         </div>
-        <Pagination 
+        <Pagination
           currentPage={currentPage}
           totalPages={pagination?.totalPages ?? 1}
           onPageSelect={setCurrentPage}
