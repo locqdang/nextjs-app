@@ -1,8 +1,8 @@
-import Hero from "../components/Hero";
-import ProjectCard from "../components/ProjectCard";
-import { fetchHomepage } from "../lib/homepage";
-import { formatMediaURL } from "../lib/strapi";
-import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
+import Hero from '../components/Hero';
+import ProjectCard from '../components/ProjectCard';
+import { fetchHomepage } from '../lib/homepage';
+import { formatMediaURL } from '../lib/strapi';
+import { useEffect } from 'react';
 
 export default function Home(props) {
   const heroData = props.homepage?.hero ?? null;
@@ -16,11 +16,14 @@ export default function Home(props) {
     if (p.logo) {
       if (p.logo.url) p.logo.url = formatMediaURL(p.logo.url);
       for (const k of Object.keys(p.logo.formats || {})) {
-        if (p.logo.formats[k]?.url)
-          p.logo.formats[k].url = formatMediaURL(p.logo.formats[k].url);
+        if (p.logo.formats[k]?.url) p.logo.formats[k].url = formatMediaURL(p.logo.formats[k].url);
       }
     }
   });
+
+  useEffect(() => {
+    console.log('client side');
+  }, []);
 
   return (
     <>
@@ -43,13 +46,11 @@ export default function Home(props) {
           <div className="section__header">
             <h2>Let&apos;s work together</h2>
             <p>
-              Email me at{" "}
-              <a href="mailto:locqdang@gmail.com">locqdang@gmail.com</a>
+              Email me at <a href="mailto:locqdang@gmail.com">locqdang@gmail.com</a>
             </p>
           </div>
         </section>
       </main>
-
     </>
   );
 }

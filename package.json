@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -32,7 +35,8 @@
     "@types/react": "19.1.11",
     "autoprefixer": "^10.4.24",
     "eslint": "^9",
-    "eslint-config-next": "15.2.0",
+    "eslint-config-next": "^16.2.3",
+    "prettier": "^3.8.2",
     "tailwindcss": "^4.1.18"
   }
 }
