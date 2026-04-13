@@ -45,8 +45,8 @@ export default function haroPitches() {
     <RequireAuth>
       <main>
         <h1 className="h1">Haro Pitches</h1>
-        {error && <p>{error}</p>}
-        {loading && <p>loading...</p>}
+        {error && <p class="text-center p-6">{error}</p>}
+        {loading && <p class="text-center p-6">loading...</p>}
         <div>
           {(!pitches || pitches.length === 0) && <p class="text-center p-6">No pitch has been done on your behalf.</p>}
           {pitches && pitches.map((p)=>(<HaroPitch key={p.match_id} pitch={p}/>))}
