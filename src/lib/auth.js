@@ -3,22 +3,39 @@ import { useRouter } from 'next/router';
 
 const AuthContext = createContext();
 
+// Read auth data once during initial state creation (client only).
+function getStoredAuth() {
+  if (typeof window === 'undefined') {
+    return { token: null, user: null };
+  }
+
+  const storedToken = localStorage.getItem('token');
+  const storedUser = localStorage.getItem('user');
+
+  if (!storedToken || !storedUser) {
+    return { token: null, user: null };
+  }
+
+  try {
+    return { token: storedToken, user: JSON.parse(storedUser) };
+  } catch {
+    // Clear corrupted auth payloads to avoid JSON parse crashes on next load.
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return { token: null, user: null };
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(() => {
+    getStoredAuth.user;
+  });
+  const [token, setToken] = useState(() => {
+    getStoredAuth.token;
+  });
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
+  // No async bootstrapping now; values are ready at initial render.
+  const loading = false;
 
   const login = (newToken, newUser) => {
     setToken(newToken);

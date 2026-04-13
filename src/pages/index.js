@@ -2,7 +2,6 @@ import Hero from '../components/Hero';
 import ProjectCard from '../components/ProjectCard';
 import { fetchHomepage } from '../lib/homepage';
 import { formatMediaURL } from '../lib/strapi';
-import { useEffect } from 'react';
 
 export default function Home(props) {
   const heroData = props.homepage?.hero ?? null;
@@ -20,10 +19,6 @@ export default function Home(props) {
       }
     }
   });
-
-  useEffect(() => {
-    console.log('client side');
-  }, []);
 
   return (
     <>
