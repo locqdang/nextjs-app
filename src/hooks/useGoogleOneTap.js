@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth';
 import { useRouter } from 'next/router';
 
 export function useGoogleOneTap(googleReady) {
   const { user, login, loading } = useAuth();
   const router = useRouter();
+  const oneTapInitialized = useRef(false);
 
   useEffect(() => {
     // Don't show if user is already logged in or google SDK is not ready
@@ -37,12 +38,14 @@ export function useGoogleOneTap(googleReady) {
 
     const triggerOneTap = () => {
       // Initialize Google One Tap
-      window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: handleGoogleLogin,
-      });
-      console.log(`Google Login Initialized`);
-
+      if (!oneTapInitialized.current) {
+        window.google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+          callback: handleGoogleLogin,
+        });
+        oneTapInitialized.current = true;
+        console.log(`Google Login Initialized`);
+      }
       // Render Google SSO button
       const googleBtnId = 'google-signin-button'; // This is hardcoded
       const el = document.getElementById(googleBtnId);
