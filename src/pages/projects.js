@@ -27,7 +27,7 @@ export default function ProjectsPage({ projects }) {
 
 export async function getStaticProps() {
   const fetchedProjects = await fetchProjects();
-  const projects = fetchedProjects?.data ?? fetchedProjects.data ?? [];
+  const projects = fetchedProjects?.data ?? [];
 
   return { props: { projects }, revalidate: 3600 };
 }

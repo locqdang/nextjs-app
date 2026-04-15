@@ -1,5 +1,5 @@
 // fetch all projects from strapi
-const STRAPI_URL = process.env.STRAPI_URL;
+const STRAPI_URL = process.env.STRAPI_URL || 'https://strapi.vietpolyglots.com';
 const STRAPI_API_KEY = process.env.STRAPI_API_TOKEN;
 
 export async function fetchProjects() {
