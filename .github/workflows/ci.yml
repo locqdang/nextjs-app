@@ -11,6 +11,21 @@ jobs:
   build-and-check:
     runs-on: ubuntu-latest
 
+    env:
+      NODE_ENV: production
+      STRAPI_URL: ${{ vars.STRAPI_URL || secrets.STRAPI_URL }}
+      STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      MONGO_DB: ${{ vars.MONGO_DB }}
+      MONGO_HARO_DB: ${{ vars.MONGO_HARO_DB }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_CALLBACK_URL: ${{ vars.GOOGLE_CALLBACK_URL }}
+      N8N_LOGIN_WEBHOOK_URL: ${{ secrets.N8N_LOGIN_WEBHOOK_URL }}
+      NEXT_PUBLIC_FRONTEND_URL: ${{ vars.NEXT_PUBLIC_FRONTEND_URL }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
