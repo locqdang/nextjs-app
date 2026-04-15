@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: production
       STRAPI_URL: ${{ vars.STRAPI_URL || secrets.STRAPI_URL }}
       STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
       MONGO_URI: ${{ secrets.MONGO_URI }}
@@ -47,3 +46,5 @@ jobs:
 
       - name: Build app
         run: npm run build
+        env:
+          NODE_ENV: production
