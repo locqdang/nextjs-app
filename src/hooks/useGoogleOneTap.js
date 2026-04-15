@@ -58,11 +58,5 @@ export function useGoogleOneTap(googleReady) {
     };
 
     triggerOneTap();
-
-    router.events.on('routeChangeComplete', triggerOneTap);
-
-    return () => {
-      router.events.off('routeChangeComplete', triggerOneTap);
-    };
   }, [googleReady, user, loading, router, login]);
 }
