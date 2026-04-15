@@ -58,5 +58,5 @@ export function useGoogleOneTap(googleReady) {
     };
 
     triggerOneTap();
-  }, [googleReady, user, loading, router, login]);
+  }, [googleReady, user, loading]);
 }
