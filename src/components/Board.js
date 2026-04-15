@@ -1,5 +1,5 @@
-import Square from "./Square";
-import styles from "../styles/Game.module.css";
+import Square from './Square';
+import styles from '../styles/Game.module.css';
 
 function Board({ xIsNext, squares, onPlay }) {
   const result = calculateWinner(squares);
@@ -15,13 +15,11 @@ function Board({ xIsNext, squares, onPlay }) {
     }
 
     const nextSquares = squares.slice();
-    nextSquares[i] = xIsNext ? "X" : "O";
+    nextSquares[i] = xIsNext ? 'X' : 'O';
     onPlay(nextSquares);
   }
 
-  let status = result
-    ? "Winner: " + winner
-    : "Next player: " + (xIsNext ? "X" : "O");
+  let status = result ? 'Winner: ' + winner : 'Next player: ' + (xIsNext ? 'X' : 'O');
 
   return (
     <>

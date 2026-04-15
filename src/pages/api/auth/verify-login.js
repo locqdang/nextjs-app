@@ -1,7 +1,7 @@
 /**
  * Verify Login Token API Route
  * GET /api/auth/verify-login?token=xxx
- * 
+ *
  * Response: { success, token, user } or { error }
  */
 
@@ -51,10 +51,7 @@ export default async function handler(req, res) {
     }
 
     // Mark token as used
-    await tokensCollection.updateOne(
-      { token },
-      { $set: { used: true, usedAt: new Date() } }
-    );
+    await tokensCollection.updateOne({ token }, { $set: { used: true, usedAt: new Date() } });
 
     // Create JWT token
     const jwtToken = jwt.sign(

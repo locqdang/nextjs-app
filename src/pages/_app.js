@@ -1,13 +1,13 @@
-import Script from "next/script";
-import { useState } from "react";
-import "../styles/globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { AuthProvider, RequireAuth } from "../lib/auth";
-import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
+import Script from 'next/script';
+import { useState } from 'react';
+import '../styles/globals.css';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { AuthProvider, RequireAuth } from '../lib/auth';
+import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
 
-function AppContent({Component, pageProps}){
-  const privatePages = ["/haro", "/video-meeting"];
+function AppContent({ Component, pageProps }) {
+  const privatePages = ['/haro', '/video-meeting'];
 
   // Use google one tap
   const [googleReady, setGoogleReady] = useState(false);
@@ -27,11 +27,11 @@ function AppContent({Component, pageProps}){
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
-        onLoad={()=>setGoogleReady(true)}
+        onLoad={() => setGoogleReady(true)}
       />
       <Navbar />
       <RequireAuth privatePages={privatePages}>
-      <Component {...pageProps} />
+        <Component {...pageProps} />
       </RequireAuth>
       <Footer />
     </>
@@ -42,10 +42,8 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <AuthProvider>
-        <AppContent Component={Component} pageProps={pageProps}/>
+        <AppContent Component={Component} pageProps={pageProps} />
       </AuthProvider>
     </>
-  
-  )
-  
+  );
 }

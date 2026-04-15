@@ -1,7 +1,7 @@
 /**
  * Login API Route with Passport
  * POST /api/auth/login
- * 
+ *
  * Body: { email, password }
  * Response: { success, token, user } or { error }
  */

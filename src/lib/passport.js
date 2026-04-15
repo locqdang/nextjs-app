@@ -26,7 +26,9 @@ passport.use(
         }
 
         if (!user.password) {
-          return done(null, false, { message: 'This account uses Google sign-in. Please use Google to log in.' });
+          return done(null, false, {
+            message: 'This account uses Google sign-in. Please use Google to log in.',
+          });
         }
 
         // Verify password

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import Board from "./Board";
-import styles from "../styles/Game.module.css";
+import { useState } from 'react';
+import Board from './Board';
+import styles from '../styles/Game.module.css';
 
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
@@ -24,12 +24,12 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className={styles.gameInfo}>
-        {" "}
+        {' '}
         <ol>
           {history.map((_, move) => (
             <li className={styles.history} key={move}>
               <button onClick={() => jumpTo(move)}>
-                {move ? `Go to move #${move}` : "Go to start"}
+                {move ? `Go to move #${move}` : 'Go to start'}
               </button>
             </li>
           ))}

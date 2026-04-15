@@ -15,7 +15,7 @@ export async function registerUser(userData) {
     email: userData.email,
     password: hashedPassword,
     createdAt: new Date(),
-    role: 'user'
+    role: 'user',
   };
 
   // 4. Insert

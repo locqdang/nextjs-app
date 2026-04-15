@@ -13,6 +13,7 @@ cp .env.example .env.local
 2. Fill in the real values in `.env.local`.
 
 Notes:
+
 - `.env.example` is safe to commit and documents the required variables.
 - `.env.local` is for your real local secrets and should not be committed.
 - `.env` is not used for active local secrets in this project.

@@ -4,25 +4,23 @@ const STRAPI_API_KEY = process.env.STRAPI_API_TOKEN;
 export async function fetchHomepage() {
   // Set the url
   const url = new URL(`${STRAPI_URL}/api/homepage`);
-  url.searchParams.set("populate[hero][populate]", "*");
-  url.searchParams.set("populate[project0][populate]", "*");
-  url.searchParams.set("populate[project1][populate]", "*");
-  url.searchParams.set("populate[project2][populate]", "*");
-  url.searchParams.set("populate[blogPost0][populate]", "*");
-  url.searchParams.set("populate[blogPost1][populate]", "*");
-  url.searchParams.set("populate[blogPost2][populate]", "*");
-  url.searchParams.set("populate[seo][populate]", "*");
+  url.searchParams.set('populate[hero][populate]', '*');
+  url.searchParams.set('populate[project0][populate]', '*');
+  url.searchParams.set('populate[project1][populate]', '*');
+  url.searchParams.set('populate[project2][populate]', '*');
+  url.searchParams.set('populate[blogPost0][populate]', '*');
+  url.searchParams.set('populate[blogPost1][populate]', '*');
+  url.searchParams.set('populate[blogPost2][populate]', '*');
+  url.searchParams.set('populate[seo][populate]', '*');
 
   // Ensure featuredProjects comes with everything (logo, tags, categories)
 
   // Fetching homepage
   try {
     const response = await fetch(url.toString(), {
-      method: "GET",
+      method: 'GET',
       headers: {
-        ...(STRAPI_API_KEY
-          ? { Authorization: `Bearer ${STRAPI_API_KEY}` }
-          : {}),
+        ...(STRAPI_API_KEY ? { Authorization: `Bearer ${STRAPI_API_KEY}` } : {}),
       },
     });
 

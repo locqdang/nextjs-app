@@ -1,7 +1,7 @@
 // components/Hero.jsx
 export default function Hero({ data }) {
-  const headline = data?.headline ?? "Your headline";
-  const subHeadline = data?.subHeadline ?? data?.subHealine ?? "";
+  const headline = data?.headline ?? 'Your headline';
+  const subHeadline = data?.subHeadline ?? data?.subHealine ?? '';
   const b1 = data?.button1 ?? {};
   const b2 = data?.button2 ?? {};
 
@@ -14,12 +14,12 @@ export default function Hero({ data }) {
         {(b1?.label || b2?.label) && (
           <div className="hero__cta">
             {b1?.label && (
-              <a className="btn" href={b1?.url ?? "projects"}>
+              <a className="btn" href={b1?.url ?? 'projects'}>
                 {b1.label}
               </a>
             )}
             {b2?.label && (
-              <a className="btn btn--ghost" href={b2?.url ?? "/video-meeting"}>
+              <a className="btn btn--ghost" href={b2?.url ?? '/video-meeting'}>
                 {b2.label}
               </a>
             )}

@@ -1,7 +1,7 @@
 /**
  * Email Login API Route (with Auto-Registration)
  * POST /api/auth/email-login
- * 
+ *
  * Body: { email }
  * Response: { success, message }
  */

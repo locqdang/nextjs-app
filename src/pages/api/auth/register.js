@@ -1,7 +1,7 @@
 /**
  * Register API Route
  * POST /api/auth/register
- * 
+ *
  * Body: { name, email, password, passwordConfirm }
  * Response: { success, user } or { error }
  */

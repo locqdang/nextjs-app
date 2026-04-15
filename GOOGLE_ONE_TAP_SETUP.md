@@ -27,10 +27,12 @@ Google One Tap is a frictionless authentication method that lets users sign in w
 ### 2. Install Dependencies
 
 The following packages have been added to `package.json`:
+
 - `google-auth-library` - For verifying Google ID tokens
 - `passport-google-oauth20` - For Google OAuth strategy
 
 Install them:
+
 ```bash
 npm install
 ```
@@ -50,6 +52,7 @@ JWT_SECRET=your_jwt_secret_key_here
 ```
 
 **Important Notes:**
+
 - `NEXT_PUBLIC_GOOGLE_CLIENT_ID` must be prefixed with `NEXT_PUBLIC_` to be accessible in the browser
 - `GOOGLE_CLIENT_SECRET` is server-side only and should never be exposed to the client
 - Generate a secure `JWT_SECRET` (at least 32 characters)
@@ -59,25 +62,30 @@ JWT_SECRET=your_jwt_secret_key_here
 #### Updated Files:
 
 **`src/pages/_document.js`**
+
 - Loads Google Identity Services SDK globally
 
 **`src/pages/login.js`**
+
 - Initializes Google One Tap on component mount
 - Renders the Google Sign-In button
 - Handles Google authentication responses
 - Sends credentials to `/api/auth/google` endpoint
 
 **`src/pages/api/auth/google.js` (New)**
+
 - Verifies Google ID tokens
 - Creates or retrieves user from database
 - Generates JWT token for session management
 - Handles errors appropriately
 
 **`src/lib/passport.js`**
+
 - Added Google OAuth Strategy (for future use with OAuth flow)
 - Configured user creation and retrieval for Google accounts
 
 **`package.json`**
+
 - Added `google-auth-library` and `passport-google-oauth20`
 
 ## How It Works
@@ -100,6 +108,7 @@ JWT_SECRET=your_jwt_secret_key_here
 ### Database Schema:
 
 Google-authenticated users are stored with:
+
 ```javascript
 {
   googleId: "Google's unique user ID",
@@ -124,19 +133,23 @@ Google-authenticated users are stored with:
 ### Customization Options:
 
 **Theme and Size:**
+
 ```javascript
 // In src/pages/login.js, line 24
-window.google.accounts.id.renderButton(
-  document.getElementById('google-signin-button'),
-  { theme: 'outline', size: 'large', width: '100%' }
-);
+window.google.accounts.id.renderButton(document.getElementById('google-signin-button'), {
+  theme: 'outline',
+  size: 'large',
+  width: '100%',
+});
 ```
 
 Options:
+
 - `theme`: 'outline' | 'filled_blue' | 'filled_black'
 - `size`: 'large' | 'medium' | 'small'
 
 **Disable Auto-Prompt:**
+
 ```javascript
 // Remove or comment out this line to disable One Tap prompt
 window.google.accounts.id.prompt();
@@ -145,6 +158,7 @@ window.google.accounts.id.prompt();
 ## Testing
 
 1. Start your development server:
+
 ```bash
 npm run dev
 ```
@@ -170,21 +184,25 @@ npm run dev
 ## Troubleshooting
 
 ### "Google SDK not loaded"
+
 - Ensure `_document.js` has the Google SDK script
 - Check network tab for script loading errors
 - Verify `https://accounts.google.com/gsi/client` is accessible
 
 ### "Invalid credential"
+
 - Verify `NEXT_PUBLIC_GOOGLE_CLIENT_ID` in `.env.local`
 - Check Google Cloud Console authorized origins
 - Ensure token hasn't expired (Google tokens are typically valid for ~1 hour)
 
 ### "User creation failed"
+
 - Check MongoDB connection
 - Verify `insertOne` function in `lib/data/mongodb.js`
 - Check database permissions
 
 ### "Token verification failed"
+
 - Verify `GOOGLE_CLIENT_SECRET` is correct
 - Check token hasn't been tampered with
 - Ensure `GOOGLE_CLIENT_ID` matches the one in Google Cloud Console
@@ -198,11 +216,15 @@ If you prefer the traditional OAuth flow with redirect:
 ```javascript
 import passport from 'passport';
 
-app.get('/api/auth/google', passport.authenticate('google', { 
-  scope: ['profile', 'email'] 
-}));
+app.get(
+  '/api/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+);
 
-app.get('/api/auth/google/callback', 
+app.get(
+  '/api/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     res.redirect('/');

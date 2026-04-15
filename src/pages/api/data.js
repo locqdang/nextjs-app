@@ -3,10 +3,7 @@
  * GET /api/data - Returns combined data from both sources
  */
 
-import {
-  findMany as mongoFindMany,
-  fetchStrapiEntries,
-} from '../../lib/data/index.js';
+import { findMany as mongoFindMany, fetchStrapiEntries } from '../../lib/data/index.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {

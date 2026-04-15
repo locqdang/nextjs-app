@@ -26,11 +26,11 @@ export function authenticatePassport(strategy, req, res) {
       if (err) {
         return reject(err);
       }
-      
+
       if (!user) {
         return resolve({ success: false, message: info?.message || 'Authentication failed' });
       }
-      
+
       resolve({ success: true, user });
     })(req, res);
   });

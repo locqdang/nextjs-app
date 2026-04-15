@@ -28,11 +28,11 @@ export {
 
 /**
  * Example usage:
- * 
+ *
  * // Fetch from Strapi
  * import { fetchStrapiEntries } from '@/lib/data';
  * const posts = await fetchStrapiEntries('posts', { populate: '*' });
- * 
+ *
  * // Query MongoDB
  * import { findMany } from '@/lib/data';
  * const users = await findMany('users', { active: true });

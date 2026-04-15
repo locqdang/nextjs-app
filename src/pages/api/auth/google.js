@@ -1,7 +1,7 @@
 /**
  * Google OAuth Callback Handler
  * POST /api/auth/google
- * 
+ *
  * Handles Google One Tap responses
  * Body: { credential } - JWT token from Google
  * Response: { success, token, user } or { error }
