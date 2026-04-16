@@ -35,6 +35,31 @@ main {
   margin-bottom: 1.25rem;
   text-align: center;
 }
+.section__header h2 {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  padding: 0 0.4rem 0.75rem;
+  font-size: clamp(1.2rem, 2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+.section__header h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 4.5rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #2563eb, #f59e0b);
+}
+.section__header p {
+  margin-top: 0.85rem;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
