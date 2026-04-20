@@ -9,7 +9,9 @@ on:
 
 jobs:
   build-and-check:
-    runs-on: ubuntu-latest
+    # Protect self-hosted runner from untrusted fork PR code execution.
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: [self-hosted, linux, x64]
 
     env:
       STRAPI_URL: ${{ vars.STRAPI_URL || secrets.STRAPI_URL }}
@@ -51,7 +53,7 @@ jobs:
         run: npm run test:integration
 
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run e2e tests
         run: npm run test:e2e
