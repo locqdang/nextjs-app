@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchHomepage } from './homepage';
+import { fetchHomepage } from '../../lib/homepage';
 
 describe('fetchHomepage', () => {
   beforeEach(() => {

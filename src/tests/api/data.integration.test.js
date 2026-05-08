@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import handler from './data';
+import handler from '../../pages/api/data';
 import { findMany, fetchStrapiEntries } from '../../lib/data/index.js';
 
 vi.mock('../../lib/data/index.js', () => ({
