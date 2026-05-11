@@ -1,0 +1,37 @@
+const { test, expect } = require('@playwright/test');
+const { createMagicLoginLink } = require('./helpers/auth');
+
+test.describe('email magic-link login', () => {
+  test('logs in from a generated magic link', async ({ page, request }) => {
+    const loginLink = await createMagicLoginLink(request, {
+      email: 'e2e-login@example.com',
+      redirectPath: '/',
+    });
+
+    await page.goto(loginLink);
+    await page.waitForURL('http://127.0.0.1:3100/');
+
+    await expect(page.getByLabel('Primary').getByText('Hi, e2e-login')).toBeVisible();
+
+    const token = await page.evaluate(() => window.localStorage.getItem('token'));
+    const user = await page.evaluate(() => window.localStorage.getItem('user'));
+
+    expect(token).toBeTruthy();
+    expect(user).toContain('e2e-login@example.com');
+  });
+
+  test('returns to the intended protected page after login', async ({ page, request }) => {
+    await page.goto('/haro');
+    await page.waitForURL('**/login?redirect=*');
+
+    const loginLink = await createMagicLoginLink(request, {
+      email: 'e2e-redirect@example.com',
+      redirectPath: '/haro',
+    });
+
+    await page.goto(loginLink);
+    await page.waitForURL('**/haro');
+
+    await expect(page).toHaveURL(/\/haro$/);
+  });
+});

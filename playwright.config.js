@@ -11,7 +11,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'npm run dev -- --hostname 127.0.0.1 --port 3100',
+    command: 'E2E_TEST_MODE=1 NEXT_PUBLIC_FRONTEND_URL=http://127.0.0.1:3100 npm run dev -- --hostname 127.0.0.1 --port 3100',
     url: 'http://127.0.0.1:3100',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
