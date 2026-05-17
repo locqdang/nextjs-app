@@ -81,8 +81,9 @@ export default function TermsOfServicePage() {
         <section className="legal-page__section">
           <h2>Disclaimers</h2>
           <p>
-            The service is provided on an "as is" and "as available" basis without warranties of any
-            kind, whether express or implied, to the fullest extent permitted by law.
+            The service is provided on an &quot;as is&quot; and &quot;as available&quot; basis
+            without warranties of any kind, whether express or implied, to the fullest extent
+            permitted by law.
           </p>
         </section>
 
