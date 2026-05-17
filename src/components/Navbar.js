@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 
@@ -61,7 +62,6 @@ export default function Navbar({ data = NAVBAR }) {
   //   data ??
   //   {};
 
-  const brandLabel = NAVBAR.brand ?? '';
   const links =
     Array.isArray(NAVBAR.menuItems) && NAVBAR.menuItems.length
       ? NAVBAR.menuItems
@@ -84,7 +84,14 @@ export default function Navbar({ data = NAVBAR }) {
     <header className="nav">
       <nav className="nav__inner" aria-label="Primary">
         <Link href="/" className="nav__brand" onClick={closeAndScroll}>
-          {brandLabel}
+          <Image
+            src="/vietpolyglots-logo.png"
+            alt={NAVBAR.brand}
+            width={30}
+            height={30}
+            className="nav__brand-logo"
+            priority
+          />
         </Link>
 
         {/* Desktop links */}
