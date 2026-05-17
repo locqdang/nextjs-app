@@ -6,11 +6,9 @@
  * Response: { success, message }
  */
 
-import crypto from 'crypto';
-import { connectToMongoDB } from '../../../lib/data/mongodb';
+import { createMagicLoginLink } from '../../../lib/auth/createMagicLoginLink';
 
 const N8N_WEBHOOK_URL = process.env.N8N_LOGIN_WEBHOOK_URL;
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://192.168.0.61:3000';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -25,46 +23,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const db = await connectToMongoDB();
-    const usersCollection = db.collection('users');
-    const tokensCollection = db.collection('loginTokens');
-
-    const normalizedEmail = email.toLowerCase();
-
-    // Check if user exists
-    let user = await usersCollection.findOne({ email: normalizedEmail });
-
-    // If user doesn't exist, create them
-    if (!user) {
-      const newUser = {
-        email: normalizedEmail,
-        name: normalizedEmail.split('@')[0], // Use email prefix
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        authMethod: 'email', // Mark as email-only auth
-      };
-
-      const result = await usersCollection.insertOne(newUser);
-      user = { ...newUser, _id: result.insertedId };
-      console.log(`✓ New user created: ${normalizedEmail}`);
-    }
-
-    // Generate secure random token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-
-    // Store token in database
-    await tokensCollection.insertOne({
-      token,
-      email: user.email,
-      userId: user._id,
-      expiresAt,
-      used: false,
-      createdAt: new Date(),
-    });
-
-    // Create login link
-    const loginLink = `${FRONTEND_URL}/verify-login?token=${token}&redirect=${redirectPath}`;
+    const { loginLink, user } = await createMagicLoginLink({ email, redirectPath });
 
     // Call n8n webhook to send email
     if (N8N_WEBHOOK_URL) {
