@@ -81,8 +81,8 @@ export default function TermsOfServicePage() {
         <section className="legal-page__section">
           <h2>Disclaimers</h2>
           <p>
-            The service is provided on an "as is" and "as available" basis without warranties of
-            any kind, whether express or implied, to the fullest extent permitted by law.
+            The service is provided on an "as is" and "as available" basis without warranties of any
+            kind, whether express or implied, to the fullest extent permitted by law.
           </p>
         </section>
 
@@ -98,8 +98,8 @@ export default function TermsOfServicePage() {
         <section className="legal-page__section">
           <h2>Termination</h2>
           <p>
-            We may suspend or terminate access to the service at any time if we reasonably believe
-            a user has violated these terms or created risk to the service or others.
+            We may suspend or terminate access to the service at any time if we reasonably believe a
+            user has violated these terms or created risk to the service or others.
           </p>
         </section>
 

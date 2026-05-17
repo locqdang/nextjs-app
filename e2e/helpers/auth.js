@@ -4,7 +4,9 @@ async function createMagicLoginLink(request, { email, redirectPath = '/' }) {
   });
 
   if (!response.ok()) {
-    throw new Error(`Failed to create magic login link: ${response.status()} ${await response.text()}`);
+    throw new Error(
+      `Failed to create magic login link: ${response.status()} ${await response.text()}`
+    );
   }
 
   const data = await response.json();
