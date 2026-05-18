@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 
 const NAVBAR = {
   brand: 'Vietpolyglots',
+  logo_url: '/vietpolyglots-logo.png',
   menuItems: [
     { id: '1', label: 'Projects', url: '/projects' },
     { id: '2', label: 'Contact', url: '/#contact' },
@@ -16,7 +16,6 @@ export default function Navbar({ data = NAVBAR }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);
-  const router = useRouter();
   const { user, logout } = useAuth();
 
   // Close on ESC
@@ -54,17 +53,9 @@ export default function Navbar({ data = NAVBAR }) {
   // Close after navigating
   const closeAndScroll = () => setOpen(false);
 
-  // normalize possible Strapi shapes (v4 vs v5 vs already-normalized)
-  // const src =
-  //   data?.attributes ??
-  //   data?.data?.attributes ??
-  //   data?.data ??
-  //   data ??
-  //   {};
-
   const links =
-    Array.isArray(NAVBAR.menuItems) && NAVBAR.menuItems.length
-      ? NAVBAR.menuItems
+    Array.isArray(data.menuItems) && data.menuItems.length
+      ? data.menuItems
       : [
           { id: 'def-1', label: 'Projects', url: '/#projects' },
           { id: 'def-2', label: 'Contact', url: '/#contact' },
@@ -77,7 +68,6 @@ export default function Navbar({ data = NAVBAR }) {
   const handleLogout = () => {
     logout();
     setOpen(false);
-    // router.push("/");
   };
 
   return (
@@ -85,8 +75,8 @@ export default function Navbar({ data = NAVBAR }) {
       <nav className="nav__inner" aria-label="Primary">
         <Link href="/" className="nav__brand" onClick={closeAndScroll}>
           <Image
-            src="/vietpolyglots-logo.png"
-            alt={NAVBAR.brand}
+            src={data.logo_url}
+            alt={data.brand}
             width={30}
             height={30}
             className="nav__brand-logo"

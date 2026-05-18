@@ -1,7 +1,7 @@
 import Hero from '../components/Hero';
 import ProjectCard from '../components/ProjectCard';
-import { fetchHomepage } from '../lib/homepage';
-import { formatMediaURL } from '../lib/strapi';
+import { fetchFromStrapi } from '../lib/data';
+import { formatMediaURL } from '../lib/data/strapi';
 
 export default function Home(props) {
   const heroData = props.homepage?.hero ?? null;
@@ -51,7 +51,18 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
-  const fetchedHomePage = await fetchHomepage();
+  const fetchedHomePage = await fetchFromStrapi('homepage', {
+    queryParams: {
+      'populate[hero][populate]': '*',
+      'populate[project0][populate]': '*',
+      'populate[project1][populate]': '*',
+      'populate[project2][populate]': '*',
+      'populate[blogPost0][populate]': '*',
+      'populate[blogPost1][populate]': '*',
+      'populate[blogPost2][populate]': '*',
+      'populate[seo][populate]': '*',
+    },
+  });
   const homepage = fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
 
   return { props: { homepage }, revalidate: 3600 };

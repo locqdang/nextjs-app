@@ -50,6 +50,15 @@ export async function fetchFromStrapi(endpoint, options = {}) {
       url.searchParams.set('sort', options.sort);
     }
 
+    // Allow callers to pass through Strapi-style nested query params directly.
+    if (options.queryParams) {
+      Object.entries(options.queryParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          url.searchParams.set(key, String(value));
+        }
+      });
+    }
+
     const headers = {
       'Content-Type': 'application/json',
     };
