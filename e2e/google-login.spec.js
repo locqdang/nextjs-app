@@ -13,6 +13,9 @@ test.describe('google one tap login', () => {
     await expect(page.getByTestId('mock-google-button')).toBeVisible();
 
     const googleState = await getGoogleMockState(page);
+    expect(googleState.initializeCalled).toBe(true);
+    expect(googleState.hasCallback).toBe(true);
+    expect(googleState.initializeConfig).toBeTruthy();
     expect(googleState.renderCalls).toHaveLength(1);
     expect(googleState.renderCalls[0].id).toBe('google-signin-button');
     expect(googleState.promptCalls).toBeGreaterThan(0);
@@ -58,7 +61,7 @@ test.describe('google one tap login', () => {
     await expect(page.getByTestId('mock-google-button')).toBeVisible();
 
     await page.evaluate(async () => {
-      await window.__googleMock.initializeConfig.callback({ credential: 'fake-credential' });
+      await window.__googleMock.callback({ credential: 'fake-credential' });
     });
 
     await page.waitForURL('**/haro');
