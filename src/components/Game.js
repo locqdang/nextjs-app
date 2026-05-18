@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Board from './Board';
 import styles from '../styles/Game.module.css';

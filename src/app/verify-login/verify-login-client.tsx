@@ -1,20 +1,23 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../lib/auth';
+'use client';
 
-export default function VerifyLogin() {
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../lib/auth';
+
+type VerifyLoginClientProps = {
+  token: string | null;
+  redirectPath: string;
+};
+
+export default function VerifyLoginClient({ token, redirectPath }: VerifyLoginClientProps) {
   const router = useRouter();
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
   const { login } = useAuth();
 
-  //  Use effect to log the user in and redirect to homepage
   useEffect(() => {
-    const { token } = router.query;
-
     if (!token) return;
 
-    // Define verify token
     const verifyToken = async () => {
       try {
         const response = await fetch('/api/auth/verify-login/', {
@@ -26,43 +29,33 @@ export default function VerifyLogin() {
         });
         const data = await response.json();
 
-        // If verificaiton fails, set error, message and return
         if (!response.ok) {
           setStatus('error');
           setMessage(data.error);
           return;
         }
 
-        // If succeed, set status and message
         setStatus('success');
         setMessage('Login successful. Redirecting...');
-
-        // Log the user in
         login(data.token, data.user);
 
-        // Redirect to homepage in 1 second
-        const redirectPath =
-          typeof router.query.redirect === 'string' ? router.query.redirect : '/';
         setTimeout(() => {
           router.push(redirectPath);
         }, 1000);
-      } catch (e) {
+      } catch (error) {
         setStatus('error');
-        setMessage(e.message);
+        setMessage(error instanceof Error ? error.message : 'Verification failed');
       }
     };
 
-    // verify token
-    verifyToken();
-  }, [router, login]);
+    void verifyToken();
+  }, [login, redirectPath, router, token]);
 
   return (
-    <>
-      <div className="py-12 text-center">
-        <h1>Logging in...</h1>
-        {status !== '' && <p>{status}</p>}
-        {message !== '' && <p>{message}</p>}
-      </div>
-    </>
+    <div className="py-12 text-center">
+      <h1>Logging in...</h1>
+      {status !== '' && <p>{status}</p>}
+      {message !== '' && <p>{message}</p>}
+    </div>
   );
 }

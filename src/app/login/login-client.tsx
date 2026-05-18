@@ -1,13 +1,19 @@
-import { useState, useEffect, FormEvent } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../lib/auth';
+'use client';
+
+import { FormEvent, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../lib/auth';
 
 type EmailLoginResponse = {
   message?: string;
   error?: string;
 };
 
-export default function Login() {
+type LoginClientProps = {
+  redirectPath: string;
+};
+
+export default function LoginClient({ redirectPath }: LoginClientProps) {
   const router = useRouter();
   const { user } = useAuth();
 
@@ -16,7 +22,6 @@ export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const redirectPath = typeof router.query.redirect === 'string' ? router.query.redirect : '/';
   useEffect(() => {
     if (user) {
       router.push(redirectPath);
@@ -43,9 +48,9 @@ export default function Login() {
       }
 
       setButtonText(data.message || 'Login link sent');
-    } catch (err) {
+    } catch (error) {
       setError('Network error. Please try again.');
-      console.error('Login error:', err);
+      console.error('Login error:', error);
     } finally {
       setLoading(false);
     }

@@ -1,15 +1,18 @@
+'use client';
+
 import Script from 'next/script';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
-import '../styles/globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { AuthProvider, RequireAuth } from '../lib/auth';
 import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
 
-function AppContent({ Component, pageProps }) {
-  const privatePages = ['/haro', '/video-meeting'];
+type AppShellProps = {
+  children: ReactNode;
+  navbarData?: any;
+};
 
-  // Use google one tap
+export default function AppShell({ children, navbarData = null }: AppShellProps) {
   const [googleReady, setGoogleReady] = useState(false);
   useGoogleOneTap(googleReady);
 
@@ -29,21 +32,9 @@ function AppContent({ Component, pageProps }) {
         strategy="afterInteractive"
         onLoad={() => setGoogleReady(true)}
       />
-      <Navbar />
-      <RequireAuth privatePages={privatePages}>
-        <Component {...pageProps} />
-      </RequireAuth>
+      <Navbar data={navbarData ?? undefined} />
+      {children}
       <Footer />
-    </>
-  );
-}
-
-export default function App({ Component, pageProps }) {
-  return (
-    <>
-      <AuthProvider>
-        <AppContent Component={Component} pageProps={pageProps} />
-      </AuthProvider>
     </>
   );
 }

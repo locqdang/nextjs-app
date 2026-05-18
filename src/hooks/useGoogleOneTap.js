@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export function useGoogleOneTap(googleReady) {
   const { user, login, loading } = useAuth();
@@ -23,13 +25,15 @@ export function useGoogleOneTap(googleReady) {
 
         const data = await res.json();
         if (!res.ok) {
-          console.error('Google login error:', err);
+          console.error('Google login error:', data?.error || 'Unknown error');
           return;
         }
 
         login(data.token, data.user);
         const redirectPath =
-          typeof router.query.redirect === 'string' ? router.query.redirect : router.asPath;
+          new URLSearchParams(window.location.search).get('redirect') ||
+          window.location.pathname ||
+          '/';
         router.push(redirectPath);
       } catch (err) {
         console.error('Google login error:', err);

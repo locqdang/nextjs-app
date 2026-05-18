@@ -1,6 +1,8 @@
+'use client';
+
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 
 type User = Record<string, unknown>;
 
@@ -74,16 +76,17 @@ export function useAuth(): AuthContextValue {
 
 export function RequireAuth({ children, privatePages = [] }: RequireAuthProps) {
   const router = useRouter();
+  const pathname = usePathname() || '/';
   const { user, loading } = useAuth();
-  const isPrivatePage = privatePages.includes(router.pathname);
+  const isPrivatePage = privatePages.length > 0 ? privatePages.includes(pathname) : true;
 
   // Redirect anonymous users trying to open protected routes.
   useEffect(() => {
     if (!loading && !user && isPrivatePage) {
-      const redirect = encodeURIComponent(router.asPath || '/');
+      const redirect = encodeURIComponent(pathname || '/');
       void router.replace(`/login?redirect=${redirect}`);
     }
-  }, [loading, user, router, isPrivatePage]);
+  }, [loading, user, router, isPrivatePage, pathname]);
 
   if (loading) {
     return null;
