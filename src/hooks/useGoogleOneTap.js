@@ -4,10 +4,28 @@ import { useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth';
 import { usePathname, useRouter } from 'next/navigation';
 
+export function renderGoogleLoginButton() {
+  if (!window.google) {
+    return false;
+  }
+
+  const el = document.getElementById('google-signin-button');
+  if (!el) {
+    return false;
+  }
+
+  el.innerHTML = '';
+  window.google.accounts.id.renderButton(el, {
+    theme: 'outline',
+    size: 'large',
+  });
+  return true;
+}
+
 export function useGoogleOneTap(googleReady) {
   const { user, login, loading } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   const oneTapInitialized = useRef(false);
 
   // Initialize Google Login
@@ -48,22 +66,11 @@ export function useGoogleOneTap(googleReady) {
     oneTapInitialized.current = true;
   }, [googleReady, user, loading, login, router]);
 
-  // Render Google Login Btn on /login
   useEffect(() => {
-    if (!googleReady || user || loading || !window.google || pathname !== '/login') {
+    if (!googleReady || user || loading || !window.google || !oneTapInitialized.current) {
       return;
     }
 
-    const el = document.getElementById('google-signin-button');
-    if (!el) {
-      return;
-    }
-
-    el.innerHTML = '';
-    window.google.accounts.id.renderButton(el, {
-      theme: 'outline',
-      size: 'large',
-    });
     window.google.accounts.id.prompt();
   }, [googleReady, user, loading, pathname]);
 }

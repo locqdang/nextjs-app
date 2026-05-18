@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../lib/auth';
+import { renderGoogleLoginButton } from '../../hooks/useGoogleOneTap';
 
 type EmailLoginResponse = {
   message?: string;
@@ -27,6 +28,26 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
       router.push(redirectPath);
     }
   }, [user, router, redirectPath]);
+
+  useEffect(() => {
+    let timeoutId: number | undefined;
+
+    const tryRenderGoogleButton = () => {
+      if (renderGoogleLoginButton()) {
+        return;
+      }
+
+      timeoutId = window.setTimeout(tryRenderGoogleButton, 50);
+    };
+
+    tryRenderGoogleButton();
+
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
