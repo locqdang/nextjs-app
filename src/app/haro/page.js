@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RequireAuth, useAuth } from '../../lib/auth';
+import { useAuth } from '../../lib/auth';
 import HaroPitch from '../../components/HaroPitch';
 import Pagination from '../../components/Pagination';
 
@@ -42,26 +42,24 @@ export default function HaroPage() {
   }, [user?.email, currentPage, limit]);
 
   return (
-    <RequireAuth>
-      <main>
-        <h1 className="h1">Haro Pitches</h1>
-        {error && <p className="text-center p-6">{error}</p>}
-        {loading && <p className="text-center p-6">loading...</p>}
-        <div>
-          {(!pitches || pitches.length === 0) && (
-            <p className="text-center p-6">No pitch has been done on your behalf.</p>
-          )}
-          {pitches && pitches.map((pitch) => <HaroPitch key={pitch.match_id} pitch={pitch} />)}
-        </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={pagination?.totalPages ?? 1}
-          onPageSelect={setCurrentPage}
-          limit={limit}
-          setLimit={setLimit}
-          loading={loading}
-        />
-      </main>
-    </RequireAuth>
+    <main>
+      <h1 className="h1">Haro Pitches</h1>
+      {error && <p className="text-center p-6">{error}</p>}
+      {loading && <p className="text-center p-6">loading...</p>}
+      <div>
+        {(!pitches || pitches.length === 0) && (
+          <p className="text-center p-6">No pitch has been done on your behalf.</p>
+        )}
+        {pitches && pitches.map((pitch) => <HaroPitch key={pitch.match_id} pitch={pitch} />)}
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={pagination?.totalPages ?? 1}
+        onPageSelect={setCurrentPage}
+        limit={limit}
+        setLimit={setLimit}
+        loading={loading}
+      />
+    </main>
   );
 }
