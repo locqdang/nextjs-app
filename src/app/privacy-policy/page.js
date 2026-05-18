@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
       <section className="legal-page__section">
         <h2>Who we are</h2>
         <p>
-          Vietpolyglots operates this website and related online services, including future tools
-          or applications connected to the site.
+          Vietpolyglots operates this website and related online services, including future tools or
+          applications connected to the site.
         </p>
       </section>
 
@@ -29,8 +29,8 @@ export default function PrivacyPolicyPage() {
           <li>Account or authentication details when you sign in or request secure access.</li>
           <li>Messages or other information you submit through forms or direct communication.</li>
           <li>
-            Technical data such as IP address, browser type, device information, referral pages,
-            and site usage data.
+            Technical data such as IP address, browser type, device information, referral pages, and
+            site usage data.
           </li>
         </ul>
       </section>
@@ -52,8 +52,8 @@ export default function PrivacyPolicyPage() {
         <p>
           If you choose to sign in with Google or another third-party provider, we may receive
           limited profile data such as your email address, name, and a provider-specific account
-          identifier. We use that information only to verify identity, create or connect an
-          account, and support the sign-in flow.
+          identifier. We use that information only to verify identity, create or connect an account,
+          and support the sign-in flow.
         </p>
         <p>
           We may also use service providers for hosting, analytics, infrastructure, or security.
@@ -65,9 +65,8 @@ export default function PrivacyPolicyPage() {
         <h2>Cookies and similar technologies</h2>
         <p>
           We may use cookies, local storage, and similar technologies to remember preferences,
-          maintain sessions, measure usage, and improve reliability. You can control cookies
-          through your browser settings, though some features may stop working properly if you
-          disable them.
+          maintain sessions, measure usage, and improve reliability. You can control cookies through
+          your browser settings, though some features may stop working properly if you disable them.
         </p>
       </section>
 
@@ -91,9 +90,9 @@ export default function PrivacyPolicyPage() {
       <section className="legal-page__section">
         <h2>Your choices</h2>
         <p>
-          Depending on your location, you may have rights to request access, correction, or
-          deletion of personal information. You may also contact us to ask questions about how
-          your data is handled.
+          Depending on your location, you may have rights to request access, correction, or deletion
+          of personal information. You may also contact us to ask questions about how your data is
+          handled.
         </p>
       </section>
 
@@ -109,8 +108,8 @@ export default function PrivacyPolicyPage() {
       <section className="legal-page__section">
         <h2>Changes to this policy</h2>
         <p>
-          We may update this Privacy Policy from time to time. When we do, we will post the
-          revised version on this page and update the effective date above.
+          We may update this Privacy Policy from time to time. When we do, we will post the revised
+          version on this page and update the effective date above.
         </p>
       </section>
 

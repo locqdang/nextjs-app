@@ -24,8 +24,8 @@ export default function TermsOfServicePage() {
       <section className="legal-page__section">
         <h2>Use of the service</h2>
         <p>
-          You may use the website only for lawful purposes and in a way that does not interfere
-          with the operation, security, or availability of the service.
+          You may use the website only for lawful purposes and in a way that does not interfere with
+          the operation, security, or availability of the service.
         </p>
       </section>
 
@@ -52,8 +52,8 @@ export default function TermsOfServicePage() {
       <section className="legal-page__section">
         <h2>Intellectual property</h2>
         <p>
-          Unless otherwise stated, the content, branding, design, and materials on this website
-          are owned by or licensed to Vietpolyglots and are protected by applicable intellectual
+          Unless otherwise stated, the content, branding, design, and materials on this website are
+          owned by or licensed to Vietpolyglots and are protected by applicable intellectual
           property laws.
         </p>
       </section>
@@ -70,9 +70,9 @@ export default function TermsOfServicePage() {
       <section className="legal-page__section">
         <h2>Disclaimers</h2>
         <p>
-          The service is provided on an &quot;as is&quot; and &quot;as available&quot; basis
-          without warranties of any kind, whether express or implied, to the fullest extent
-          permitted by law.
+          The service is provided on an &quot;as is&quot; and &quot;as available&quot; basis without
+          warranties of any kind, whether express or implied, to the fullest extent permitted by
+          law.
         </p>
       </section>
 
@@ -96,15 +96,16 @@ export default function TermsOfServicePage() {
       <section className="legal-page__section">
         <h2>Changes to the service or terms</h2>
         <p>
-          We may update the service or these terms from time to time. Continued use after an
-          update means you accept the revised terms.
+          We may update the service or these terms from time to time. Continued use after an update
+          means you accept the revised terms.
         </p>
       </section>
 
       <section className="legal-page__section">
         <h2>Contact</h2>
         <p>
-          For questions about these terms, contact <a href="mailto:locqdang@gmail.com">locqdang@gmail.com</a>.
+          For questions about these terms, contact{' '}
+          <a href="mailto:locqdang@gmail.com">locqdang@gmail.com</a>.
         </p>
       </section>
     </main>

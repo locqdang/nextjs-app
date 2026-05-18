@@ -7,7 +7,5 @@ type VerifyLoginPageProps = {
 export default async function VerifyLoginPage({ searchParams }: VerifyLoginPageProps) {
   const params = (await searchParams) || {};
 
-  return (
-    <VerifyLoginClient token={params.token || null} redirectPath={params.redirect || '/'} />
-  );
+  return <VerifyLoginClient token={params.token || null} redirectPath={params.redirect || '/'} />;
 }
