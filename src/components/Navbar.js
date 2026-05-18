@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth';
 
 const NAVBAR = {
   brand: 'Vietpolyglots',
+  logo_url: '/vietpolyglots-logo.png',
   menuItems: [
     { id: '1', label: 'Projects', url: '/projects' },
     { id: '2', label: 'Contact', url: '/#contact' },
@@ -74,8 +75,8 @@ export default function Navbar({ data = NAVBAR }) {
       <nav className="nav__inner" aria-label="Primary">
         <Link href="/" className="nav__brand" onClick={closeAndScroll}>
           <Image
-            src="/vietpolyglots-logo.png"
-            alt={NAVBAR.brand}
+            src={data.logo_url}
+            alt={data.brand}
             width={30}
             height={30}
             className="nav__brand-logo"

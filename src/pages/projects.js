@@ -1,6 +1,6 @@
 import ProjectCard from '../components/ProjectCard';
-import { fetchProjects } from '../lib/projects';
-import { formatMediaURL } from '../lib/strapi';
+import { fetchStrapiEntries } from '../lib/data';
+import { formatMediaURL } from '../lib/data/strapi';
 
 export default function ProjectsPage({ projects }) {
   projects.forEach((p) => {
@@ -26,8 +26,7 @@ export default function ProjectsPage({ projects }) {
 }
 
 export async function getStaticProps() {
-  const fetchedProjects = await fetchProjects();
-  const projects = fetchedProjects?.data ?? [];
+  const projects = await fetchStrapiEntries('projects', { populate: '*' });
 
   return { props: { projects }, revalidate: 3600 };
 }
