@@ -2,16 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function useGoogleOneTap(googleReady) {
   const { user, login, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const oneTapInitialized = useRef(false);
 
+  // Initialize Google Login
   useEffect(() => {
-    // Don't show if user is already logged in or google SDK is not ready
-    if (!googleReady || user || loading || !window.google) {
+    if (!googleReady || user || loading || !window.google || oneTapInitialized.current) {
       return;
     }
 
@@ -40,30 +41,29 @@ export function useGoogleOneTap(googleReady) {
       }
     };
 
-    const triggerOneTap = () => {
-      // Initialize Google One Tap
-      if (!oneTapInitialized.current) {
-        window.google.accounts.id.initialize({
-          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-          callback: handleGoogleLogin,
-        });
-        oneTapInitialized.current = true;
-        console.log(`Google Login Initialized`);
-      }
-      // Render Google SSO button
-      const googleBtnId = 'google-signin-button'; // This is hardcoded
-      const el = document.getElementById(googleBtnId);
-      if (el) {
-        window.google.accounts.id.renderButton(el, {
-          theme: 'outline',
-          size: 'large',
-        });
-      }
-
-      // Show prompt
-      window.google.accounts.id.prompt();
-    };
-
-    triggerOneTap();
+    window.google.accounts.id.initialize({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin,
+    });
+    oneTapInitialized.current = true;
   }, [googleReady, user, loading, login, router]);
+
+  // Render Google Login Btn on /login
+  useEffect(() => {
+    if (!googleReady || user || loading || !window.google || pathname !== '/login') {
+      return;
+    }
+
+    const el = document.getElementById('google-signin-button');
+    if (!el) {
+      return;
+    }
+
+    el.innerHTML = '';
+    window.google.accounts.id.renderButton(el, {
+      theme: 'outline',
+      size: 'large',
+    });
+    window.google.accounts.id.prompt();
+  }, [googleReady, user, loading, pathname]);
 }
