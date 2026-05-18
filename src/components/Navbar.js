@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useAuth } from '../lib/auth';
 
 const NAVBAR = {
@@ -16,7 +15,6 @@ export default function Navbar({ data = NAVBAR }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const btnRef = useRef(null);
-  const router = useRouter();
   const { user, logout } = useAuth();
 
   // Close on ESC
@@ -54,17 +52,9 @@ export default function Navbar({ data = NAVBAR }) {
   // Close after navigating
   const closeAndScroll = () => setOpen(false);
 
-  // normalize possible Strapi shapes (v4 vs v5 vs already-normalized)
-  // const src =
-  //   data?.attributes ??
-  //   data?.data?.attributes ??
-  //   data?.data ??
-  //   data ??
-  //   {};
-
   const links =
-    Array.isArray(NAVBAR.menuItems) && NAVBAR.menuItems.length
-      ? NAVBAR.menuItems
+    Array.isArray(data.menuItems) && data.menuItems.length
+      ? data.menuItems
       : [
           { id: 'def-1', label: 'Projects', url: '/#projects' },
           { id: 'def-2', label: 'Contact', url: '/#contact' },
@@ -77,7 +67,6 @@ export default function Navbar({ data = NAVBAR }) {
   const handleLogout = () => {
     logout();
     setOpen(false);
-    // router.push("/");
   };
 
   return (
