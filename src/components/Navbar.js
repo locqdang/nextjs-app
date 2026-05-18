@@ -1,11 +1,18 @@
+'use client';
+
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '../lib/auth';
+import { formatMediaURL } from '../lib/data/strapi';
 
 const NAVBAR = {
   brand: 'Vietpolyglots',
-  logo_url: '/vietpolyglots-logo.png',
+  logo: {
+    url: '/vietpolyglots-logo.png',
+    alternativeText: 'Vietpolyglots',
+    formats: {},
+  },
   menuItems: [
     { id: '1', label: 'Projects', url: '/projects' },
     { id: '2', label: 'Contact', url: '/#contact' },
@@ -17,6 +24,10 @@ export default function Navbar({ data = NAVBAR }) {
   const menuRef = useRef(null);
   const btnRef = useRef(null);
   const { user, logout } = useAuth();
+  const logoUrl =
+    formatMediaURL(data.logo?.formats?.thumbnail?.url ?? data.logo?.url ?? NAVBAR.logo.url) ||
+    NAVBAR.logo.url;
+  const brandLabel = data.brand ?? NAVBAR.brand;
 
   // Close on ESC
   useEffect(() => {
@@ -75,8 +86,8 @@ export default function Navbar({ data = NAVBAR }) {
       <nav className="nav__inner" aria-label="Primary">
         <Link href="/" className="nav__brand" onClick={closeAndScroll}>
           <Image
-            src={data.logo_url}
-            alt={data.brand}
+            src={logoUrl}
+            alt={brandLabel}
             width={30}
             height={30}
             className="nav__brand-logo"

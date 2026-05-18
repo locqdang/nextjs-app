@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
-import { RequireAuth, useAuth } from '../lib/auth';
-import HaroPitch from '../components/HaroPitch';
-import Pagination from '../components/Pagination';
+'use client';
 
-export default function HaroPitches() {
+import { useEffect, useState } from 'react';
+import { RequireAuth, useAuth } from '../../lib/auth';
+import HaroPitch from '../../components/HaroPitch';
+import Pagination from '../../components/Pagination';
+
+export default function HaroPage() {
   const { user } = useAuth();
   const [error, setError] = useState(null);
   const [pitches, setPitches] = useState(null);
@@ -29,7 +31,6 @@ export default function HaroPitches() {
         }
         setPitches(data.pitches);
         setPagination(data.pagination);
-        setLoading(false);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -37,7 +38,7 @@ export default function HaroPitches() {
       }
     };
 
-    if (user?.email) loadPitches();
+    if (user?.email) void loadPitches();
   }, [user?.email, currentPage, limit]);
 
   return (
@@ -50,7 +51,7 @@ export default function HaroPitches() {
           {(!pitches || pitches.length === 0) && (
             <p className="text-center p-6">No pitch has been done on your behalf.</p>
           )}
-          {pitches && pitches.map((p) => <HaroPitch key={p.match_id} pitch={p} />)}
+          {pitches && pitches.map((pitch) => <HaroPitch key={pitch.match_id} pitch={pitch} />)}
         </div>
         <Pagination
           currentPage={currentPage}
