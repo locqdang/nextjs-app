@@ -18,12 +18,8 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-type RequireAuthProps = {
-  children: ReactNode;
-  privatePages?: string[];
-};
-
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const privatePages = ['/haro', '/video-meeting'];
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -74,11 +70,11 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
-export function RequireAuth({ children, privatePages = [] }: RequireAuthProps) {
+export function RequireAuth({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() || '/';
   const { user, loading } = useAuth();
-  const isPrivatePage = privatePages.length > 0 ? privatePages.includes(pathname) : true;
+  const isPrivatePage = privatePages.includes(pathname);
 
   // Redirect anonymous users trying to open protected routes.
   useEffect(() => {
