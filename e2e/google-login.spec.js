@@ -21,7 +21,9 @@ test.describe('google one tap login', () => {
     expect(googleState.promptCalls).toBeGreaterThan(0);
   });
 
-  test('shows the Google sign-in button after client navigation from home to /login', async ({ page }) => {
+  test('shows the Google sign-in button after client navigation from home to /login', async ({
+    page,
+  }) => {
     await page.goto('/');
     await page.getByRole('link', { name: 'Login' }).click();
 
@@ -33,7 +35,9 @@ test.describe('google one tap login', () => {
     expect(googleState.renderCalls.length).toBeGreaterThan(0);
   });
 
-  test('redirects protected routes to login and still renders the Google button', async ({ page }) => {
+  test('redirects protected routes to login and still renders the Google button', async ({
+    page,
+  }) => {
     await page.goto('/haro');
 
     await page.waitForURL('**/login?redirect=*');
