@@ -16,7 +16,8 @@ async function getNavbarData() {
     const response = await fetchFromStrapi('navbar', {
       queryParams: {
         'populate[logo][populate]': '*',
-        'populate[menuItems][populate]': '*',
+        'populate[fixedMenu][populate][subItems][populate]': '*',
+        'populate[dynamicMenu][populate][subItems][populate]': '*',
       },
     });
 
@@ -27,7 +28,8 @@ async function getNavbarData() {
     return {
       brand: navbar.brand ?? 'Vietpolyglots',
       logo: navbar.logo ?? null,
-      menuItems: Array.isArray(navbar.menuItems) ? navbar.menuItems : [],
+      fixedMenu: Array.isArray(navbar.fixedMenu) ? navbar.fixedMenu : [],
+      dynamicMenu: Array.isArray(navbar.dynamicMenu) ? navbar.dynamicMenu : [],
     };
   } catch {
     return null;

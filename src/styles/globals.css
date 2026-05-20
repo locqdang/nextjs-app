@@ -77,6 +77,7 @@ main {
 .nav {
   position: sticky;
   top: 0;
+  z-index: 1000;
   background: #ffffffcc;
   backdrop-filter: blur(6px);
   border-bottom: 1px solid #e2e8f0;
@@ -88,39 +89,80 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
 .nav__brand {
   display: inline-flex;
   align-items: center;
+  gap: 0.75rem;
   text-decoration: none;
   color: #0f172a;
+  flex-shrink: 0;
 }
 .nav__brand-logo {
   width: auto;
-  height: 1.6 rem;
+  height: 30px;
   object-fit: contain;
   border-radius: 50%;
   border: 2px solid #94a3b8;
   background: #ffffff;
 }
-.nav__links a,
-.nav__links .nav__action {
-  margin-left: 1rem;
+.nav__brand-text {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.nav__links {
+  display: none;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.nav__group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.nav__group--left {
+  justify-content: flex-start;
+}
+.nav__group--right {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+.nav__link,
+.nav__action,
+.nav__dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
   text-decoration: none;
   color: #0f172a;
-  background: none;
+  background: transparent;
   border: 0;
   font: inherit;
   cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
 }
-.nav__greeting {
-  margin-left: 1rem;
-  font-weight: 600;
-  color: #0f172a;
+.nav__link:hover,
+.nav__action:hover,
+.nav__dropdown-trigger:hover,
+.nav__dropdown-trigger.is-open {
+  background: #e8eef9;
 }
-.nav__links a:hover,
-.nav__links .nav__action:hover {
-  text-decoration: underline;
+.nav__link--active {
+  background: #0f172a;
+  color: #ffffff;
+}
+.nav__link--muted {
+  color: #64748b;
 }
 
 /* Hero */
@@ -321,10 +363,6 @@ main {
   color: #1d4ed8;
 }
 
-/* Mobile: hide desktop links, show hamburger */
-.nav__links {
-  display: none;
-}
 .nav__toggle {
   display: inline-flex;
   gap: 6px;
@@ -362,42 +400,89 @@ main {
   transition:
     transform 0.2s ease,
     opacity 0.2s ease;
+  padding: 0.5rem var(--gap) 1rem;
 }
 .nav__drawer.is-open {
   transform: translateY(0);
   opacity: 1;
   pointer-events: auto;
 }
-.nav__drawer-list {
-  list-style: none;
-  margin: 0;
-  padding: 0.5rem var(--gap) 1rem;
-}
-.nav__drawer-list a,
-.nav__drawer-list .nav__action {
-  display: block;
-  padding: 0.75rem 0;
+.nav__mobile-user {
+  margin: 0.25rem 0 0.75rem;
+  font-weight: 700;
   color: #0f172a;
-  text-decoration: none;
-  font-weight: 600;
-  background: none;
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
 }
-.nav__drawer-list a:focus,
-.nav__drawer-list .nav__action:focus {
+.nav__mobile-section + .nav__mobile-section {
+  margin-top: 1rem;
+}
+.nav__mobile-heading {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.nav__mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.nav__mobile-list .nav__link,
+.nav__mobile-list .nav__action {
+  justify-content: flex-start;
+  width: 100%;
+  border-radius: 0.75rem;
+}
+.nav__mobile-list .nav__link:focus,
+.nav__mobile-list .nav__action:focus,
+.nav__dropdown-trigger:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+.nav__dropdown {
+  position: relative;
+}
+.nav__dropdown-trigger::after {
+  content: '▾';
+  margin-left: 0.45rem;
+  font-size: 0.75rem;
+}
+.nav__dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  min-width: 12rem;
+  padding: 0.4rem;
+  border: 1px solid #dbe4ee;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  z-index: 20;
+}
+.nav__dropdown-menu.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.nav__dropdown-menu .nav__link,
+.nav__dropdown-menu .nav__action {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  border-radius: 0.75rem;
 }
 
 /* Desktop ≥768px: show inline links, hide mobile UI */
 @media (min-width: 768px) {
   .nav__links {
     display: flex;
-    align-items: center;
   }
   .nav__toggle,
   .nav__drawer {
