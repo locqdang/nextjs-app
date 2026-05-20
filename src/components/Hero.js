@@ -1,6 +1,6 @@
 // components/Hero.jsx
 export default function Hero({ data }) {
-  const headline = data?.headline ?? 'Your headline';
+  const headline = data?.headline ?? 'Strapi Connection Issue';
   const subHeadline = data?.subHeadline ?? data?.subHealine ?? '';
   const b1 = data?.button1 ?? {};
   const b2 = data?.button2 ?? {};
