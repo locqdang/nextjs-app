@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../lib/auth';
-import HaroPitch from '../../components/HaroPitch';
-import Pagination from '../../components/Pagination';
+import { useAuth } from '../../../lib/auth';
+import HaroPitch from '../../../components/HaroPitch';
+import Pagination from '../../../components/Pagination';
 
-export default function HaroPage() {
+export default function HaroPitchesPage() {
   const { user } = useAuth();
   const [error, setError] = useState(null);
   const [pitches, setPitches] = useState(null);

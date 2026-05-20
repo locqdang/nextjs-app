@@ -39,7 +39,7 @@ const NAVBAR = {
       url: '/haro',
       subItems: [
         { id: 'profile', label: 'Profile', url: '/haro/profile' },
-        { id: 'mailbox', label: 'Mailbox', url: '/haro/mailbox' },
+        { id: 'mailbox', label: 'Connect Mailbox', url: '/haro/mailbox' },
         { id: 'pitches', label: 'Pitches', url: '/haro/pitches' },
         { id: 'journalists', label: 'Journalists', url: '/haro/journalists' },
       ],
@@ -182,7 +182,7 @@ export default function Navbar({ data = NAVBAR }) {
   }, [pathname]);
 
   const renderLink = (item, prefix = '') => {
-    const key = `${prefix}-${item.id ?? 'no-id'}-${item.label ?? 'no-label'}`;
+    const key = `${prefix}-${item.id ?? 'no-id'}-${item.label ?? 'no-label'}-${item.url ?? 'no-url'}`;
 
     if (item.action === 'logout') {
       return (
