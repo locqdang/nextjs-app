@@ -10,14 +10,16 @@ test.describe('email magic-link login', () => {
 
     await page.goto(loginLink);
     await page.waitForURL('http://127.0.0.1:3100/');
-
-    await expect(page.getByLabel('Primary').getByText('Hi, e2e-login')).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
 
     const token = await page.evaluate(() => window.localStorage.getItem('token'));
     const user = await page.evaluate(() => window.localStorage.getItem('user'));
 
     expect(token).toBeTruthy();
     expect(user).toContain('e2e-login@example.com');
+
+    await page.getByRole('button', { name: 'Account' }).click();
+    await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
   });
 
   test('returns to the intended protected page after login', async ({ page, request }) => {
