@@ -42,16 +42,26 @@ export default function HaroPitchesPage() {
   }, [user?.email, currentPage, limit]);
 
   return (
-    <main>
-      <h1 className="h1">Haro Pitches</h1>
-      {error && <p className="text-center p-6">{error}</p>}
-      {loading && <p className="text-center p-6">loading...</p>}
-      <div>
+    <main className="haro-pitches">
+      <section className="haro-pitches__hero">
+        <p className="haro-pitches__eyebrow">HARO Workspace</p>
+        <h1>Recent Pitches</h1>
+        <p className="haro-pitches__intro">
+          Review outreach that has been generated on your behalf, track active matches, and scan
+          deadlines before they expire.
+        </p>
+      </section>
+
+      {error && <p className="haro-pitches__state haro-pitches__state--error">{error}</p>}
+      {loading && <p className="haro-pitches__state">Loading pitches...</p>}
+
+      <section className="haro-pitches__list">
         {(!pitches || pitches.length === 0) && (
-          <p className="text-center p-6">No pitch has been done on your behalf.</p>
+          <p className="haro-pitches__state">No pitch has been done on your behalf.</p>
         )}
         {pitches && pitches.map((pitch) => <HaroPitch key={pitch.match_id} pitch={pitch} />)}
-      </div>
+      </section>
+
       <Pagination
         currentPage={currentPage}
         totalPages={pagination?.totalPages ?? 1}
