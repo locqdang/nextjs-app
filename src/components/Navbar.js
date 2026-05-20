@@ -10,7 +10,7 @@ import { formatMediaURL } from '../lib/data/strapi';
 const NAVBAR = {
   brand: 'Vietpolyglots',
   logo: {
-    url: '/vietpolyglots-logo.png',
+    url: '/uploads/vietpolyglots_logo_dff44d8aa8.png',
     alternativeText: 'Vietpolyglots',
     formats: {},
   },

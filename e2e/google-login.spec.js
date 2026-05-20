@@ -25,6 +25,7 @@ test.describe('google one tap login', () => {
     page,
   }) => {
     await page.goto('/');
+    await page.getByRole('button', { name: 'Account' }).click();
     await page.getByRole('link', { name: 'Login' }).click();
 
     await page.waitForURL('**/login');
