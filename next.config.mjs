@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'strapi.vietpolyglots.com',
-        pathname: '/uploads/**',
+        pathname: '/**',
       },
     ],
   },
