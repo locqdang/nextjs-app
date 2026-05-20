@@ -10,7 +10,6 @@ export default function Pagination({
 
   const isPrevDisabled = loading || currentPage <= 1;
   const isNextDisabled = loading || currentPage >= totalPages;
-  const btnClasses = 'btn--sm border border-gray-500 rounded-lg hover:cursor-pointer';
 
   const handleLimitChange = (e) => {
     setLimit(e.target.value);
@@ -18,10 +17,9 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex justify-center gap-2 flex-wrap">
-      {/* First Btn */}
+    <div className="pagination">
       <button
-        className={btnClasses}
+        className="pagination__button"
         disabled={loading}
         onClick={() => {
           onPageSelect(1);
@@ -29,27 +27,29 @@ export default function Pagination({
       >
         First
       </button>
-      {/* Prev Btn */}
       <button
-        className={btnClasses}
+        className="pagination__button"
         disabled={isPrevDisabled}
         onClick={() => {
           onPageSelect(currentPage - 1);
         }}
       >
-        previous
+        Previous
       </button>
 
-      {/* Middle Btns */}
       {Array.from({ length: totalPages }, (_, i) => {
         const pageNo = i + 1;
         const isActive = pageNo === currentPage;
         if (pageNo < currentPage - 2 || pageNo > currentPage + 2) {
-          return '.';
+          return (
+            <span className="pagination__ellipsis" key={`ellipsis-${pageNo}`}>
+              ...
+            </span>
+          );
         }
         return (
           <button
-            className={`${isActive ? 'btn' : ''} ${btnClasses} `}
+            className={`pagination__button ${isActive ? 'pagination__button--active' : ''}`}
             key={pageNo}
             onClick={() => {
               onPageSelect(pageNo);
@@ -60,19 +60,16 @@ export default function Pagination({
         );
       })}
 
-      {/* Next Btn */}
       <button
-        className={btnClasses}
+        className="pagination__button"
         disabled={isNextDisabled}
         onClick={() => onPageSelect(currentPage + 1)}
       >
-        next
+        Next
       </button>
 
-      {/* Last Btn */}
-      {/* First Btn */}
       <button
-        className={btnClasses}
+        className="pagination__button"
         disabled={loading}
         onClick={() => {
           onPageSelect(totalPages);
@@ -81,11 +78,15 @@ export default function Pagination({
         Last
       </button>
 
-      {/* Set no items per page */}
-      <div className="w-full mt-4 flex justify-center">
-        <label>
+      <div className="pagination__limit">
+        <label className="pagination__limit-label">
           Items per page:
-          <select value={limit} onChange={handleLimitChange} disabled={loading}>
+          <select
+            className="pagination__select"
+            value={limit}
+            onChange={handleLimitChange}
+            disabled={loading}
+          >
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={10}>10</option>
