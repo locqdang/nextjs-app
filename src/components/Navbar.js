@@ -182,7 +182,7 @@ export default function Navbar({ data = NAVBAR }) {
   }, [pathname]);
 
   const renderLink = (item, prefix = '') => {
-    const key = `${prefix}${item.id ?? `${item.label}|${item.url}`}`;
+    const key = `${prefix}-${item.id ?? 'no-id'}-${item.label ?? 'no-label'}`;
 
     if (item.action === 'logout') {
       return (
@@ -238,8 +238,8 @@ export default function Navbar({ data = NAVBAR }) {
       <p className="nav__mobile-heading">{title}</p>
       <div className="nav__mobile-list">
         {items.map((item) => (
-          <div key={`mobile-${title}-${item.id ?? item.label}`}>
-            {renderLink(item, `mobile-${title}-`)}
+          <div key={`mobile-${title}-${item.id}-${item.label}`}>
+            {renderLink(item, `mobile-${title}`)}
           </div>
         ))}
       </div>
@@ -263,7 +263,7 @@ export default function Navbar({ data = NAVBAR }) {
 
         <div className="nav__links" aria-hidden={open ? 'true' : 'false'}>
           <div className="nav__group nav__group--left">
-            {leftLinks.map((item) => renderLink(item, 'desktop-left-'))}
+            {leftLinks.map((item) => renderLink(item, 'desktop-left'))}
           </div>
 
           <div className="nav__group nav__group--right">
