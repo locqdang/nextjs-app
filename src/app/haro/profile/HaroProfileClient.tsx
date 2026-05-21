@@ -110,6 +110,19 @@ function getUserEmail(user: unknown): string {
   return getStringProperty(user, 'email').trim().toLowerCase();
 }
 
+function formatConnectionTime(value?: string) {
+  if (!value) {
+    return '';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return date.toLocaleString();
+}
+
 export default function HaroProfileClient() {
   const { user } = useAuth();
 
@@ -127,6 +140,7 @@ export default function HaroProfileClient() {
 
   const userEmail = useMemo(() => getUserEmail(user), [user]);
   const fallbackName = useMemo(() => getUserNameParts(user), [user]);
+  const connectedAtLabel = useMemo(() => formatConnectionTime(mailbox.connectedAt), [mailbox.connectedAt]);
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -317,83 +331,127 @@ export default function HaroProfileClient() {
   }
 
   if (loading) {
-    return <main className="p-8">Loading HARO profile...</main>;
+    return <main className="haro-profile haro-profile--loading">Loading HARO profile...</main>;
   }
 
   return (
-    <main className="mx-auto max-w-4xl p-8">
-      <header className="mb-8">
-        <p className="text-sm uppercase tracking-wide text-gray-500">HARO</p>
-        <h1 className="text-3xl font-semibold">Profile</h1>
-        <p className="mt-2 text-gray-600">Manage your expert profile and Gmail mailbox connection in one place.</p>
-      </header>
+    <main className="haro-profile">
+      <section className="haro-profile__hero">
+        <p className="haro-profile__eyebrow">HARO Workspace</p>
+        <h1>Profile</h1>
+        <p className="haro-profile__intro">Manage your expert profile and Gmail mailbox connection in one place.</p>
+      </section>
 
       {error !== '' && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">{error}</div>
+        <div className="haro-profile__state haro-profile__state--error" role="alert">
+          {error}
+        </div>
       )}
 
-      {message !== '' && (
-        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700">{message}</div>
-      )}
+      {message !== '' && <div className="haro-profile__state haro-profile__state--success">{message}</div>}
 
       {!exists && (
-        <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
+        <div className="haro-profile__state haro-profile__state--warning">
           No HARO profile exists yet for your email. Fill out the form below to create one.
         </div>
       )}
 
-      <section className="mb-8 rounded-xl border p-5">
-        <h2 className="mb-3 text-xl font-medium">Mailbox connection</h2>
+      <section className="haro-profile__grid">
+        <article className="haro-profile__panel haro-profile__panel--mailbox">
+          <div className="haro-profile__panel-header">
+            <div>
+              <p className="haro-profile__kicker">Mail delivery</p>
+              <h2>Mailbox connection</h2>
+            </div>
+            <span
+              className={`haro-profile__badge ${
+                mailbox.status === 'connected' ? 'haro-profile__badge--connected' : 'haro-profile__badge--disconnected'
+              }`}
+            >
+              {mailbox.status === 'connected' ? 'Connected' : 'Not connected'}
+            </span>
+          </div>
 
-        {mailbox.status === 'connected' ? (
-          <div>
-            <p className="text-green-700">Connected as {mailbox.connectedEmail}</p>
-            {mailbox.connectedAt && (
-              <p className="text-sm text-gray-500">Connected at {new Date(mailbox.connectedAt).toLocaleString()}</p>
-            )}
+          {mailbox.status === 'connected' ? (
+            <>
+              <dl className="haro-profile__details">
+                <div>
+                  <dt>Connected Gmail</dt>
+                  <dd>{mailbox.connectedEmail || 'Unknown account'}</dd>
+                </div>
+                {connectedAtLabel ? (
+                  <div>
+                    <dt>Connected at</dt>
+                    <dd>{connectedAtLabel}</dd>
+                  </div>
+                ) : null}
+              </dl>
 
-            <div className="mt-4 flex gap-3">
-              <button
-                type="button"
-                onClick={connectGmail}
-                disabled={connectingMailbox}
-                className="rounded-lg border px-4 py-2 disabled:opacity-60"
-              >
-                {connectingMailbox ? 'Opening Google...' : 'Reconnect Gmail'}
-              </button>
+              <div className="haro-profile__actions">
+                <button type="button" onClick={connectGmail} disabled={connectingMailbox} className="btn">
+                  {connectingMailbox ? 'Opening Google...' : 'Reconnect Gmail'}
+                </button>
+                <button
+                  type="button"
+                  onClick={disconnectGmail}
+                  disabled={disconnectingMailbox}
+                  className="btn btn--ghost haro-profile__danger-button"
+                >
+                  {disconnectingMailbox ? 'Disconnecting...' : 'Disconnect'}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="haro-profile__muted">
+                No Gmail mailbox is connected yet. Connect one so HARO workflows can send from the right account.
+              </p>
+              <div className="haro-profile__actions">
+                <button type="button" onClick={connectGmail} disabled={connectingMailbox} className="btn">
+                  {connectingMailbox ? 'Opening Google...' : 'Connect Gmail'}
+                </button>
+              </div>
+            </>
+          )}
+        </article>
 
-              <button
-                type="button"
-                onClick={disconnectGmail}
-                disabled={disconnectingMailbox}
-                className="rounded-lg border border-red-300 px-4 py-2 text-red-700 disabled:opacity-60"
-              >
-                {disconnectingMailbox ? 'Disconnecting...' : 'Disconnect'}
-              </button>
+        <article className="haro-profile__panel haro-profile__panel--summary">
+          <div className="haro-profile__panel-header">
+            <div>
+              <p className="haro-profile__kicker">Account</p>
+              <h2>Profile summary</h2>
             </div>
           </div>
-        ) : (
-          <div>
-            <p className="text-gray-600">No Gmail mailbox is connected yet.</p>
-            <button
-              type="button"
-              onClick={connectGmail}
-              disabled={connectingMailbox}
-              className="mt-4 rounded-lg bg-black px-4 py-2 text-white disabled:opacity-60"
-            >
-              {connectingMailbox ? 'Opening Google...' : 'Connect Gmail'}
-            </button>
-          </div>
-        )}
+
+          <dl className="haro-profile__details">
+            <div>
+              <dt>Signed-in email</dt>
+              <dd>{profileEmail || userEmail || 'Not available'}</dd>
+            </div>
+            <div>
+              <dt>Record status</dt>
+              <dd>{exists ? 'Existing profile' : 'New profile draft'}</dd>
+            </div>
+            <div>
+              <dt>Expertise tags</dt>
+              <dd>{form.expertise.length > 0 ? `${form.expertise.length} selected` : 'None selected yet'}</dd>
+            </div>
+          </dl>
+        </article>
       </section>
 
-      <form onSubmit={saveProfile} className="space-y-6 rounded-xl border p-5">
-        <div>
-          <h2 className="text-xl font-medium">Expert profile</h2>
-          <p className="mt-1 text-sm text-gray-500">Email is locked to the signed-in account, and expertise can only be selected from approved database values.</p>
+      <form onSubmit={saveProfile} className="haro-profile__panel haro-profile__form">
+        <div className="haro-profile__panel-header">
+          <div>
+            <p className="haro-profile__kicker">Expert profile</p>
+            <h2>{exists ? 'Edit profile' : 'Create profile'}</h2>
+            <p className="haro-profile__muted">
+              Email is locked to the signed-in account, and expertise can only be selected from approved database values.
+            </p>
+          </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="haro-profile__fields">
           <Field label="First name" value={form.firstName} onChange={(value) => setForm((prev) => ({ ...prev, firstName: value }))} />
           <Field label="Last name" value={form.lastName} onChange={(value) => setForm((prev) => ({ ...prev, lastName: value }))} />
           <Field label="Email" value={profileEmail} readOnly helperText="Controlled by your signed-in account and cannot be changed here." />
@@ -411,54 +469,51 @@ export default function HaroProfileClient() {
           />
         </div>
 
-        <div>
-          <div className="mb-1 block text-sm font-medium">Expertise</div>
-          <div className="rounded-lg border p-4">
-            <p className="mb-3 text-xs text-gray-500">Only existing expertise values from the database can be selected.</p>
-            <div className="grid gap-2 md:grid-cols-2">
-              {allowedExpertise.map((item) => {
-                const checked = form.expertise.includes(item);
-                return (
-                  <label key={item} className="flex items-start gap-3 rounded-md border p-3">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleExpertise(item)}
-                      className="mt-1"
-                    />
-                    <span className="text-sm">{item}</span>
-                  </label>
-                );
-              })}
-            </div>
+        <div className="haro-profile__field-group">
+          <div className="haro-profile__field-heading">
+            <h3>Expertise</h3>
+            <p>Only existing expertise values from the database can be selected.</p>
+          </div>
+          <div className="haro-profile__expertise-grid">
+            {allowedExpertise.map((item) => {
+              const checked = form.expertise.includes(item);
+              return (
+                <label key={item} className={`haro-profile__expertise-option ${checked ? 'haro-profile__expertise-option--checked' : ''}`}>
+                  <input type="checkbox" checked={checked} onChange={() => toggleExpertise(item)} />
+                  <span>{item}</span>
+                </label>
+              );
+            })}
           </div>
         </div>
 
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium">Experience / Bio</span>
+        <label className="haro-profile__field-group">
+          <div className="haro-profile__field-heading">
+            <h3>Experience / Bio</h3>
+          </div>
           <textarea
             value={form.bio}
             onChange={(event) => setForm((prev) => ({ ...prev, bio: event.target.value }))}
-            className="min-h-40 w-full rounded-lg border p-3"
+            className="haro-profile__textarea"
           />
         </label>
 
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium">Signature</span>
+        <label className="haro-profile__field-group">
+          <div className="haro-profile__field-heading">
+            <h3>Signature</h3>
+          </div>
           <textarea
             value={form.signature}
             onChange={(event) => setForm((prev) => ({ ...prev, signature: event.target.value }))}
-            className="min-h-32 w-full rounded-lg border p-3"
+            className="haro-profile__textarea haro-profile__textarea--signature"
           />
         </label>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-lg bg-black px-5 py-2 text-white disabled:opacity-60"
-        >
-          {saving ? 'Saving...' : exists ? 'Save changes' : 'Create profile'}
-        </button>
+        <div className="haro-profile__actions">
+          <button type="submit" disabled={saving} className="btn">
+            {saving ? 'Saving...' : exists ? 'Save changes' : 'Create profile'}
+          </button>
+        </div>
       </form>
     </main>
   );
@@ -478,15 +533,15 @@ function Field({
   helperText?: string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium">{label}</span>
+    <label className="haro-profile__field">
+      <span className="haro-profile__field-label">{label}</span>
       <input
         value={value}
         readOnly={readOnly}
         onChange={onChange ? (event) => onChange(event.target.value) : undefined}
-        className="w-full rounded-lg border p-3 read-only:bg-gray-50 read-only:text-gray-500"
+        className="haro-profile__input"
       />
-      {helperText ? <span className="mt-1 block text-xs text-gray-500">{helperText}</span> : null}
+      {helperText ? <span className="haro-profile__helper">{helperText}</span> : null}
     </label>
   );
 }
