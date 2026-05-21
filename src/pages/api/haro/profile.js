@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { findOne, insertOne, updateOne } from '../../../lib/data/haro';
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const MAILBOX_COLLECTION = 'mailbox_connections';
 const ALLOWED_STATUSES = new Set(['active', 'inactive']);
 const ALLOWED_EXPERTISE_VALUES = [
   'Analytics',
@@ -71,6 +72,18 @@ function sanitizeExpertise(expertise) {
   return Array.from(new Set(normalized.filter((item) => ALLOWED_EXPERTISE_SET.has(item))));
 }
 
+function mapMailboxToResponse(connection, email) {
+  if (!connection || connection.status !== 'connected') {
+    return { status: 'disconnected' };
+  }
+
+  return {
+    status: 'connected',
+    connectedEmail: normalizeEmail(connection.connected_email) || email,
+    connectedAt: connection.connected_at ? new Date(connection.connected_at).toISOString() : undefined,
+  };
+}
+
 function mapDbProfileToResponse(profile, email) {
   if (!profile) {
     return null;
@@ -91,6 +104,10 @@ function mapDbProfileToResponse(profile, email) {
     signature: profile.expert_signature || '',
     status: profile.expert_status === 'inactive' ? 'inactive' : 'active',
   };
+}
+
+async function getMailboxConnection(email) {
+  return findOne(MAILBOX_COLLECTION, { owner_email: email, provider: 'google' });
 }
 
 export default async function handler(req, res) {
@@ -116,11 +133,14 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'GET') {
-      const dbProfile = await findOne('profiles', { expert_email: email });
+      const [dbProfile, mailboxConnection] = await Promise.all([
+        findOne('profiles', { expert_email: email }),
+        getMailboxConnection(email),
+      ]);
 
       return res.status(200).json({
         profile: mapDbProfileToResponse(dbProfile, email),
-        mailbox: null,
+        mailbox: mapMailboxToResponse(mailboxConnection, email),
         allowedExpertise: ALLOWED_EXPERTISE_VALUES,
       });
     }
@@ -170,12 +190,15 @@ export default async function handler(req, res) {
       });
     }
 
-    const savedProfile = await findOne('profiles', { expert_email: email });
+    const [savedProfile, mailboxConnection] = await Promise.all([
+      findOne('profiles', { expert_email: email }),
+      getMailboxConnection(email),
+    ]);
 
     return res.status(200).json({
       message: 'Profile saved successfully.',
       profile: mapDbProfileToResponse(savedProfile, email),
-      mailbox: null,
+      mailbox: mapMailboxToResponse(mailboxConnection, email),
       allowedExpertise: ALLOWED_EXPERTISE_VALUES,
     });
   } catch (error) {

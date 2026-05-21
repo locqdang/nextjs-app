@@ -595,6 +595,296 @@ main {
   line-height: 1.6;
 }
 
+.haro-profile {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem var(--gap) 3rem;
+}
+
+.haro-profile--loading {
+  min-height: 16rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+}
+
+.haro-profile__hero {
+  max-width: 48rem;
+  margin: 0 auto 1.5rem;
+  padding: 2rem;
+  border: 1px solid #dbe4ee;
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  text-align: center;
+}
+
+.haro-profile__eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2563eb;
+}
+
+.haro-profile__hero h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.haro-profile__intro {
+  margin: 0;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.haro-profile__state {
+  margin: 0 auto 1rem;
+  max-width: 48rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #dbe4ee;
+  border-radius: 1rem;
+  background: #ffffff;
+  color: #475569;
+  text-align: center;
+}
+
+.haro-profile__state--error {
+  border-color: #fecaca;
+  background: #fff5f5;
+  color: #b91c1c;
+}
+
+.haro-profile__state--success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.haro-profile__state--warning {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.haro-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.haro-profile__panel {
+  padding: 1.5rem;
+  border: 1px solid #dbe4ee;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.haro-profile__panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.haro-profile__panel-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.haro-profile__kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.haro-profile__badge {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.haro-profile__badge--connected {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.haro-profile__badge--disconnected {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.haro-profile__details {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.haro-profile__details div {
+  padding-top: 0.9rem;
+  border-top: 1px solid #edf2f7;
+}
+
+.haro-profile__details div:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.haro-profile__details dt {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.haro-profile__details dd {
+  margin: 0;
+  color: #0f172a;
+  line-height: 1.6;
+}
+
+.haro-profile__muted {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.haro-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.haro-profile__danger-button {
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.haro-profile__form {
+  margin-top: 1rem;
+}
+
+.haro-profile__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.haro-profile__field,
+.haro-profile__field-group {
+  display: block;
+}
+
+.haro-profile__field-group {
+  margin-top: 1.5rem;
+}
+
+.haro-profile__field-label,
+.haro-profile__field-heading h3 {
+  display: block;
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.haro-profile__field-heading p {
+  margin: 0 0 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.haro-profile__input,
+.haro-profile__textarea {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.9rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.haro-profile__input:focus,
+.haro-profile__textarea:focus {
+  outline: 2px solid #bfdbfe;
+  outline-offset: 1px;
+  border-color: #60a5fa;
+}
+
+.haro-profile__input[readonly] {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.haro-profile__helper {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.haro-profile__expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.haro-profile__expertise-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid #dbe4ee;
+  border-radius: 1rem;
+  background: #ffffff;
+  color: #334155;
+}
+
+.haro-profile__expertise-option input {
+  margin-top: 0.2rem;
+}
+
+.haro-profile__expertise-option--checked {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.haro-profile__textarea {
+  min-height: 12rem;
+  resize: vertical;
+}
+
+.haro-profile__textarea--signature {
+  min-height: 9rem;
+}
+
+@media (max-width: 640px) {
+  .haro-profile__hero,
+  .haro-profile__panel {
+    padding: 1.25rem;
+  }
+
+  .haro-profile__panel-header {
+    flex-direction: column;
+  }
+}
+
 .haro-pitches {
   padding-top: 2rem;
   padding-bottom: 3rem;
