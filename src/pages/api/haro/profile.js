@@ -162,7 +162,7 @@ export default async function handler(req, res) {
     const existingProfile = await findOne('profiles', { expert_email: email });
     const existingStatus = existingProfile?.expert_status;
     const normalizedStatus =
-      typeof existingStatus === 'string' ? existingStatus.trim().toLowerCase() : 'active';
+      typeof existingStatus === 'string' ? existingStatus.trim().toLowerCase() : 'inactive';
 
     const nextProfile = {
       expert_email: email,
@@ -177,7 +177,7 @@ export default async function handler(req, res) {
       expert_linkedin_url: typeof linkedinUrl === 'string' ? linkedinUrl.trim() : '',
       expert_headshot_url: typeof headshotUrl === 'string' ? headshotUrl.trim() : '',
       expert_signature: typeof signature === 'string' ? signature.trim() : '',
-      expert_status: ALLOWED_STATUSES.has(normalizedStatus) ? normalizedStatus : 'active',
+      expert_status: ALLOWED_STATUSES.has(normalizedStatus) ? normalizedStatus : 'inactive',
       updatedAt: now,
     };
 

@@ -60,7 +60,7 @@ async function ensureProfileExists(email) {
   const now = new Date();
   await insertOne('profiles', {
     expert_email: email,
-    expert_status: 'active',
+    expert_status: 'inactive',
     createdAt: now,
     updatedAt: now,
   });
