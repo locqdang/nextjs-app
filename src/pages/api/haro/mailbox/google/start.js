@@ -9,12 +9,7 @@ const GOOGLE_MAILBOX_CALLBACK_URL =
   process.env.GOOGLE_MAILBOX_CALLBACK_URL ||
   (FRONTEND_URL ? `${FRONTEND_URL.replace(/\/$/, '')}/api/haro/mailbox/google/callback` : '');
 
-const GOOGLE_SCOPES = [
-  'openid',
-  'email',
-  'profile',
-  'https://www.googleapis.com/auth/gmail.send',
-];
+const GOOGLE_SCOPES = ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/gmail.send'];
 
 function getBearerToken(req) {
   const auth = req.headers.authorization || '';

@@ -57,10 +57,7 @@ function parseExpertise(expertise) {
       const parsed = JSON.parse(expertise);
       return Array.isArray(parsed) ? parsed.map(normalizeExpertiseItem).filter(Boolean) : [];
     } catch {
-      return expertise
-        .split(',')
-        .map(normalizeExpertiseItem)
-        .filter(Boolean);
+      return expertise.split(',').map(normalizeExpertiseItem).filter(Boolean);
     }
   }
 
@@ -80,7 +77,9 @@ function mapMailboxToResponse(connection, email) {
   return {
     status: 'connected',
     connectedEmail: normalizeEmail(connection.connected_email) || email,
-    connectedAt: connection.connected_at ? new Date(connection.connected_at).toISOString() : undefined,
+    connectedAt: connection.connected_at
+      ? new Date(connection.connected_at).toISOString()
+      : undefined,
   };
 }
 
@@ -162,7 +161,8 @@ export default async function handler(req, res) {
     const now = new Date();
     const existingProfile = await findOne('profiles', { expert_email: email });
     const existingStatus = existingProfile?.expert_status;
-    const normalizedStatus = typeof existingStatus === 'string' ? existingStatus.trim().toLowerCase() : 'active';
+    const normalizedStatus =
+      typeof existingStatus === 'string' ? existingStatus.trim().toLowerCase() : 'active';
 
     const nextProfile = {
       expert_email: email,

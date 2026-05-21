@@ -129,7 +129,9 @@ export default function HaroProfileClient() {
   const [form, setForm] = useState<ProfileForm>(EMPTY_FORM);
   const [profileEmail, setProfileEmail] = useState('');
   const [exists, setExists] = useState(false);
-  const [allowedExpertise, setAllowedExpertise] = useState<string[]>([...DEFAULT_ALLOWED_EXPERTISE]);
+  const [allowedExpertise, setAllowedExpertise] = useState<string[]>([
+    ...DEFAULT_ALLOWED_EXPERTISE,
+  ]);
   const [mailbox, setMailbox] = useState<MailboxState>({ status: 'disconnected' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -140,7 +142,10 @@ export default function HaroProfileClient() {
 
   const userEmail = useMemo(() => getUserEmail(user), [user]);
   const fallbackName = useMemo(() => getUserNameParts(user), [user]);
-  const connectedAtLabel = useMemo(() => formatConnectionTime(mailbox.connectedAt), [mailbox.connectedAt]);
+  const connectedAtLabel = useMemo(
+    () => formatConnectionTime(mailbox.connectedAt),
+    [mailbox.connectedAt]
+  );
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -198,7 +203,8 @@ export default function HaroProfileClient() {
 
       setMailbox(data?.mailbox || { status: 'disconnected' });
     } catch (caughtError: unknown) {
-      const nextMessage = caughtError instanceof Error ? caughtError.message : 'Something went wrong';
+      const nextMessage =
+        caughtError instanceof Error ? caughtError.message : 'Something went wrong';
       setError(nextMessage);
       setExists(false);
       setMailbox({ status: 'disconnected' });
@@ -216,7 +222,9 @@ export default function HaroProfileClient() {
       const existsInForm = prev.expertise.includes(value);
       return {
         ...prev,
-        expertise: existsInForm ? prev.expertise.filter((item) => item !== value) : [...prev.expertise, value],
+        expertise: existsInForm
+          ? prev.expertise.filter((item) => item !== value)
+          : [...prev.expertise, value],
       };
     });
   }
@@ -288,7 +296,10 @@ export default function HaroProfileClient() {
         },
       });
 
-      const data = (await response.json().catch(() => null)) as { message?: string; url?: string } | null;
+      const data = (await response.json().catch(() => null)) as {
+        message?: string;
+        url?: string;
+      } | null;
 
       if (!response.ok || !data?.url) {
         throw new Error(data?.message || 'Failed to start Gmail connection');
@@ -339,7 +350,9 @@ export default function HaroProfileClient() {
       <section className="haro-profile__hero">
         <p className="haro-profile__eyebrow">HARO Workspace</p>
         <h1>Profile</h1>
-        <p className="haro-profile__intro">Manage your expert profile and Gmail mailbox connection in one place.</p>
+        <p className="haro-profile__intro">
+          Manage your expert profile and Gmail mailbox connection in one place.
+        </p>
       </section>
 
       {error !== '' && (
@@ -348,7 +361,9 @@ export default function HaroProfileClient() {
         </div>
       )}
 
-      {message !== '' && <div className="haro-profile__state haro-profile__state--success">{message}</div>}
+      {message !== '' && (
+        <div className="haro-profile__state haro-profile__state--success">{message}</div>
+      )}
 
       {!exists && (
         <div className="haro-profile__state haro-profile__state--warning">
@@ -365,7 +380,9 @@ export default function HaroProfileClient() {
             </div>
             <span
               className={`haro-profile__badge ${
-                mailbox.status === 'connected' ? 'haro-profile__badge--connected' : 'haro-profile__badge--disconnected'
+                mailbox.status === 'connected'
+                  ? 'haro-profile__badge--connected'
+                  : 'haro-profile__badge--disconnected'
               }`}
             >
               {mailbox.status === 'connected' ? 'Connected' : 'Not connected'}
@@ -388,7 +405,12 @@ export default function HaroProfileClient() {
               </dl>
 
               <div className="haro-profile__actions">
-                <button type="button" onClick={connectGmail} disabled={connectingMailbox} className="btn">
+                <button
+                  type="button"
+                  onClick={connectGmail}
+                  disabled={connectingMailbox}
+                  className="btn"
+                >
                   {connectingMailbox ? 'Opening Google...' : 'Reconnect Gmail'}
                 </button>
                 <button
@@ -404,10 +426,16 @@ export default function HaroProfileClient() {
           ) : (
             <>
               <p className="haro-profile__muted">
-                No Gmail mailbox is connected yet. Connect one so HARO workflows can send from the right account.
+                No Gmail mailbox is connected yet. Connect one so HARO workflows can send from the
+                right account.
               </p>
               <div className="haro-profile__actions">
-                <button type="button" onClick={connectGmail} disabled={connectingMailbox} className="btn">
+                <button
+                  type="button"
+                  onClick={connectGmail}
+                  disabled={connectingMailbox}
+                  className="btn"
+                >
                   {connectingMailbox ? 'Opening Google...' : 'Connect Gmail'}
                 </button>
               </div>
@@ -434,7 +462,11 @@ export default function HaroProfileClient() {
             </div>
             <div>
               <dt>Expertise tags</dt>
-              <dd>{form.expertise.length > 0 ? `${form.expertise.length} selected` : 'None selected yet'}</dd>
+              <dd>
+                {form.expertise.length > 0
+                  ? `${form.expertise.length} selected`
+                  : 'None selected yet'}
+              </dd>
             </div>
           </dl>
         </article>
@@ -446,21 +478,59 @@ export default function HaroProfileClient() {
             <p className="haro-profile__kicker">Expert profile</p>
             <h2>{exists ? 'Edit profile' : 'Create profile'}</h2>
             <p className="haro-profile__muted">
-              Email is locked to the signed-in account, and expertise can only be selected from approved database values.
+              Email is locked to the signed-in account, and expertise can only be selected from
+              approved database values.
             </p>
           </div>
         </div>
 
         <div className="haro-profile__fields">
-          <Field label="First name" value={form.firstName} onChange={(value) => setForm((prev) => ({ ...prev, firstName: value }))} />
-          <Field label="Last name" value={form.lastName} onChange={(value) => setForm((prev) => ({ ...prev, lastName: value }))} />
-          <Field label="Email" value={profileEmail} readOnly helperText="Controlled by your signed-in account and cannot be changed here." />
-          <Field label="Job title" value={form.jobTitle} onChange={(value) => setForm((prev) => ({ ...prev, jobTitle: value }))} />
-          <Field label="Company" value={form.company} onChange={(value) => setForm((prev) => ({ ...prev, company: value }))} />
-          <Field label="Company niche" value={form.companyNiche} onChange={(value) => setForm((prev) => ({ ...prev, companyNiche: value }))} />
-          <Field label="Company website" value={form.website} onChange={(value) => setForm((prev) => ({ ...prev, website: value }))} />
-          <Field label="LinkedIn URL" value={form.linkedinUrl} onChange={(value) => setForm((prev) => ({ ...prev, linkedinUrl: value }))} />
-          <Field label="Headshot URL" value={form.headshotUrl} onChange={(value) => setForm((prev) => ({ ...prev, headshotUrl: value }))} />
+          <Field
+            label="First name"
+            value={form.firstName}
+            onChange={(value) => setForm((prev) => ({ ...prev, firstName: value }))}
+          />
+          <Field
+            label="Last name"
+            value={form.lastName}
+            onChange={(value) => setForm((prev) => ({ ...prev, lastName: value }))}
+          />
+          <Field
+            label="Email"
+            value={profileEmail}
+            readOnly
+            helperText="Controlled by your signed-in account and cannot be changed here."
+          />
+          <Field
+            label="Job title"
+            value={form.jobTitle}
+            onChange={(value) => setForm((prev) => ({ ...prev, jobTitle: value }))}
+          />
+          <Field
+            label="Company"
+            value={form.company}
+            onChange={(value) => setForm((prev) => ({ ...prev, company: value }))}
+          />
+          <Field
+            label="Company niche"
+            value={form.companyNiche}
+            onChange={(value) => setForm((prev) => ({ ...prev, companyNiche: value }))}
+          />
+          <Field
+            label="Company website"
+            value={form.website}
+            onChange={(value) => setForm((prev) => ({ ...prev, website: value }))}
+          />
+          <Field
+            label="LinkedIn URL"
+            value={form.linkedinUrl}
+            onChange={(value) => setForm((prev) => ({ ...prev, linkedinUrl: value }))}
+          />
+          <Field
+            label="Headshot URL"
+            value={form.headshotUrl}
+            onChange={(value) => setForm((prev) => ({ ...prev, headshotUrl: value }))}
+          />
           <Field
             label="Status"
             value={form.status}
@@ -478,7 +548,10 @@ export default function HaroProfileClient() {
             {allowedExpertise.map((item) => {
               const checked = form.expertise.includes(item);
               return (
-                <label key={item} className={`haro-profile__expertise-option ${checked ? 'haro-profile__expertise-option--checked' : ''}`}>
+                <label
+                  key={item}
+                  className={`haro-profile__expertise-option ${checked ? 'haro-profile__expertise-option--checked' : ''}`}
+                >
                   <input type="checkbox" checked={checked} onChange={() => toggleExpertise(item)} />
                   <span>{item}</span>
                 </label>
