@@ -1,52 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# nextjs-app
 
-## Getting Started
+## Getting started
 
 ### Environment setup
 
-1. Copy the example file:
+This project uses a split environment setup:
+
+- `.env` = shared defaults / production-safe values
+- `.env.local` = local machine secrets and local overrides for `next dev`
+- `.env.example` = documented template you can copy from safely
+
+#### 1. Copy the example file into `.env`
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-2. Fill in the real values in `.env.local`.
+#### 2. Put real shared/default values into `.env`
 
-Notes:
+Use `.env` for the baseline values the app should have in normal and production-like runs.
 
-- `.env.example` is safe to commit and documents the required variables.
-- `.env.local` is for your real local secrets and should not be committed.
-- `.env` is not used for active local secrets in this project.
+#### 3. Add machine-specific secrets and local overrides in `.env.local`
 
-Then run the development server:
+At minimum, local development often needs secrets like:
+
+```env
+STRAPI_API_TOKEN=
+MONGO_URI=
+JWT_SECRET=
+GOOGLE_CLIENT_SECRET=
+```
+
+If you debug locally on port `33345`, add overrides like:
+
+```env
+NEXT_PUBLIC_FRONTEND_URL=http://localhost:33345
+GOOGLE_CALLBACK_URL=http://localhost:33345/api/auth/google/callback
+GOOGLE_MAILBOX_CALLBACK_URL=http://localhost:33345/api/haro/mailbox/google/callback
+```
+
+If a variable is the same locally and in production, keep it only in `.env`.
+
+### Environment loading behavior
+
+For `npm run dev`, Next.js loads environment files automatically and `.env.local` overrides `.env`.
+
+That means:
+
+- keep shared / production-safe defaults in `.env`
+- keep only machine-specific secrets and local overrides in `.env.local`
+
+### Mailbox OAuth config
+
+The HARO mailbox flow uses these environment variables:
+
+- `NEXT_PUBLIC_FRONTEND_URL`
+- `GOOGLE_CALLBACK_URL`
+- `GOOGLE_MAILBOX_CALLBACK_URL`
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `JWT_SECRET`
+- optional: `MAILBOX_TOKEN_ENCRYPTION_KEY`
+
+If `GOOGLE_MAILBOX_CALLBACK_URL` is not set, the mailbox route falls back to:
+
+```text
+${NEXT_PUBLIC_FRONTEND_URL}/api/haro/mailbox/google/callback
+```
+
+For Google Cloud OAuth, register both local and production redirect URIs if you use both:
+
+```text
+http://localhost:33345/api/haro/mailbox/google/callback
+https://vietpolyglots.com/api/haro/mailbox/google/callback
+```
+
+### Docker / CI-CD note
+
+`docker-compose.yml` is configured to load only `.env`.
+
+That is intentional so production or CI/CD runs do not accidentally inherit localhost overrides from `.env.local`.
+
+## Run the development server
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev -- --inspect --port 33345
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:33345](http://localhost:33345).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Notes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `.env.example` is safe to commit and documents required variables.
+- `.env.local` should not be committed.
+- `.env` should not contain localhost overrides.
+- Mailbox OAuth tokens are stored in the `mailbox_connections` collection, not `profiles`.

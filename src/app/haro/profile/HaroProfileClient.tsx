@@ -47,7 +47,7 @@ const EMPTY_FORM: ProfileForm = {
   linkedinUrl: '',
   headshotUrl: '',
   signature: '',
-  status: 'active',
+  status: 'inactive',
 };
 
 const DEFAULT_ALLOWED_EXPERTISE = [

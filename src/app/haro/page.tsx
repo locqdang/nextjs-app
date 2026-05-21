@@ -12,11 +12,6 @@ const haroSections = [
     href: '/haro/profile',
   },
   {
-    title: 'Connect Mailbox',
-    description: 'Set up mailbox access for HARO-related communication and follow-up workflows.',
-    href: '/haro/mailbox',
-  },
-  {
     title: 'Journalists',
     description: 'Browse the journalist workspace as that section comes online.',
     href: '/haro/journalists',
