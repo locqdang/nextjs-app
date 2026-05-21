@@ -39,7 +39,6 @@ const NAVBAR = {
       url: '/haro',
       subItems: [
         { id: 'profile', label: 'Profile', url: '/haro/profile' },
-        { id: 'mailbox', label: 'Connect Mailbox', url: '/haro/mailbox' },
         { id: 'pitches', label: 'Pitches', url: '/haro/pitches' },
         { id: 'journalists', label: 'Journalists', url: '/haro/journalists' },
       ],
