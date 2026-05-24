@@ -1,6 +1,7 @@
 import UnderConstructionPage from '../../../components/UnderConstructionPage';
 
 export default function AccountProfilePage() {
+  // Reserve account profile route while full settings UI is still pending.
   return (
     <UnderConstructionPage
       eyebrow="Account"

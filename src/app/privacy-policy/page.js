@@ -1,4 +1,5 @@
 export default function PrivacyPolicyPage() {
+  // Keep legal revision date centralized for easier policy updates.
   const lastUpdated = 'May 17, 2026';
 
   return (

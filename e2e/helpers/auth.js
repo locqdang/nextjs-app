@@ -1,4 +1,5 @@
 async function createMagicLoginLink(request, { email, redirectPath = '/' }) {
+  // Use test-only API to mint a valid magic link without depending on real email delivery.
   const response = await request.post('/api/test/generate-login-link', {
     data: { email, redirectPath },
   });

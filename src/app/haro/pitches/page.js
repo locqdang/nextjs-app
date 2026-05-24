@@ -6,6 +6,7 @@ import HaroPitch from '../../../components/HaroPitch';
 import Pagination from '../../../components/Pagination';
 
 export default function HaroPitchesPage() {
+  // Require authenticated user context before loading private HARO pitch data.
   const { user } = useAuth();
   const [error, setError] = useState(null);
   const [pitches, setPitches] = useState(null);
@@ -17,6 +18,7 @@ export default function HaroPitchesPage() {
   useEffect(() => {
     const loadPitches = async () => {
       try {
+        // Lock UI while fetching the current page of pitches from protected API.
         setLoading(true);
 
         const token = localStorage.getItem('token');
@@ -38,6 +40,7 @@ export default function HaroPitchesPage() {
       }
     };
 
+    // Fetch pitches only after auth is resolved and email is available.
     if (user?.email) void loadPitches();
   }, [user?.email, currentPage, limit]);
 

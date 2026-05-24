@@ -284,12 +284,15 @@ export default function HaroProfileClient() {
   }
 
   async function connectGmail() {
+    // Lock the UI and clear old notices while we start a new OAuth attempt.
     setConnectingMailbox(true);
     setError('');
     setMessage('');
 
     try {
+      // Read the app auth token so backend can identify which user is connecting a mailbox.
       const token = localStorage.getItem('token');
+      // Ask backend to create a Google OAuth consent URL for this user.
       const response = await fetch('/api/haro/mailbox/google/start', {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -305,6 +308,7 @@ export default function HaroProfileClient() {
         throw new Error(data?.message || 'Failed to start Gmail connection');
       }
 
+      // Start OAuth: redirect browser to Google's consent screen URL returned by backend.
       window.location.href = data.url;
     } catch (caughtError: unknown) {
       setError(caughtError instanceof Error ? caughtError.message : 'Something went wrong');

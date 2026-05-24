@@ -24,6 +24,7 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
+    // Skip login screen for users who already have an active app session.
     if (user) {
       router.push(redirectPath);
     }
@@ -33,6 +34,7 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
     let timeoutId: number | undefined;
 
     const tryRenderGoogleButton = () => {
+      // Retry until Google script + container are ready, then render once.
       if (renderGoogleLoginButton()) {
         return;
       }
@@ -51,10 +53,12 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Reset UI feedback and lock submit while request is in flight.
     setError('');
     setLoading(true);
 
     try {
+      // Request a magic login link email for the entered address.
       const response = await fetch('/api/auth/email-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -64,10 +68,12 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
       const data = (await response.json()) as EmailLoginResponse;
 
       if (!response.ok) {
+        // Show backend-provided reason so user can correct input/state.
         setError(data.error || 'Login failed');
         return;
       }
 
+      // Replace CTA text with confirmation that link dispatch was accepted.
       setButtonText(data.message || 'Login link sent');
     } catch (error) {
       setError('Network error. Please try again.');
@@ -91,6 +97,7 @@ export default function LoginClient({ redirectPath }: LoginClientProps) {
         )}
 
         <div className="mb-6 flex justify-center">
+          {/* Placeholder container used by Google SDK to inject the sign-in button. */}
           <div id="google-signin-button"></div>
         </div>
 

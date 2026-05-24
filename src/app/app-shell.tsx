@@ -13,6 +13,7 @@ type AppShellProps = {
 };
 
 export default function AppShell({ children, navbarData = null }: AppShellProps) {
+  // Track when Google Identity script has loaded before initializing One Tap.
   const [googleReady, setGoogleReady] = useState(false);
   useGoogleOneTap(googleReady);
 
@@ -30,6 +31,7 @@ export default function AppShell({ children, navbarData = null }: AppShellProps)
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
+        // Mark Google SDK ready so One Tap can be initialized safely.
         onLoad={() => setGoogleReady(true)}
       />
       <Navbar data={navbarData ?? undefined} />
