@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   res.setHeader('Pragma', 'no-cache');
 
   if (req.method !== 'GET') {
-    return res.stasus(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {

@@ -3,6 +3,7 @@ const { mockGoogleIdentity, getGoogleMockState } = require('./helpers/google');
 
 test.describe('google one tap login', () => {
   test.beforeEach(async ({ page }) => {
+    // Stub Google Identity script so tests stay deterministic and offline-safe.
     await mockGoogleIdentity(page);
   });
 
@@ -48,6 +49,7 @@ test.describe('google one tap login', () => {
   });
 
   test('uses the redirect query after a successful Google login', async ({ page }) => {
+    // Mock backend auth endpoint so we can validate client-side redirect/session behavior only.
     await page.route('**/api/auth/google', async (route) => {
       await route.fulfill({
         status: 200,
@@ -65,6 +67,7 @@ test.describe('google one tap login', () => {
     await page.goto('/login?redirect=/haro');
     await expect(page.getByTestId('mock-google-button')).toBeVisible();
 
+    // Trigger the mocked Google callback to simulate a successful One Tap credential response.
     await page.evaluate(async () => {
       await window.__googleMock.callback({ credential: 'fake-credential' });
     });

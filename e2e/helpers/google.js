@@ -1,4 +1,5 @@
 async function mockGoogleIdentity(page) {
+  // Replace Google GSI script with a lightweight in-page mock for stable E2E assertions.
   await page.route('https://accounts.google.com/gsi/client', async (route) => {
     await route.fulfill({
       status: 200,
@@ -34,6 +35,7 @@ async function mockGoogleIdentity(page) {
 }
 
 async function getGoogleMockState(page) {
+  // Expose captured mock telemetry (initialize/prompt/render/callback) to test assertions.
   return page.evaluate(() => window.__googleMock);
 }
 

@@ -6,6 +6,7 @@ import { formatMediaURL } from '../lib/data/strapi';
 export const revalidate = 3600;
 
 export default async function HomePage() {
+  // Fetch homepage content from Strapi; fall back gracefully if CMS is unavailable.
   let fetchedHomePage = null;
   try {
     fetchedHomePage = await fetchFromStrapi('homepage', {
@@ -23,12 +24,15 @@ export default async function HomePage() {
   } catch {
     fetchedHomePage = null;
   }
+  // Normalize Strapi response shape (v4/v5 style) into one predictable object.
   const homepage = fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
   const heroData = homepage?.hero ?? null;
+  // Keep homepage project slots stable while ignoring empty entries.
   const featuredProjects = [homepage.project0, homepage.project1, homepage.project2].filter(
     Boolean
   );
 
+  // Convert Strapi media paths to absolute/usable URLs for image rendering.
   featuredProjects.forEach((project) => {
     if (project.logo?.url) project.logo.url = formatMediaURL(project.logo.url);
     for (const key of Object.keys(project.logo?.formats || {})) {

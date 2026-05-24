@@ -17,6 +17,7 @@ function normalizeEmail(email) {
 }
 
 function decryptValue(value) {
+  // Best-effort decrypt for stored mailbox tokens; return null when unavailable/invalid.
   if (!value || !ENCRYPTION_SECRET) {
     return null;
   }
@@ -42,6 +43,7 @@ function decryptValue(value) {
 }
 
 async function revokeGoogleToken(token) {
+  // Revoke token at Google so disconnected mailbox cannot keep API access.
   if (!token) {
     return;
   }
@@ -55,6 +57,7 @@ async function revokeGoogleToken(token) {
 }
 
 export default async function handler(req, res) {
+  // Prevent stale mailbox state from being cached by browser or intermediaries.
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
@@ -63,6 +66,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Verify app JWT and resolve mailbox owner from signed-in user context.
     const token = getBearerToken(req);
 
     if (!token) {

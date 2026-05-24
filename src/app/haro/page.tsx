@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+// Central config for HARO landing cards so section links stay easy to update.
 const haroSections = [
   {
     title: 'Pitches',
@@ -19,6 +20,7 @@ const haroSections = [
 ];
 
 export default function HaroLandingPage() {
+  // Provide a single entry point into HARO sub-workspaces.
   return (
     <main className="haro-landing">
       <section className="haro-landing__hero">

@@ -129,6 +129,7 @@ export default async function handler(req, res) {
       return res.redirect(buildRedirectUrl('error', 'Missing Google OAuth callback parameters.'));
     }
 
+    // Verify state to prevent CSRF and recover which user started this OAuth flow.
     const decodedState = jwt.verify(state, JWT_SECRET);
     const ownerEmail = normalizeEmail(decodedState?.email);
 
@@ -136,9 +137,11 @@ export default async function handler(req, res) {
       return res.redirect(buildRedirectUrl('error', 'Invalid mailbox connection state.'));
     }
 
+    // Exchange one-time auth code for Google tokens.
     const { tokens } = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
 
+    // Confirm which Google mailbox was authorized.
     const tokenInfo = await oauthClient.getTokenInfo(tokens.access_token);
     const connectedEmail = normalizeEmail(tokenInfo.email);
 
@@ -148,9 +151,11 @@ export default async function handler(req, res) {
       );
     }
 
+    // Ensure HARO profile exists, then persist encrypted mailbox tokens + connection metadata.
     await ensureProfileExists(ownerEmail);
     await persistMailboxConnection(ownerEmail, tokens, connectedEmail);
 
+    // Send user back to HARO profile page with a success status.
     return res.redirect(buildRedirectUrl('connected', 'Gmail mailbox connected successfully.'));
   } catch (error) {
     console.error('HARO mailbox Google callback error:', error);

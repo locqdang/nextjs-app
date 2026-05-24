@@ -1,6 +1,7 @@
 import UnderConstructionPage from '../../../components/UnderConstructionPage';
 
 export default function HaroJournalistsPage() {
+  // Temporary placeholder route until journalists workspace is implemented.
   return (
     <UnderConstructionPage
       eyebrow="HARO"

@@ -37,6 +37,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Read and verify app JWT so we know which signed-in user is initiating mailbox connect.
     const token = getBearerToken(req);
 
     if (!token) {
@@ -58,6 +59,7 @@ export default async function handler(req, res) {
       });
     }
 
+    // Sign state so callback can verify this flow was initiated by our app for this user.
     const state = jwt.sign(
       {
         type: 'haro-mailbox-google',
@@ -67,6 +69,7 @@ export default async function handler(req, res) {
       { expiresIn: '15m' }
     );
 
+    // Build Google consent URL (scopes + state) for Authorization Code flow.
     const url = oauthClient.generateAuthUrl({
       access_type: 'offline',
       prompt: 'consent',
