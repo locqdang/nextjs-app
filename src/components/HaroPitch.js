@@ -1,11 +1,13 @@
-export default function HaroPitch({ pitch }) {
+export default function HaroPitch({ pitch, isAdmin = false }) {
   if (!pitch) return null;
+
   const question = pitch.query ?? 'N/A';
   const expertPitch = pitch.expert_pitch || pitch.humanized_pitch || pitch.proposed_pitch || 'N/A';
   const matchTime = pitch.createdAt ?? 'N/A';
   const deadline = pitch.deadline_original || pitch.deadline || pitch.deadline_iso || 'N/A';
   const mediaOutlet = pitch.media_outlet ?? 'N/A';
   const journalistName = pitch.journalist_name ?? 'N/A';
+  const expertEmail = pitch.expert_email || 'Unknown expert';
 
   return (
     <article className="haro-pitch-card">
@@ -13,6 +15,7 @@ export default function HaroPitch({ pitch }) {
         <div className="haro-pitch-card__header">
           <p className="haro-pitch-card__outlet">{mediaOutlet}</p>
           <p className="haro-pitch-card__meta">Match Time: {matchTime}</p>
+          {isAdmin && <p className="haro-pitch-card__meta">Expert: {expertEmail}</p>}
         </div>
 
         <div className="haro-pitch-card__content">
