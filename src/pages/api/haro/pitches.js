@@ -163,18 +163,22 @@ export default async function handler(req, res) {
         const queryDoc = await findOne('queries', {
           _id: toObjectId(p.query_id),
         });
-        const { createdAt: _queryCreatedAt, updatedAt: _queryUpdatedAt, ...query } = queryDoc || {};
+        // Strip createdAt and updatedAt from queryDoc
+        const query = (() => {
+          const { createdAt, updatedAt, ...rest } = queryDoc || {};
+          return rest;
+        })();
 
         const pitchProfileDoc = isAdmin
           ? await findOne('profiles', {
               _id: toObjectId(p.profile_id),
             })
           : profile;
-        const {
-          createdAt: _profileCreatedAt,
-          updatedAt: _profileUpdatedAt,
-          ...pitchProfile
-        } = pitchProfileDoc || {};
+        //  Strip createdAt and updatedAt from profileDoc
+        const pitchProfile = (() => {
+          const { createdAt, updatedAt, ...rest } = pitchProfileDoc || {};
+          return rest;
+        })();
 
         // Intent: admin view needs each pitch's owning expert profile, not the logged-in admin profile.
         return {
