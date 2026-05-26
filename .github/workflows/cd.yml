@@ -15,7 +15,7 @@ jobs:
       - name: Deploy on home runner
         run: |
           set -e
-          cd /home/loc/projects/vietpolyglotss.com
+          cd /home/loc/projects/vietpolyglots.com
           git fetch origin
           git reset --hard origin/main
           docker compose up -d --build
