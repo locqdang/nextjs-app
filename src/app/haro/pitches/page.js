@@ -10,6 +10,9 @@ export default function HaroPitchesPage() {
   const { user } = useAuth();
   const [error, setError] = useState(null);
   const [pitches, setPitches] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [sources, setSources] = useState([]);
+  const [selectedSource, setSelectedSource] = useState('');
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +25,16 @@ export default function HaroPitchesPage() {
         setLoading(true);
 
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/haro/pitches?page=${currentPage}&limit=${limit}`, {
+        const params = new URLSearchParams({
+          page: String(currentPage),
+          limit: String(limit),
+        });
+
+        if (selectedSource) {
+          params.set('source', selectedSource);
+        }
+
+        const res = await fetch(`/api/haro/pitches?${params.toString()}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -32,6 +44,9 @@ export default function HaroPitchesPage() {
           throw new Error(data.error || 'Failed to load pitches');
         }
         setPitches(data.pitches);
+        // Intent: the API decides admin status server-side; the page only uses it for display.
+        setIsAdmin(Boolean(data.isAdmin));
+        setSources(Array.isArray(data.sources) ? data.sources : []);
         setPagination(data.pagination);
       } catch (e) {
         setError(e.message);
@@ -42,7 +57,7 @@ export default function HaroPitchesPage() {
 
     // Fetch pitches only after auth is resolved and email is available.
     if (user?.email) void loadPitches();
-  }, [user?.email, currentPage, limit]);
+  }, [user?.email, currentPage, limit, selectedSource]);
 
   return (
     <main className="haro-pitches">
@@ -58,11 +73,49 @@ export default function HaroPitchesPage() {
       {error && <p className="haro-pitches__state haro-pitches__state--error">{error}</p>}
       {loading && <p className="haro-pitches__state">Loading pitches...</p>}
 
+      {isAdmin && !loading && (
+        <p className="haro-pitches__state">Admin view: showing pitches from all experts.</p>
+      )}
+
+      {sources.length > 0 && (
+        <section className="haro-pitches__filters">
+          <label htmlFor="pitch-source-filter" className="haro-pitches__filter-label">
+            Query source
+          </label>
+
+          <select
+            id="pitch-source-filter"
+            value={selectedSource}
+            onChange={(event) => {
+              // Intent: changing query source should restart pagination from the first page.
+              setSelectedSource(event.target.value);
+              setCurrentPage(1);
+            }}
+            className="haro-pitches__filter-select"
+          >
+            <option value="">All sources</option>
+            {sources.map((sourceName) => (
+              <option key={sourceName} value={sourceName}>
+                {sourceName}
+              </option>
+            ))}
+          </select>
+        </section>
+      )}
+
       <section className="haro-pitches__list">
         {(!pitches || pitches.length === 0) && (
-          <p className="haro-pitches__state">No pitch has been done on your behalf.</p>
+          <p className="haro-pitches__state">
+            {isAdmin
+              ? 'No pitches have been submitted by any expert yet.'
+              : 'No pitch has been done on your behalf.'}
+          </p>
         )}
-        {pitches && pitches.map((pitch) => <HaroPitch key={pitch.match_id} pitch={pitch} />)}
+
+        {pitches &&
+          pitches.map((pitch) => (
+            <HaroPitch key={pitch.match_id} pitch={pitch} isAdmin={isAdmin} />
+          ))}
       </section>
 
       <Pagination
