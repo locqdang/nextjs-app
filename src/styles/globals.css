@@ -459,15 +459,18 @@ main {
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(-6px);
   transition:
     opacity 0.18s ease,
-    transform 0.18s ease;
+    transform 0.18s ease,
+    visibility 0.18s ease;
   z-index: 20;
 }
 .nav__dropdown-menu.is-open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
 }
