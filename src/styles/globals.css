@@ -100,7 +100,7 @@ main {
   flex-shrink: 0;
 }
 .nav__brand-logo {
-  width: auto;
+  width: 30px;
   height: 30px;
   object-fit: contain;
   border-radius: 50%;
