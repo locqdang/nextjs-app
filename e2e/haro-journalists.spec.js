@@ -15,7 +15,9 @@ test.describe('/haro/journalists', () => {
       redirectPath: '/haro/journalists',
     });
 
-    await expect(page.getByRole('heading', { name: 'Journalists page is under construction' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Journalists page is under construction' })
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'Back to HARO' })).toBeVisible();
   });
 });

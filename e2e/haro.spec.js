@@ -15,7 +15,9 @@ test.describe('/haro', () => {
       redirectPath: '/haro',
     });
 
-    await expect(page.getByRole('heading', { name: 'Manage your HARO workflow from one place' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Manage your HARO workflow from one place' })
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'View Pitches' })).toBeVisible();
   });
 });

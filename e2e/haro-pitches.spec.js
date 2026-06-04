@@ -16,6 +16,8 @@ test.describe('/haro/pitches', () => {
     });
 
     await expect(page.getByRole('heading', { name: 'Recent Pitches' })).toBeVisible();
-    await expect(page.getByText(/No pitch has been done on your behalf|No pitches have been submitted/)).toBeVisible();
+    await expect(
+      page.getByText(/No pitch has been done on your behalf|No pitches have been submitted/)
+    ).toBeVisible();
   });
 });
