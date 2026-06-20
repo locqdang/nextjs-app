@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import '../styles/blog.css';
 import Providers from './providers';
 import AppShell from './app-shell';
 import { fetchFromStrapi } from '../lib/data';
