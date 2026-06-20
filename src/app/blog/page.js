@@ -18,10 +18,10 @@ export default async function BlogPage() {
   }
 
   const getPostKey = (post) => post.documentId ?? post.id ?? post.slug;
-  const featuredPost = posts.find((post) => post.isFeatured === true) ?? posts[0] ?? null;
-  const olderPosts = featuredPost
-    ? posts.filter((post) => getPostKey(post) !== getPostKey(featuredPost))
-    : [];
+  const strapiFeaturedPosts = posts.filter((post) => post.isFeatured === true).slice(0, 3);
+  const featuredPosts = strapiFeaturedPosts.length ? strapiFeaturedPosts : posts.slice(0, 3);
+  const featuredKeys = new Set(featuredPosts.map(getPostKey));
+  const olderPosts = posts.filter((post) => !featuredKeys.has(getPostKey(post)));
 
   return (
     <main>
@@ -40,14 +40,18 @@ export default async function BlogPage() {
           ) : null}
         </header>
 
-        {featuredPost ? (
+        {featuredPosts.length ? (
           <>
-            <section className="blog-index__featured" aria-labelledby="latest-blog-post">
+            <section className="blog-index__featured" aria-labelledby="featured-blog-posts">
               <div className="blog-index__section-heading">
-                <p>Latest article</p>
-                <h2 id="latest-blog-post">Start here</h2>
+                <p>Featured articles</p>
+                <h2 id="featured-blog-posts">Start here</h2>
               </div>
-              <BlogCard post={featuredPost} featured />
+              <div className="blog-featured-grid">
+                {featuredPosts.map((post) => (
+                  <BlogCard post={post} featured key={post.documentId ?? post.id ?? post.slug} />
+                ))}
+              </div>
             </section>
 
             {olderPosts.length ? (
