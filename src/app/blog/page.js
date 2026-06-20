@@ -17,7 +17,11 @@ export default async function BlogPage() {
     posts = [];
   }
 
-  const [featuredPost, ...olderPosts] = posts;
+  const getPostKey = (post) => post.documentId ?? post.id ?? post.slug;
+  const featuredPost = posts.find((post) => post.isFeatured === true) ?? posts[0] ?? null;
+  const olderPosts = featuredPost
+    ? posts.filter((post) => getPostKey(post) !== getPostKey(featuredPost))
+    : [];
 
   return (
     <main>
