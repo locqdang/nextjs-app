@@ -96,6 +96,7 @@ export function normalizeBlogPost(post) {
   return {
     ...normalized,
     slug: slugifyBlogPost(normalized),
+    isFeatured: normalized.isFeatured === true,
     authors: (normalized.authors || []).map(normalizeAuthor),
     paragraphs: (normalized.paragraphs || []).map((paragraph) => ({
       ...paragraph,
