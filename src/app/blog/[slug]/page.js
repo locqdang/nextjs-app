@@ -1,0 +1,148 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  try {
+    const posts = await fetchBlogPosts();
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const post = await fetchBlogPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: 'Blog post not found | Vietpolyglots',
+    };
+  }
+
+  return {
+    title: `${post.title} | Vietpolyglots`,
+    description: post.excerpt,
+  };
+}
+
+function renderParagraphText(text) {
+  return String(text || '')
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => <p key={paragraph}>{paragraph}</p>);
+}
+
+function Authors({ authors = [], showBio = false }) {
+  if (!authors.length) return null;
+
+  return (
+    <div className="blog-authors">
+      {authors.map((author) => {
+        const photoUrl = author.photo?.formats?.thumbnail?.url ?? author.photo?.url;
+        const name = author.name || author.title;
+        const nameNode = author.profile_link ? (
+          <a href={author.profile_link} target="_blank" rel="noreferrer">
+            {name}
+          </a>
+        ) : (
+          name
+        );
+
+        return (
+          <div className="blog-author" key={author.documentId ?? author.id ?? name}>
+            {photoUrl ? (
+              <Image
+                src={photoUrl}
+                alt={author.photo?.alternativeText || name}
+                width={showBio ? 64 : 44}
+                height={showBio ? 64 : 44}
+                className="blog-author__photo"
+              />
+            ) : null}
+            <div>
+              <p className="blog-author__label">{showBio ? 'The author' : 'Written by'}</p>
+              <p className="blog-author__name">{nameNode}</p>
+              {showBio && author.bio ? <p className="blog-author__bio">{author.bio}</p> : null}
+              {showBio && author.profile_link ? (
+                <a
+                  className="blog-author__profile-link"
+                  href={author.profile_link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View public profile
+                </a>
+              ) : null}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function BlogMedia({ mediaBlock }) {
+  const media = mediaBlock?.media;
+  const imageUrl = media?.formats?.large?.url ?? media?.formats?.medium?.url ?? media?.url;
+
+  if (!imageUrl || mediaBlock?.type === 'video') return null;
+
+  return (
+    <figure className="blog-post__media">
+      <Image
+        src={imageUrl}
+        alt={mediaBlock?.altText || media?.alternativeText || mediaBlock?.caption || ''}
+        width={media?.formats?.large?.width ?? media?.width ?? 1000}
+        height={media?.formats?.large?.height ?? media?.height ?? 650}
+        sizes="(max-width: 768px) 100vw, 820px"
+      />
+      {mediaBlock?.caption ? <figcaption>{mediaBlock.caption}</figcaption> : null}
+    </figure>
+  );
+}
+
+export default async function BlogPostPage({ params }) {
+  const { slug } = await params;
+  const post = await fetchBlogPostBySlug(slug);
+
+  if (!post) notFound();
+
+  return (
+    <main>
+      <article className="blog-post">
+        <Link className="blog-post__back" href="/blog">
+          ← Back to blog
+        </Link>
+
+        <header className="blog-post__hero">
+          <p className="blog-post__date">{formatBlogDate(post.date ?? post.publishedAt)}</p>
+          <Authors authors={post.authors} />
+          <h1>{post.title}</h1>
+          {post.excerpt ? <p className="blog-post__excerpt">{post.excerpt}</p> : null}
+        </header>
+
+        <div className="blog-post__content">
+          {post.paragraphs.map((paragraph) => (
+            <section className="blog-post__section" key={paragraph.id ?? paragraph.title}>
+              {paragraph.title ? <h2>{paragraph.title}</h2> : null}
+              <BlogMedia mediaBlock={paragraph.ParagraphMedia} />
+              {renderParagraphText(paragraph.text)}
+            </section>
+          ))}
+        </div>
+
+        {post.authors?.length ? (
+          <footer className="blog-post__author-bio">
+            <Authors authors={post.authors} showBio />
+          </footer>
+        ) : null}
+      </article>
+    </main>
+  );
+}
