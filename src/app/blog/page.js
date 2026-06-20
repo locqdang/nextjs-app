@@ -47,10 +47,15 @@ export default async function BlogPage() {
                 <p>Featured articles</p>
                 <h2 id="featured-blog-posts">Start here</h2>
               </div>
-              <div className="blog-featured-grid">
-                {featuredPosts.map((post) => (
-                  <BlogCard post={post} featured key={post.documentId ?? post.id ?? post.slug} />
-                ))}
+              <div className="blog-featured-layout">
+                <BlogCard post={featuredPosts[0]} featured key={getPostKey(featuredPosts[0])} />
+                {featuredPosts.length > 1 ? (
+                  <div className="blog-featured-sidebar">
+                    {featuredPosts.slice(1).map((post) => (
+                      <BlogCard post={post} key={getPostKey(post)} />
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </section>
 
