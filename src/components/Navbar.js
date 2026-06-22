@@ -30,6 +30,7 @@ const NAVBAR = {
       subItems: [
         { id: 'projects', label: 'Projects', url: '/projects' },
         { id: 'meeting', label: 'Book Meeting', url: '/video-meeting' },
+        { id: 'blog', label: 'Blog', url: '/blog' },
         { id: 'contact', label: 'Contact', url: '/#contact' },
       ],
     },
