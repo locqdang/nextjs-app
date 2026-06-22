@@ -6,6 +6,8 @@ import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useGoogleOneTap } from '../hooks/useGoogleOneTap';
+import { usePathname } from 'next/navigation';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 type AppShellProps = {
   children: ReactNode;
@@ -16,6 +18,8 @@ export default function AppShell({ children, navbarData = null }: AppShellProps)
   // Track when Google Identity script has loaded before initializing One Tap.
   const [googleReady, setGoogleReady] = useState(false);
   useGoogleOneTap(googleReady);
+
+  const pathname = usePathname();
 
   return (
     <>
@@ -35,6 +39,7 @@ export default function AppShell({ children, navbarData = null }: AppShellProps)
         onLoad={() => setGoogleReady(true)}
       />
       <Navbar data={navbarData ?? undefined} />
+      {pathname && pathname !== '/' && <Breadcrumbs pathname={pathname} />}
       {children}
       <Footer />
     </>
