@@ -24,8 +24,8 @@ export default async function BlogIndexPage() {
           <p className="blog-index__eyebrow">Vietpolyglots Blog</p>
           <h1>Ideas on technology, learning, and work</h1>
           <p>
-            Practical notes and longer-form essays from Vietpolyglots — starting with how AI may reshape work without
-            removing the human part of it.
+            Practical notes and longer-form essays from Vietpolyglots — starting with how AI may
+            reshape work without removing the human part of it.
           </p>
           {articleCount ? (
             <p className="blog-index__count">

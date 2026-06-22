@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
 import BlogCoverImage from '../../../components/BlogCoverImage';
@@ -43,10 +42,6 @@ export default async function BlogPostPage({ params }) {
   return (
     <main>
       <article className="blog-post">
-        <Link className="blog-post__back" href="/blog">
-          ← Back to blog
-        </Link>
-
         <header className="blog-post__hero">
           <p className="blog-post__date">{formatBlogDate(post.date ?? post.publishedAt)}</p>
           <BlogAuthor authors={post.authors} />
