@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
@@ -32,6 +33,27 @@ export async function generateMetadata({ params }) {
   };
 }
 
+function BlogCoverImage({ post }) {
+  const coverImage = post.coverImage;
+  const imageUrl = coverImage?.formats?.large?.url ?? coverImage?.formats?.medium?.url ?? coverImage?.url;
+
+  if (!imageUrl) return null;
+
+  return (
+    <figure className="blog-post__cover">
+      <Image
+        src={imageUrl}
+        alt={coverImage?.alternativeText || post.title}
+        width={coverImage?.formats?.large?.width ?? coverImage?.width ?? 1200}
+        height={coverImage?.formats?.large?.height ?? coverImage?.height ?? 675}
+        sizes="(max-width: 900px) 100vw, 860px"
+        priority
+      />
+      {coverImage?.caption ? <figcaption>{coverImage.caption}</figcaption> : null}
+    </figure>
+  );
+}
+
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const post = await fetchBlogPostBySlug(slug);
@@ -52,6 +74,8 @@ export default async function BlogPostPage({ params }) {
           <h1>{post.title}</h1>
           {post.excerpt ? <p className="blog-post__excerpt">{post.excerpt}</p> : null}
         </header>
+
+        <BlogCoverImage post={post} />
 
         <div className="blog-post__content">
           {post.paragraphs.map((paragraph) => (
