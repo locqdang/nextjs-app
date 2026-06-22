@@ -4,6 +4,7 @@ import { formatMediaURL } from './data/strapi';
 const BLOG_POSTS_POPULATE = {
   'populate[paragraphs][populate][ParagraphMedia][populate]': '*',
   'populate[authors][populate]': '*',
+  'populate[coverImage][populate]': '*',
 };
 
 export function slugifyBlogPost(post) {
@@ -106,6 +107,7 @@ export function normalizeBlogPost(post) {
     ...normalized,
     slug: slugifyBlogPost(normalized),
     isFeatured: normalized.isFeatured === true,
+    coverImage: normalizeMedia(normalized.coverImage),
     authors: (normalized.authors || []).map(normalizeAuthor),
     tags: (normalized.tags || []).map(normalizeTag),
     paragraphs: (normalized.paragraphs || []).map((paragraph) => ({

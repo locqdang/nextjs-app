@@ -18,6 +18,10 @@ type BlogPostCardData = {
   publishedAt?: string | null;
   slug?: string;
   authors?: Parameters<typeof BlogAuthor>[0]['authors'];
+  coverImage?: (MediaFormat & {
+    alternativeText?: string | null;
+    formats?: Record<string, MediaFormat>;
+  }) | null;
   paragraphs?: Array<{
     ParagraphMedia?: {
       type?: string | null;
@@ -36,7 +40,23 @@ type BlogCardProps = {
   featured?: boolean;
 };
 
+function getImageFromMedia(media: BlogPostCardData['coverImage'], fallbackAlt: string) {
+  const imageUrl = media?.formats?.large?.url ?? media?.formats?.medium?.url ?? media?.url;
+
+  if (!imageUrl) return null;
+
+  return {
+    src: imageUrl,
+    alt: media?.alternativeText || fallbackAlt,
+    width: media?.formats?.large?.width ?? media?.width ?? 1000,
+    height: media?.formats?.large?.height ?? media?.height ?? 650,
+  };
+}
+
 function getPostImage(post: BlogPostCardData) {
+  const coverImage = getImageFromMedia(post.coverImage, post.title);
+  if (coverImage) return coverImage;
+
   for (const paragraph of post.paragraphs || []) {
     const mediaBlock = paragraph?.ParagraphMedia;
     const media = mediaBlock?.media;
