@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
 import BlogParagraph from '../../../components/BlogParagraph';
+import RelatedBlogs from '../../../components/RelatedBlogs';
 import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
 
 export const revalidate = 3600;
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }) {
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const post = await fetchBlogPostBySlug(slug);
+  const posts = await fetchBlogPosts();
 
   if (!post) notFound();
 
@@ -62,6 +64,8 @@ export default async function BlogPostPage({ params }) {
             <BlogAuthor authors={post.authors} showBio />
           </footer>
         ) : null}
+
+        <RelatedBlogs currentPost={post} posts={posts} />
       </article>
     </main>
   );

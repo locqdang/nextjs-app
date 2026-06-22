@@ -90,6 +90,15 @@ function normalizeAuthor(author) {
   };
 }
 
+function normalizeTag(tag) {
+  const normalized = tag?.attributes ? { id: tag.id, ...tag.attributes } : { ...tag };
+
+  return {
+    ...normalized,
+    name: normalized.name || normalized.title || normalized.label || normalized.slug,
+  };
+}
+
 export function normalizeBlogPost(post) {
   const normalized = post?.attributes ? { id: post.id, ...post.attributes } : { ...post };
 
@@ -98,6 +107,7 @@ export function normalizeBlogPost(post) {
     slug: slugifyBlogPost(normalized),
     isFeatured: normalized.isFeatured === true,
     authors: (normalized.authors || []).map(normalizeAuthor),
+    tags: (normalized.tags || []).map(normalizeTag),
     paragraphs: (normalized.paragraphs || []).map((paragraph) => ({
       ...paragraph,
       ParagraphMedia: paragraph.ParagraphMedia
