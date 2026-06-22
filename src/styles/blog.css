@@ -321,6 +321,24 @@
   padding-left: 1.5rem;
 }
 
+.blog-post__section ul {
+  list-style: disc outside;
+}
+
+.blog-post__section ol {
+  list-style: decimal outside;
+}
+
+.blog-post__section li {
+  display: list-item;
+  margin: 0.35rem 0;
+}
+
+.blog-post__section li::marker {
+  color: #2563eb;
+  font-weight: 700;
+}
+
 .blog-post__section h3,
 .blog-post__section h4 {
   margin: 1.5rem 0 0.75rem;
