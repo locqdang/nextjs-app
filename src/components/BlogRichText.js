@@ -58,6 +58,11 @@ function renderBlock(block, index) {
     return <HeadingTag key={`heading-${index}`}>{renderTextChildren(block.children)}</HeadingTag>;
   }
 
+  if (block.type === 'quote') {
+    if (!blockText(block)) return null;
+    return <blockquote key={`quote-${index}`}>{renderTextChildren(block.children)}</blockquote>;
+  }
+
   if (block.type === 'list') {
     return renderList(block, index);
   }
