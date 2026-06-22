@@ -42,3 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 mongodb_data/
+
+# test results
+test-results/.last-run.json
