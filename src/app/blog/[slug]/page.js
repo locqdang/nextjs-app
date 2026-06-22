@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
+import BlogRichText from '../../../components/BlogRichText';
 import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
 
 export const revalidate = 3600;
@@ -31,12 +32,16 @@ export async function generateMetadata({ params }) {
   };
 }
 
-function renderParagraphText(text) {
-  return String(text || '')
+function renderParagraphContent(paragraph) {
+  if (Array.isArray(paragraph.richText) && paragraph.richText.length) {
+    return <BlogRichText content={paragraph.richText} />;
+  }
+
+  return String(paragraph.text || '')
     .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
+    .map((text) => text.trim())
     .filter(Boolean)
-    .map((paragraph) => <p key={paragraph}>{paragraph}</p>);
+    .map((text) => <p key={text}>{text}</p>);
 }
 
 function BlogMedia({ mediaBlock }) {
@@ -84,7 +89,7 @@ export default async function BlogPostPage({ params }) {
             <section className="blog-post__section" key={paragraph.id ?? paragraph.title}>
               {paragraph.title ? <h2>{paragraph.title}</h2> : null}
               <BlogMedia mediaBlock={paragraph.ParagraphMedia} />
-              {renderParagraphText(paragraph.text)}
+              {renderParagraphContent(paragraph)}
             </section>
           ))}
         </div>
