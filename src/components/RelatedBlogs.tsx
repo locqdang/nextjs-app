@@ -36,7 +36,10 @@ function getRelatedPosts(currentPost: RelatedBlogPost, posts: RelatedBlogPost[],
   const currentTagKeys = new Set((currentPost.tags || []).map(getTagKey).filter(Boolean));
   const otherPosts = posts.filter((post) => getPostKey(post) !== currentPostKey);
 
-  if (!currentTagKeys.size) return otherPosts.slice(0, limit);
+  if (!currentTagKeys.size) {
+    // The section label is intentionally neutral because current CMS data may not include tags yet.
+    return otherPosts.slice(0, limit);
+  }
 
   const relatedPosts = otherPosts
     .map((post) => {
@@ -48,6 +51,7 @@ function getRelatedPosts(currentPost: RelatedBlogPost, posts: RelatedBlogPost[],
     .map(({ post }) => post);
 
   const relatedPostKeys = new Set(relatedPosts.map(getPostKey));
+  // Fill remaining slots with newest posts so the section stays useful when tag overlap is sparse.
   const newestFallbackPosts = otherPosts.filter((post) => !relatedPostKeys.has(getPostKey(post)));
 
   return [...relatedPosts, ...newestFallbackPosts].slice(0, limit);

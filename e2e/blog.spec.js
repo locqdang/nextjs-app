@@ -63,6 +63,7 @@ test.describe('/blog/[slug]', () => {
   test('renders rich-text lists with visible bullet styling', async ({ page }) => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 
+    // Guard against global CSS resets hiding bullets even when Strapi list markup renders correctly.
     const firstList = page.locator('.blog-post__section ul').first();
     const firstListItem = page.locator('.blog-post__section li').first();
 
@@ -74,6 +75,7 @@ test.describe('/blog/[slug]', () => {
   test('renders rich-text quotes', async ({ page }) => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 
+    // Quotes are their own Strapi block type, so verify they do not silently disappear.
     const quote = page.getByText('I am learning French at an A2 level. Have a conversation with me.');
 
     await expect(quote).toBeVisible();
@@ -83,6 +85,7 @@ test.describe('/blog/[slug]', () => {
   test('renders the cover image on blog post pages when populated', async ({ page }) => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 
+    // Cover images come from a dedicated CMS field, not from paragraph media.
     const cover = page.locator('.blog-post__cover img');
 
     await expect(cover).toBeVisible();

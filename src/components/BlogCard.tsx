@@ -54,6 +54,7 @@ function getImageFromMedia(media: BlogPostCardData['coverImage'], fallbackAlt: s
 }
 
 function getPostImage(post: BlogPostCardData) {
+  // Prefer the editorial cover image; paragraph media is only a legacy/fallback source for cards.
   const coverImage = getImageFromMedia(post.coverImage, post.title);
   if (coverImage) return coverImage;
 

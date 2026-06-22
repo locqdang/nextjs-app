@@ -63,6 +63,7 @@ function renderBlock(block: RichTextBlock, index: number): ReactNode {
     if (!blockText(block)) return null;
 
     const onlyChild = block.children?.length === 1 ? block.children[0] : null;
+    // Strapi represents code blocks as code-marked paragraph text, so promote them to <pre> for readability.
     if (onlyChild?.code) {
       return (
         <pre key={`code-${index}`}>

@@ -1,6 +1,7 @@
 import { fetchStrapiEntries } from './data';
 import { formatMediaURL } from './data/strapi';
 
+// Keep every CMS relation the blog UI renders in one query so static generation has complete article data.
 const BLOG_POSTS_POPULATE = {
   'populate[paragraphs][populate][ParagraphMedia][populate]': '*',
   'populate[authors][populate]': '*',
@@ -8,6 +9,7 @@ const BLOG_POSTS_POPULATE = {
 };
 
 export function slugifyBlogPost(post) {
+  // Strapi slugs are optional right now, so titles become stable enough URLs until explicit slugs exist.
   const source = post?.slug || post?.title || `blog-post-${post?.id}`;
 
   return String(source)
@@ -34,6 +36,7 @@ export function formatBlogDate(date) {
 }
 
 function normalizeMedia(media) {
+  // Strapi returns relative upload paths; normalize them once so components can render media directly.
   if (!media) return null;
 
   const normalized = { ...media };
@@ -106,6 +109,7 @@ export function normalizeBlogPost(post) {
   return {
     ...normalized,
     slug: slugifyBlogPost(normalized),
+    // Only an explicit true should affect layout; Strapi null/undefined should behave like false.
     isFeatured: normalized.isFeatured === true,
     coverImage: normalizeMedia(normalized.coverImage),
     authors: (normalized.authors || []).map(normalizeAuthor),
