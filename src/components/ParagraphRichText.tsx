@@ -1,8 +1,30 @@
-function renderTextChildren(children = []) {
+import type { ReactNode } from 'react';
+
+type RichTextChild = {
+  type?: string;
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  code?: boolean;
+  children?: RichTextChild[];
+};
+
+type RichTextBlock = RichTextChild & {
+  level?: number;
+  format?: 'ordered' | 'unordered' | string;
+};
+
+type ParagraphRichTextProps = {
+  content?: RichTextBlock[] | null;
+};
+
+function renderTextChildren(children: RichTextChild[] = []): ReactNode[] {
   return children.map((child, index) => {
     if (child.type !== 'text') return null;
 
-    let content = child.text;
+    let content: ReactNode = child.text;
 
     if (!content) return null;
     if (child.code) content = <code>{content}</code>;
@@ -15,14 +37,14 @@ function renderTextChildren(children = []) {
   });
 }
 
-function blockText(block) {
+function blockText(block: RichTextBlock): string {
   return (block.children || [])
     .map((child) => child.text || '')
     .join('')
     .trim();
 }
 
-function renderList(block, index) {
+function renderList(block: RichTextBlock, index: number): ReactNode {
   const ListTag = block.format === 'ordered' ? 'ol' : 'ul';
 
   return (
@@ -34,7 +56,7 @@ function renderList(block, index) {
   );
 }
 
-function renderBlock(block, index) {
+function renderBlock(block: RichTextBlock, index: number): ReactNode {
   if (!block) return null;
 
   if (block.type === 'paragraph') {
@@ -54,7 +76,8 @@ function renderBlock(block, index) {
 
   if (block.type === 'heading') {
     if (!blockText(block)) return null;
-    const HeadingTag = `h${Math.min(Math.max(block.level || 3, 3), 4)}`;
+    const headingLevel = Math.min(Math.max(block.level || 3, 3), 4);
+    const HeadingTag = `h${headingLevel}` as 'h3' | 'h4';
     return <HeadingTag key={`heading-${index}`}>{renderTextChildren(block.children)}</HeadingTag>;
   }
 
@@ -70,7 +93,7 @@ function renderBlock(block, index) {
   return null;
 }
 
-export default function BlogRichText({ content }) {
+export default function ParagraphRichText({ content }: ParagraphRichTextProps) {
   if (!Array.isArray(content) || !content.length) return null;
 
   return <>{content.map(renderBlock)}</>;

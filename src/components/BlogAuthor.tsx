@@ -1,13 +1,37 @@
 import Image from 'next/image';
 
-export default function BlogAuthor({ authors = [], compact = false, showBio = false }) {
+type BlogAuthorData = {
+  id?: string | number;
+  documentId?: string;
+  title?: string;
+  name?: string;
+  bio?: string | null;
+  profile_link?: string | null;
+  photo?: {
+    alternativeText?: string | null;
+    url?: string;
+    formats?: {
+      thumbnail?: {
+        url?: string;
+      };
+    };
+  } | null;
+};
+
+type BlogAuthorProps = {
+  authors?: BlogAuthorData[];
+  compact?: boolean;
+  showBio?: boolean;
+};
+
+export default function BlogAuthor({ authors = [], compact = false, showBio = false }: BlogAuthorProps) {
   if (!authors.length) return null;
 
   return (
     <div className={compact ? 'blog-authors blog-authors--compact' : 'blog-authors'}>
       {authors.map((author) => {
         const photoUrl = author.photo?.formats?.thumbnail?.url ?? author.photo?.url;
-        const name = author.name || author.title;
+        const name = author.name || author.title || 'Vietpolyglots';
         const nameNode = author.profile_link ? (
           <a href={author.profile_link} target="_blank" rel="noreferrer">
             {name}

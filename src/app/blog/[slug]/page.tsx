@@ -1,8 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
-import BlogRichText from '../../../components/BlogRichText';
+import BlogParagraph from '../../../components/BlogParagraph';
 import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
 
 export const revalidate = 3600;
@@ -32,30 +31,6 @@ export async function generateMetadata({ params }) {
   };
 }
 
-function renderParagraphContent(paragraph) {
-  return <BlogRichText content={paragraph.richText} />;
-}
-
-function BlogMedia({ mediaBlock }) {
-  const media = mediaBlock?.media;
-  const imageUrl = media?.formats?.large?.url ?? media?.formats?.medium?.url ?? media?.url;
-
-  if (!imageUrl || mediaBlock?.type === 'video') return null;
-
-  return (
-    <figure className="blog-post__media">
-      <Image
-        src={imageUrl}
-        alt={mediaBlock?.altText || media?.alternativeText || mediaBlock?.caption || ''}
-        width={media?.formats?.large?.width ?? media?.width ?? 1000}
-        height={media?.formats?.large?.height ?? media?.height ?? 650}
-        sizes="(max-width: 768px) 100vw, 820px"
-      />
-      {mediaBlock?.caption ? <figcaption>{mediaBlock.caption}</figcaption> : null}
-    </figure>
-  );
-}
-
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const post = await fetchBlogPostBySlug(slug);
@@ -78,11 +53,7 @@ export default async function BlogPostPage({ params }) {
 
         <div className="blog-post__content">
           {post.paragraphs.map((paragraph) => (
-            <section className="blog-post__section" key={paragraph.id ?? paragraph.title}>
-              {paragraph.title ? <h2>{paragraph.title}</h2> : null}
-              <BlogMedia mediaBlock={paragraph.ParagraphMedia} />
-              {renderParagraphContent(paragraph)}
-            </section>
+            <BlogParagraph paragraph={paragraph} key={paragraph.id ?? paragraph.title} />
           ))}
         </div>
 

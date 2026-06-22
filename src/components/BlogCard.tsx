@@ -3,7 +3,40 @@ import Link from 'next/link';
 import { formatBlogDate, getBlogPostUrl } from '../lib/blog-posts';
 import BlogAuthor from './BlogAuthor';
 
-function getPostImage(post) {
+type MediaFormat = {
+  url?: string;
+  width?: number;
+  height?: number;
+};
+
+type BlogPostCardData = {
+  id?: string | number;
+  documentId?: string;
+  title: string;
+  excerpt?: string | null;
+  date?: string | null;
+  publishedAt?: string | null;
+  slug?: string;
+  authors?: Parameters<typeof BlogAuthor>[0]['authors'];
+  paragraphs?: Array<{
+    ParagraphMedia?: {
+      type?: string | null;
+      altText?: string | null;
+      caption?: string | null;
+      media?: (MediaFormat & {
+        alternativeText?: string | null;
+        formats?: Record<string, MediaFormat>;
+      }) | null;
+    } | null;
+  }>;
+};
+
+type BlogCardProps = {
+  post: BlogPostCardData;
+  featured?: boolean;
+};
+
+function getPostImage(post: BlogPostCardData) {
   for (const paragraph of post.paragraphs || []) {
     const mediaBlock = paragraph?.ParagraphMedia;
     const media = mediaBlock?.media;
@@ -22,7 +55,7 @@ function getPostImage(post) {
   return null;
 }
 
-export default function BlogCard({ post, featured = false }) {
+export default function BlogCard({ post, featured = false }: BlogCardProps) {
   const image = getPostImage(post);
   const href = getBlogPostUrl(post);
 
