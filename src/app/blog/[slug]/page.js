@@ -33,15 +33,7 @@ export async function generateMetadata({ params }) {
 }
 
 function renderParagraphContent(paragraph) {
-  if (Array.isArray(paragraph.richText) && paragraph.richText.length) {
-    return <BlogRichText content={paragraph.richText} />;
-  }
-
-  return String(paragraph.text || '')
-    .split(/\n{2,}/)
-    .map((text) => text.trim())
-    .filter(Boolean)
-    .map((text) => <p key={text}>{text}</p>);
+  return <BlogRichText content={paragraph.richText} />;
 }
 
 function BlogMedia({ mediaBlock }) {
