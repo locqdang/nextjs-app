@@ -43,7 +43,10 @@ function getRelatedPosts(currentPost: RelatedBlogPost, posts: RelatedBlogPost[],
 
   const relatedPosts = otherPosts
     .map((post) => {
-      const score = (post.tags || []).reduce((count, tag) => (currentTagKeys.has(getTagKey(tag)) ? count + 1 : count), 0);
+      const score = (post.tags || []).reduce(
+        (count, tag) => (currentTagKeys.has(getTagKey(tag)) ? count + 1 : count),
+        0
+      );
       return { post, score };
     })
     .filter(({ score }) => score > 0)

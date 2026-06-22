@@ -24,7 +24,11 @@ type BlogAuthorProps = {
   showBio?: boolean;
 };
 
-export default function BlogAuthor({ authors = [], compact = false, showBio = false }: BlogAuthorProps) {
+export default function BlogAuthor({
+  authors = [],
+  compact = false,
+  showBio = false,
+}: BlogAuthorProps) {
   if (!authors.length) return null;
 
   return (

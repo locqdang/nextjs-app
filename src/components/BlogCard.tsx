@@ -18,19 +18,23 @@ type BlogPostCardData = {
   publishedAt?: string | null;
   slug?: string;
   authors?: Parameters<typeof BlogAuthor>[0]['authors'];
-  coverImage?: (MediaFormat & {
-    alternativeText?: string | null;
-    formats?: Record<string, MediaFormat>;
-  }) | null;
+  coverImage?:
+    | (MediaFormat & {
+        alternativeText?: string | null;
+        formats?: Record<string, MediaFormat>;
+      })
+    | null;
   paragraphs?: Array<{
     ParagraphMedia?: {
       type?: string | null;
       altText?: string | null;
       caption?: string | null;
-      media?: (MediaFormat & {
-        alternativeText?: string | null;
-        formats?: Record<string, MediaFormat>;
-      }) | null;
+      media?:
+        | (MediaFormat & {
+            alternativeText?: string | null;
+            formats?: Record<string, MediaFormat>;
+          })
+        | null;
     } | null;
   }>;
 };

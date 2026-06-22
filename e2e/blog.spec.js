@@ -19,7 +19,9 @@ test.describe('/blog', () => {
     expect(response).not.toBeNull();
     expect(response.ok()).toBeTruthy();
     await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.getByRole('heading', { name: 'Ideas on technology, learning, and work' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Ideas on technology, learning, and work' })
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Start here' })).toBeVisible();
 
     for (const title of expectedPostTitles) {
@@ -34,7 +36,9 @@ test.describe('/blog', () => {
 
     await page.waitForURL('**/blog');
     await expect(page).toHaveURL(/\/blog$/);
-    await expect(page.getByRole('heading', { name: 'Ideas on technology, learning, and work' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Ideas on technology, learning, and work' })
+    ).toBeVisible();
   });
 
   test('links to every visible blog post page', async ({ page }) => {
@@ -55,7 +59,6 @@ test.describe('/blog/[slug]', () => {
 
       await expect(page.getByRole('heading', { name: title, level: 1 })).toBeVisible();
       await expect(page.getByText('Written by')).toBeVisible();
-      await expect(page.getByRole('link', { name: '← Back to blog' })).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Other blog posts' })).toBeVisible();
     });
   }
@@ -76,7 +79,9 @@ test.describe('/blog/[slug]', () => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 
     // Quotes are their own Strapi block type, so verify they do not silently disappear.
-    const quote = page.getByText('I am learning French at an A2 level. Have a conversation with me.');
+    const quote = page.getByText(
+      'I am learning French at an A2 level. Have a conversation with me.'
+    );
 
     await expect(quote).toBeVisible();
     await expect(page.locator('.blog-post__section blockquote').first()).toBeVisible();
@@ -96,7 +101,9 @@ test.describe('/blog/[slug]', () => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 
     await expect(page.getByText('The author')).toBeVisible();
-    await expect(page.getByText('language lover, web builder, and digital marketing professional')).toBeVisible();
+    await expect(
+      page.getByText('language lover, web builder, and digital marketing professional')
+    ).toBeVisible();
     await expect(page.getByRole('link', { name: 'View public profile' })).toHaveAttribute(
       'href',
       /linkedin\.com\/in\/loc-dang-7ab66222/

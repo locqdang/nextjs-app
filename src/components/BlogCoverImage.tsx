@@ -18,7 +18,8 @@ type BlogCoverImageProps = {
 };
 
 export default function BlogCoverImage({ title, coverImage }: BlogCoverImageProps) {
-  const imageUrl = coverImage?.formats?.large?.url ?? coverImage?.formats?.medium?.url ?? coverImage?.url;
+  const imageUrl =
+    coverImage?.formats?.large?.url ?? coverImage?.formats?.medium?.url ?? coverImage?.url;
 
   if (!imageUrl) return null;
 
