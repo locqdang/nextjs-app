@@ -95,3 +95,24 @@ Then open [http://localhost:33345](http://localhost:33345).
 - `.env.local` should not be committed.
 - `.env` should not contain localhost overrides.
 - Mailbox OAuth tokens are stored in the `mailbox_connections` collection, not `profiles`.
+
+## Logging stack
+
+This project now includes a local self-hosted logging stack using Alloy, Loki, and Grafana.
+
+Start the full stack with:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d --build
+```
+
+# Logging
+
+## Local development
+
+This repo uses Alloy to collect Docker container logs and ship them to Loki.
+The local logging stack is started with:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d --build
+```
