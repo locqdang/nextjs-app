@@ -3,6 +3,7 @@ import pino from 'pino';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Intent: keep accidental secrets out of structured logs before they reach Loki/Grafana.
 const SENSITIVE_KEY_PATTERN = /token|auth|authorization|password|secret|credential|jwt|loginlink/i;
 
 export function shouldIncludeStack() {
@@ -24,6 +25,7 @@ export function serializeError(error) {
 }
 
 export function redactLogFields(value) {
+  // Intent: preserve useful log context while recursively removing secret-looking fields.
   if (Array.isArray(value)) {
     return value.map(redactLogFields);
   }
@@ -55,6 +57,7 @@ export function hashUserIdentity(email) {
 }
 
 export function canLogLoginLinks() {
+  // Intent: magic login links are convenient locally but must never appear in production logs.
   return process.env.NODE_ENV !== 'production' && process.env.LOG_LOGIN_LINKS === '1';
 }
 

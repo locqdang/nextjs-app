@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+// Intent: each test mutates process.env, so keep a clean baseline to restore after every case.
 const ORIGINAL_ENV = { ...process.env };
 
 async function loadLoggerModule() {
+  // Intent: reload the module after env changes so logger defaults use the current test env.
   vi.resetModules();
   return import('../../lib/logger');
 }
