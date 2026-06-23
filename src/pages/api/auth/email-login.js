@@ -7,10 +7,17 @@
  */
 
 import { createMagicLoginLink } from '../../../lib/auth/createMagicLoginLink';
+import { createApiLogger } from '../../../lib/api-logging';
+import { canLogLoginLinks, serializeError } from '../../../lib/logger';
 
 const N8N_WEBHOOK_URL = process.env.N8N_LOGIN_WEBHOOK_URL;
 
 export default async function handler(req, res) {
+  const log = createApiLogger(req, {
+    route: '/api/auth/email-login',
+    operation: 'email_login',
+  });
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -25,7 +32,13 @@ export default async function handler(req, res) {
   try {
     const { loginLink, user } = await createMagicLoginLink({ email, redirectPath });
 
-    // Call n8n webhook to send email
+    const userLog = createApiLogger(req, {
+      route: '/api/auth/email-login',
+      operation: 'email_login',
+      userEmail: user.email,
+    });
+
+    // Intent: normal production path sends the magic link through n8n, not server logs.
     if (N8N_WEBHOOK_URL) {
       try {
         await fetch(N8N_WEBHOOK_URL, {
@@ -39,13 +52,17 @@ export default async function handler(req, res) {
           }),
         });
       } catch (webhookError) {
-        console.error('n8n webhook error:', webhookError);
-        // Continue even if webhook fails - token is still created
+        userLog.error({ error: serializeError(webhookError) }, 'n8n login webhook failed');
+        // Continue even if webhook fails - token is still created.
       }
+    } else if (canLogLoginLinks()) {
+      // Intent: local-only escape hatch for development when n8n is unavailable.
+      userLog.warn(
+        { loginLink },
+        'Development login link generated because n8n webhook is unavailable'
+      );
     } else {
-      console.warn('N8N_LOGIN_WEBHOOK_URL not configured');
-      // In development, log the link
-      console.log(`\n🔗 Login link for ${email}:\n${loginLink}\n`);
+      userLog.warn('N8N login webhook is unavailable; login link suppressed');
     }
 
     res.status(200).json({
@@ -53,7 +70,7 @@ export default async function handler(req, res) {
       message: 'Login link sent.',
     });
   } catch (error) {
-    console.error('Email login error:', error);
+    log.error({ error: serializeError(error) }, 'Email login error');
     res.status(500).json({ error: 'Failed to process login request' });
   }
 }
