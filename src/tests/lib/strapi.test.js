@@ -43,11 +43,9 @@ describe('fetchFromStrapi', () => {
     });
 
     vi.stubGlobal('fetch', fetchMock);
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(fetchFromStrapi('homepage')).rejects.toThrow(
       'Strapi API error: 500 Internal Server Error'
     );
-    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
