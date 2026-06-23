@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+import { logger, serializeError } from '../logger.js';
 
 const MONGO_URI = process.env.MONGO_URI;
 const DB_NAME = process.env.MONGO_DB;
@@ -8,11 +9,10 @@ let db = null;
 
 /**
  * Connect to MongoDB
- * @returns {Promise<object>} MongoDB database instance
  */
 export async function connectToMongoDB() {
   if (db) {
-    console.log('✓ MongoDB already connected');
+    logger.debug({ db: DB_NAME }, 'MongoDB already connected');
     return db;
   }
 
@@ -24,10 +24,10 @@ export async function connectToMongoDB() {
 
     await client.connect();
     db = client.db(DB_NAME);
-    console.log(`✓ Connected to MongoDB: ${DB_NAME}`);
+    logger.info({ db: DB_NAME }, 'Connected to MongoDB');
     return db;
   } catch (error) {
-    console.error('✗ MongoDB connection failed:', error.message);
+    logger.error({ error: serializeError(error), db: DB_NAME }, 'MongoDB connection failed');
     throw error;
   }
 }
@@ -40,14 +40,12 @@ export async function closeMongoDBConnection() {
     await client.close();
     client = null;
     db = null;
-    console.log('✓ MongoDB connection closed');
+    logger.info({ db: DB_NAME }, 'MongoDB connection closed');
   }
 }
 
 /**
  * Get a specific collection from MongoDB
- * @param {string} collectionName - Name of the collection
- * @returns {Promise<object>} MongoDB collection instance
  */
 export async function getCollection(collectionName) {
   const database = await connectToMongoDB();
@@ -56,82 +54,65 @@ export async function getCollection(collectionName) {
 
 /**
  * Find one document in a collection
- * @param {string} collectionName - Name of the collection
- * @param {object} query - MongoDB query filter
- * @returns {Promise<object|null>} Document or null if not found
  */
 export async function findOne(collectionName, query) {
   try {
     const collection = await getCollection(collectionName);
     return await collection.findOne(query);
   } catch (error) {
-    console.error(`Error finding document in ${collectionName}:`, error.message);
+    logger.error({ error: serializeError(error), collectionName }, 'MongoDB findOne failed');
     throw error;
   }
 }
 
 /**
  * Find multiple documents in a collection
- * @param {string} collectionName - Name of the collection
- * @param {object} query - MongoDB query filter
- * @param {object} options - Query options (limit, sort, etc.)
- * @returns {Promise<array>} Array of documents
  */
 export async function findMany(collectionName, query = {}, options = {}) {
   try {
     const collection = await getCollection(collectionName);
     return await collection.find(query).setOptions(options).toArray();
   } catch (error) {
-    console.error(`Error finding documents in ${collectionName}:`, error.message);
+    logger.error({ error: serializeError(error), collectionName }, 'MongoDB findMany failed');
     throw error;
   }
 }
 
 /**
  * Insert a document into a collection
- * @param {string} collectionName - Name of the collection
- * @param {object} document - Document to insert
- * @returns {Promise<object>} Insert result with insertedId
  */
 export async function insertOne(collectionName, document) {
   try {
     const collection = await getCollection(collectionName);
     return await collection.insertOne(document);
   } catch (error) {
-    console.error(`Error inserting document into ${collectionName}:`, error.message);
+    logger.error({ error: serializeError(error), collectionName }, 'MongoDB insertOne failed');
     throw error;
   }
 }
 
 /**
  * Update a document in a collection
- * @param {string} collectionName - Name of the collection
- * @param {object} query - MongoDB query filter
- * @param {object} updates - Update operations
- * @returns {Promise<object>} Update result
  */
 export async function updateOne(collectionName, query, updates) {
   try {
     const collection = await getCollection(collectionName);
     return await collection.updateOne(query, { $set: updates });
   } catch (error) {
-    console.error(`Error updating document in ${collectionName}:`, error.message);
+    logger.error({ error: serializeError(error), collectionName }, 'MongoDB updateOne failed');
     throw error;
   }
 }
 
 /**
  * Delete a document from a collection
- * @param {string} collectionName - Name of the collection
- * @param {object} query - MongoDB query filter
- * @returns {Promise<object>} Delete result
  */
 export async function deleteOne(collectionName, query) {
   try {
     const collection = await getCollection(collectionName);
     return await collection.deleteOne(query);
   } catch (error) {
-    console.error(`Error deleting document in ${collectionName}:`, error.message);
+    logger.error({ error: serializeError(error), collectionName }, 'MongoDB deleteOne failed');
     throw error;
   }
 }

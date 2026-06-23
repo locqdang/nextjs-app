@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import { findMany, countDocuments, findOne } from '../../../lib/data/haro';
 import { findOne as findAuthUser } from '../../../lib/data/mongodb';
 import { ObjectId } from 'mongodb';
+import { createApiLogger } from '../../../lib/api-logging';
+import { serializeError } from '../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -73,7 +75,6 @@ async function addQuerySourceFilter(matchFilter, source) {
 async function isAdminEmail(email) {
   const normalizedEmail = normalizeEmail(email);
 
-  // Intent: admin access must come from MongoDB server-side, never from the browser.
   const user = await findAuthUser('users', {
     email: normalizedEmail,
   });
@@ -85,7 +86,13 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
+  const baseLog = createApiLogger(req, {
+    route: '/api/haro/pitches',
+    operation: 'haro_pitches',
+  });
+
   if (req.method !== 'GET') {
+    baseLog.warn({ method: req.method }, 'HARO pitches invalid method');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -93,19 +100,29 @@ export default async function handler(req, res) {
     const auth = req.headers.authorization || '';
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
 
-    if (!token) return res.status(401).json({ error: 'Missing token' });
-
-    const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
-    const skip = (page - 1) * limit;
-    const source = String(req.query.source || '').trim();
+    if (!token) {
+      baseLog.warn({ reason: 'missing_token' }, 'HARO pitches auth failure');
+      return res.status(401).json({ error: 'Missing token' });
+    }
 
     const decoded = jwt.verify(token, JWT_SECRET);
     const email = normalizeEmail(decoded.email);
 
     if (!email) {
+      baseLog.warn({ reason: 'invalid_token_payload' }, 'HARO pitches auth failure');
       return res.status(401).json({ error: 'Unauthorized' });
     }
+
+    const log = createApiLogger(req, {
+      route: '/api/haro/pitches',
+      operation: 'haro_pitches',
+      userEmail: email,
+    });
+
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+    const skip = (page - 1) * limit;
+    const source = String(req.query.source || '').trim();
 
     const isAdmin = await isAdminEmail(email);
 
@@ -137,16 +154,14 @@ export default async function handler(req, res) {
       const expertProfileId = profile._id.toString();
 
       if (!expertProfileId) {
+        log.warn({ reason: 'missing_profile_id' }, 'HARO pitches missing profile id');
         return res.status(400).json({ error: 'Profile is missing profile_id' });
       }
 
-      // Intent: regular experts only see pitches tied to their authenticated profile.
       filter.profile_id = expertProfileId;
     }
 
     const sources = await getQuerySourcesForMatches(filter);
-
-    // Intent: query source filtering is applied server-side within the authorized pitch scope.
     await addQuerySourceFilter(filter, source);
 
     const total = await countDocuments('matches', filter);
@@ -163,7 +178,6 @@ export default async function handler(req, res) {
         const queryDoc = await findOne('queries', {
           _id: toObjectId(p.query_id),
         });
-        // Strip createdAt and updatedAt from queryDoc
         const query = (() => {
           const { createdAt, updatedAt, ...rest } = queryDoc || {};
           return rest;
@@ -174,13 +188,12 @@ export default async function handler(req, res) {
               _id: toObjectId(p.profile_id),
             })
           : profile;
-        //  Strip createdAt and updatedAt from profileDoc
+
         const pitchProfile = (() => {
           const { createdAt, updatedAt, ...rest } = pitchProfileDoc || {};
           return rest;
         })();
 
-        // Intent: admin view needs each pitch's owning expert profile, not the logged-in admin profile.
         return {
           ...p,
           ...query,
@@ -202,8 +215,8 @@ export default async function handler(req, res) {
         totalPages,
       },
     });
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    baseLog.error({ error: serializeError(error) }, 'HARO pitches API error');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 }

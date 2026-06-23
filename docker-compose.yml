@@ -8,3 +8,8 @@ services:
     ports:
       - '3004:3000'
     command: ['npm', 'run', 'start']
+    labels:
+      logging: 'loki'
+      app: 'vietpolyglots'
+      service: 'nextjs-app'
+      environment: 'production'

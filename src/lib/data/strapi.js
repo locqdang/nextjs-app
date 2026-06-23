@@ -1,10 +1,10 @@
+import { logger, serializeError } from '../logger.js';
+
 const STRAPI_URL = process.env.STRAPI_URL || 'https://strapi.vietpolyglots.com';
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
 /**
  * Format media URL from Strapi
- * @param {string} url - Media URL from Strapi
- * @returns {string|null} Full media URL or null
  */
 export function formatMediaURL(url) {
   if (!url) return null;
@@ -13,15 +13,11 @@ export function formatMediaURL(url) {
 
 /**
  * Fetch data from Strapi API
- * @param {string} endpoint - API endpoint (e.g., 'pages', 'posts')
- * @param {object} options - Query options (populate, filters, pagination, sort)
- * @returns {Promise<object|array>} Strapi API response
  */
 export async function fetchFromStrapi(endpoint, options = {}) {
   try {
     const url = new URL(`${STRAPI_URL}/api/${endpoint}`);
 
-    // Add populate parameters
     if (options.populate) {
       if (Array.isArray(options.populate)) {
         options.populate.forEach((field, index) => {
@@ -32,25 +28,21 @@ export async function fetchFromStrapi(endpoint, options = {}) {
       }
     }
 
-    // Add filters
     if (options.filters) {
       Object.entries(options.filters).forEach(([key, value]) => {
         url.searchParams.set(`filters[${key}]`, value);
       });
     }
 
-    // Add pagination
     if (options.pagination) {
       url.searchParams.set('pagination[page]', options.pagination.page || 1);
       url.searchParams.set('pagination[pageSize]', options.pagination.pageSize || 25);
     }
 
-    // Add sorting
     if (options.sort) {
       url.searchParams.set('sort', options.sort);
     }
 
-    // Allow callers to pass through Strapi-style nested query params directly.
     if (options.queryParams) {
       Object.entries(options.queryParams).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -78,17 +70,13 @@ export async function fetchFromStrapi(endpoint, options = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error(`Error fetching from Strapi endpoint "${endpoint}":`, error.message);
+    logger.error({ error: serializeError(error), endpoint }, 'Error fetching from Strapi');
     throw error;
   }
 }
 
 /**
  * Fetch a single entry from Strapi
- * @param {string} contentType - Content type (e.g., 'pages', 'posts')
- * @param {number|string} id - Entry ID
- * @param {object} options - Query options
- * @returns {Promise<object>} Single entry data
  */
 export async function fetchStrapiEntry(contentType, id, options = {}) {
   const response = await fetchFromStrapi(`${contentType}/${id}`, options);
@@ -97,9 +85,6 @@ export async function fetchStrapiEntry(contentType, id, options = {}) {
 
 /**
  * Fetch multiple entries from Strapi
- * @param {string} contentType - Content type (e.g., 'pages', 'posts')
- * @param {object} options - Query options
- * @returns {Promise<array>} Array of entries
  */
 export async function fetchStrapiEntries(contentType, options = {}) {
   const response = await fetchFromStrapi(contentType, options);
@@ -107,10 +92,7 @@ export async function fetchStrapiEntries(contentType, options = {}) {
 }
 
 /**
- * Create an entry in Strapi (requires authentication)
- * @param {string} contentType - Content type
- * @param {object} data - Entry data
- * @returns {Promise<object>} Created entry
+ * Create an entry in Strapi
  */
 export async function createStrapiEntry(contentType, data) {
   try {
@@ -136,17 +118,13 @@ export async function createStrapiEntry(contentType, data) {
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error(`Error creating Strapi entry in "${contentType}":`, error.message);
+    logger.error({ error: serializeError(error), contentType }, 'Error creating Strapi entry');
     throw error;
   }
 }
 
 /**
- * Update an entry in Strapi (requires authentication)
- * @param {string} contentType - Content type
- * @param {number|string} id - Entry ID
- * @param {object} data - Updated data
- * @returns {Promise<object>} Updated entry
+ * Update an entry in Strapi
  */
 export async function updateStrapiEntry(contentType, id, data) {
   try {
@@ -172,16 +150,13 @@ export async function updateStrapiEntry(contentType, id, data) {
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error(`Error updating Strapi entry in "${contentType}":`, error.message);
+    logger.error({ error: serializeError(error), contentType, id }, 'Error updating Strapi entry');
     throw error;
   }
 }
 
 /**
- * Delete an entry from Strapi (requires authentication)
- * @param {string} contentType - Content type
- * @param {number|string} id - Entry ID
- * @returns {Promise<object>} Delete result
+ * Delete an entry from Strapi
  */
 export async function deleteStrapiEntry(contentType, id) {
   try {
@@ -205,7 +180,7 @@ export async function deleteStrapiEntry(contentType, id) {
 
     return await response.json();
   } catch (error) {
-    console.error(`Error deleting Strapi entry in "${contentType}":`, error.message);
+    logger.error({ error: serializeError(error), contentType, id }, 'Error deleting Strapi entry');
     throw error;
   }
 }

@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { findOne, insertOne, updateOne } from '../../../lib/data/haro';
+import { createApiLogger } from '../../../lib/api-logging';
+import { serializeError } from '../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const MAILBOX_COLLECTION = 'mailbox_connections';
@@ -113,7 +115,13 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
+  const baseLog = createApiLogger(req, {
+    route: '/api/haro/profile',
+    operation: 'haro_profile',
+  });
+
   if (!['GET', 'PUT'].includes(req.method)) {
+    baseLog.warn({ method: req.method }, 'HARO profile invalid method');
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
@@ -121,6 +129,7 @@ export default async function handler(req, res) {
     const token = getBearerToken(req);
 
     if (!token) {
+      baseLog.warn({ reason: 'missing_token' }, 'HARO profile auth failure');
       return res.status(401).json({ message: 'Missing token' });
     }
 
@@ -128,8 +137,15 @@ export default async function handler(req, res) {
     const email = normalizeEmail(decoded.email);
 
     if (!email) {
+      baseLog.warn({ reason: 'invalid_token_payload' }, 'HARO profile auth failure');
       return res.status(401).json({ message: 'Invalid token payload' });
     }
+
+    const log = createApiLogger(req, {
+      route: '/api/haro/profile',
+      operation: 'haro_profile',
+      userEmail: email,
+    });
 
     if (req.method === 'GET') {
       const [dbProfile, mailboxConnection] = await Promise.all([
@@ -202,7 +218,7 @@ export default async function handler(req, res) {
       allowedExpertise: ALLOWED_EXPERTISE_VALUES,
     });
   } catch (error) {
-    console.error('HARO profile API error:', error);
+    baseLog.error({ error: serializeError(error) }, 'HARO profile API error');
     return res.status(401).json({ message: 'Unauthorized' });
   }
 }
