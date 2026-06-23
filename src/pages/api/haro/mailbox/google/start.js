@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
+import { createApiLogger } from '../../../../../lib/api-logging';
+import { serializeError } from '../../../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -29,6 +31,12 @@ function getOAuthClient() {
 }
 
 export default async function handler(req, res) {
+  // Intent: attach route/operation context before auth succeeds, without logging the bearer token.
+  const log = createApiLogger(req, {
+    route: '/api/haro/mailbox/google/start',
+    operation: 'haro_mailbox_google_start',
+  });
+
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
@@ -51,9 +59,16 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Invalid token payload' });
     }
 
+    const userLog = createApiLogger(req, {
+      route: '/api/haro/mailbox/google/start',
+      operation: 'haro_mailbox_google_start',
+      userEmail: email,
+    });
+
     const oauthClient = getOAuthClient();
 
     if (!oauthClient) {
+      userLog.error('Google OAuth is not configured for mailbox connection');
       return res.status(500).json({
         message: 'Google OAuth is not configured for mailbox connection.',
       });
@@ -80,7 +95,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ url });
   } catch (error) {
-    console.error('HARO mailbox Google start error:', error);
+    log.error({ error: serializeError(error) }, 'HARO mailbox Google start error');
     return res.status(401).json({ message: 'Unauthorized' });
   }
 }

@@ -2,6 +2,8 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { findOne, insertOne, updateOne } from '../../../../../lib/data/haro';
+import { createApiLogger } from '../../../../../lib/api-logging';
+import { serializeError } from '../../../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -104,6 +106,12 @@ async function persistMailboxConnection(ownerEmail, tokens, connectedEmail) {
 }
 
 export default async function handler(req, res) {
+  // Intent: callback logs must include route context but never OAuth code, state, or token values.
+  const log = createApiLogger(req, {
+    route: '/api/haro/mailbox/google/callback',
+    operation: 'haro_mailbox_google_callback',
+  });
+
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
@@ -137,6 +145,12 @@ export default async function handler(req, res) {
       return res.redirect(buildRedirectUrl('error', 'Invalid mailbox connection state.'));
     }
 
+    const userLog = createApiLogger(req, {
+      route: '/api/haro/mailbox/google/callback',
+      operation: 'haro_mailbox_google_callback',
+      userEmail: ownerEmail,
+    });
+
     // Exchange one-time auth code for Google tokens.
     const { tokens } = await oauthClient.getToken(code);
     oauthClient.setCredentials(tokens);
@@ -146,6 +160,7 @@ export default async function handler(req, res) {
     const connectedEmail = normalizeEmail(tokenInfo.email);
 
     if (!connectedEmail) {
+      userLog.warn('Google mailbox callback did not return a connected email');
       return res.redirect(
         buildRedirectUrl('error', 'Google did not return an email address for this mailbox.')
       );
@@ -158,7 +173,7 @@ export default async function handler(req, res) {
     // Send user back to HARO profile page with a success status.
     return res.redirect(buildRedirectUrl('connected', 'Gmail mailbox connected successfully.'));
   } catch (error) {
-    console.error('HARO mailbox Google callback error:', error);
+    log.error({ error: serializeError(error) }, 'HARO mailbox Google callback error');
     return res.redirect(buildRedirectUrl('error', 'Failed to connect Gmail mailbox.'));
   }
 }
