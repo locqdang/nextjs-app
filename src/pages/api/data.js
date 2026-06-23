@@ -1,17 +1,24 @@
 /**
  * Example API route showing both MongoDB and Strapi usage
- * GET /api/data - Returns combined data from both sources
+ * GET /api/data
  */
 
 import { findMany as mongoFindMany, fetchStrapiEntries } from '../../lib/data/index.js';
+import { createApiLogger } from '../../lib/api-logging';
+import { serializeError } from '../../lib/logger';
 
 export default async function handler(req, res) {
+  const log = createApiLogger(req, {
+    route: '/api/data',
+    operation: 'data_api',
+  });
+
   if (req.method !== 'GET') {
+    log.warn({ method: req.method }, 'Invalid data API method');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Fetch from Strapi
     let strapiPosts = [];
     try {
       strapiPosts = await fetchStrapiEntries('posts', {
@@ -19,15 +26,14 @@ export default async function handler(req, res) {
         pagination: { pageSize: 5 },
       });
     } catch (error) {
-      console.warn('Strapi fetch failed:', error.message);
+      log.warn({ error: serializeError(error) }, 'Strapi fetch failed');
     }
 
-    // Fetch from MongoDB (example collection: 'items')
     let mongoItems = [];
     try {
       mongoItems = await mongoFindMany('items', {}, { limit: 10 });
     } catch (error) {
-      console.warn('MongoDB fetch failed:', error.message);
+      log.warn({ error: serializeError(error) }, 'MongoDB fetch failed');
     }
 
     res.status(200).json({
@@ -38,7 +44,7 @@ export default async function handler(req, res) {
       },
     });
   } catch (error) {
-    console.error('API error:', error);
+    log.error({ error: serializeError(error) }, 'API data route error');
     res.status(500).json({ error: 'Internal server error' });
   }
 }

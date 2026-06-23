@@ -1,23 +1,30 @@
 /**
  * Verify Login Token API Route
- * GET /api/auth/verify-login?token=xxx
- *
- * Response: { success, token, user } or { error }
+ * POST /api/auth/verify-login
  */
 
 import jwt from 'jsonwebtoken';
 import { connectToMongoDB } from '../../../lib/data/mongodb';
+import { createApiLogger } from '../../../lib/api-logging';
+import { serializeError } from '../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export default async function handler(req, res) {
+  const log = createApiLogger(req, {
+    route: '/api/auth/verify-login',
+    operation: 'auth_verify_login',
+  });
+
   if (req.method !== 'POST') {
+    log.warn({ method: req.method }, 'Invalid auth/verify-login method');
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { token } = req.body;
 
   if (!token) {
+    log.warn({ reason: 'missing_token' }, 'Verify-login request missing token');
     return res.status(400).json({ error: 'Token is required' });
   }
 
@@ -26,34 +33,32 @@ export default async function handler(req, res) {
     const tokensCollection = db.collection('loginTokens');
     const usersCollection = db.collection('users');
 
-    // Find token in database
     const loginToken = await tokensCollection.findOne({ token });
 
     if (!loginToken) {
+      log.warn({ reason: 'invalid_or_expired_token' }, 'Verify-login token invalid or expired');
       return res.status(401).json({ error: 'Invalid or expired login link' });
     }
 
-    // Check if token has been used
     if (loginToken.used) {
+      log.warn({ reason: 'used_token' }, 'Verify-login token already used');
       return res.status(401).json({ error: 'This login link has already been used' });
     }
 
-    // Check if token has expired
     if (new Date() > new Date(loginToken.expiresAt)) {
+      log.warn({ reason: 'expired_token' }, 'Verify-login token expired');
       return res.status(401).json({ error: 'This login link has expired' });
     }
 
-    // Get user
     const user = await usersCollection.findOne({ _id: loginToken.userId });
 
     if (!user) {
+      log.warn({ userId: loginToken.userId?.toString() }, 'Verify-login user not found');
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Mark token as used
     await tokensCollection.updateOne({ token }, { $set: { used: true, usedAt: new Date() } });
 
-    // Create JWT token
     const jwtToken = jwt.sign(
       {
         id: user._id.toString(),
@@ -64,7 +69,8 @@ export default async function handler(req, res) {
       { expiresIn: '7d' }
     );
 
-    // Return user data and JWT
+    log.info({ userId: user._id?.toString() }, 'Verify-login token accepted');
+
     res.status(200).json({
       success: true,
       token: jwtToken,
@@ -75,7 +81,7 @@ export default async function handler(req, res) {
       },
     });
   } catch (error) {
-    console.error('Token verification error:', error);
+    log.error({ error: serializeError(error) }, 'Token verification error');
     res.status(500).json({ error: 'Failed to verify login token' });
   }
 }
