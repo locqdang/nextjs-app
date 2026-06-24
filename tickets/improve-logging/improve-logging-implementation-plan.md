@@ -118,8 +118,7 @@ import pino from 'pino';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const SENSITIVE_KEY_PATTERN =
-  /token|auth|authorization|password|secret|credential|jwt|loginlink/i;
+const SENSITIVE_KEY_PATTERN = /token|auth|authorization|password|secret|credential|jwt|loginlink/i;
 
 export function shouldIncludeStack() {
   return process.env.LOG_INCLUDE_STACK !== '0';
@@ -579,10 +578,10 @@ Modify `docker-compose.yml`:
 services:
   nextjs-app:
     labels:
-      logging: "loki"
-      app: "vietpolyglots"
-      service: "nextjs-app"
-      environment: "production"
+      logging: 'loki'
+      app: 'vietpolyglots'
+      service: 'nextjs-app'
+      environment: 'production'
 ```
 
 Do not change existing app port mapping:
@@ -739,8 +738,8 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d --build
 After `docker-compose.logging.yml` exists, add a Compose config validation step:
 
 ```yaml
-      - name: Validate Docker Compose config
-        run: docker compose -f docker-compose.yml -f docker-compose.logging.yml config
+- name: Validate Docker Compose config
+  run: docker compose -f docker-compose.yml -f docker-compose.logging.yml config
 ```
 
 Do not start Loki/Grafana in CI unless a later task requires it.

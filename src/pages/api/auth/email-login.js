@@ -51,6 +51,7 @@ export default async function handler(req, res) {
             expiresIn: '15 minutes',
           }),
         });
+        log.info({ result: 'login_link_sent' }, 'Email login requested');
       } catch (webhookError) {
         userLog.error({ error: serializeError(webhookError) }, 'n8n login webhook failed');
         // Continue even if webhook fails - token is still created.

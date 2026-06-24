@@ -159,10 +159,10 @@ Add labels to the existing `nextjs-app` service in `docker-compose.yml` so the l
 services:
   nextjs-app:
     labels:
-      logging: "loki"
-      app: "vietpolyglots"
-      service: "nextjs-app"
-      environment: "production"
+      logging: 'loki'
+      app: 'vietpolyglots'
+      service: 'nextjs-app'
+      environment: 'production'
 ```
 
 Do not change the current app port mapping:
@@ -469,8 +469,7 @@ Design rule:
 
 ```js
 const canLogLoginLinks =
-  process.env.NODE_ENV !== 'production' &&
-  process.env.LOG_LOGIN_LINKS === '1';
+  process.env.NODE_ENV !== 'production' && process.env.LOG_LOGIN_LINKS === '1';
 ```
 
 Behavior:
