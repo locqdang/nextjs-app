@@ -63,4 +63,8 @@ jobs:
           NODE_ENV: production
 
       - name: Validate Docker Compose config
-        run: docker compose -f docker-compose.yml -f docker-compose.logging.yml config
+        run: |
+          # Intent: docker-compose.yml requires an env_file named .env in production,
+          # but CI receives env vars from GitHub Actions and does not check in a real .env.
+          touch .env
+          docker compose -f docker-compose.yml -f docker-compose.logging.yml config
