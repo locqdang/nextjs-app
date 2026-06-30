@@ -6,6 +6,7 @@ const BLOG_POSTS_POPULATE = {
   'populate[paragraphs][populate][ParagraphMedia][populate]': '*',
   'populate[authors][populate]': '*',
   'populate[coverImage][populate]': '*',
+  'populate[seo][populate]': '*',
 };
 
 export function slugifyBlogPost(post) {
@@ -103,6 +104,16 @@ function normalizeTag(tag) {
   };
 }
 
+function normalizeSeo(seo) {
+  // The SEO component carries metaTitle/metaDescription plus the JSON-LD object the UI emits as structured data.
+  if (!seo) return null;
+
+  return {
+    ...seo,
+    shareImage: normalizeMedia(seo.shareImage),
+  };
+}
+
 export function normalizeBlogPost(post) {
   const normalized = post?.attributes ? { id: post.id, ...post.attributes } : { ...post };
 
@@ -112,6 +123,7 @@ export function normalizeBlogPost(post) {
     // Only an explicit true should affect layout; Strapi null/undefined should behave like false.
     isFeatured: normalized.isFeatured === true,
     coverImage: normalizeMedia(normalized.coverImage),
+    seo: normalizeSeo(normalized.seo),
     authors: (normalized.authors || []).map(normalizeAuthor),
     tags: (normalized.tags || []).map(normalizeTag),
     paragraphs: (normalized.paragraphs || []).map((paragraph) => ({
