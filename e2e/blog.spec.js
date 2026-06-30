@@ -1,13 +1,13 @@
 const { test, expect } = require('@playwright/test');
 
 const expectedPostTitles = [
-  'Will AI Take Our Jobs? History Suggests a Different Story',
+  'Will AI Take Our Jobs? History and the Evidence Say a More Nuanced Story',
   'How to Use AI to Learn a Language Faster',
   'How to Back Up Your Server (Before You Wish You Had)',
 ];
 
 const expectedPostSlugs = [
-  '/blog/will-ai-take-our-jobs-history-suggests-a-different-story',
+  '/blog/will-ai-take-our-jobs-history-and-the-evidence-say-a-more-nuanced-story',
   '/blog/how-to-use-ai-to-learn-a-language-faster',
   '/blog/how-to-back-up-your-server-before-you-wish-you-had',
 ];

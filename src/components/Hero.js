@@ -2,14 +2,16 @@
 export default function Hero({ data }) {
   const headline = data?.headline ?? 'Strapi Connection Issue';
   const subHeadline = data?.subHeadline ?? data?.subHealine ?? '';
-  const b1 = data?.button1 ?? {};
-  const b2 = data?.button2 ?? {};
+  const introText = data?.introText ?? '';
+  const b1 = data?.button1 ?? { label: 'See Projects', url: '/projects' };
+  const b2 = data?.button2 ?? { label: 'Book a Meeting', url: '/video-meeting' };
 
   return (
     <section className="hero">
       <div className="hero__content">
         <h1>{headline}</h1>
-        {subHeadline && <p>{subHeadline}</p>}
+        {subHeadline && <p className="hero__subheadline">{subHeadline}</p>}
+        {introText && <p className="hero__intro">{introText}</p>}
 
         {(b1?.label || b2?.label) && (
           <div className="hero__cta">
