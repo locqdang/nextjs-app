@@ -28,8 +28,8 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${post.title} | Vietpolyglots`,
-    description: post.excerpt,
+    title: `${post.seo?.metaTitle || post.title} | Vietpolyglots`,
+    description: post.seo?.metaDescription || post.excerpt,
   };
 }
 
@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <main>
-      <StructuredData data={post?.seo?.structuredData} />
+      <StructuredData data={post.seo?.structuredData} />
       <article className="blog-post">
         <header className="blog-post__hero">
           <p className="blog-post__date">{formatBlogDate(post.date ?? post.publishedAt)}</p>
