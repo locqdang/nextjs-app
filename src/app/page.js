@@ -2,6 +2,7 @@ import Hero from '../components/Hero';
 import ProjectCard from '../components/ProjectCard';
 import { fetchFromStrapi } from '../lib/data';
 import { formatMediaURL } from '../lib/data/strapi';
+import StructuredData from '../components/StructuredData';
 
 export const revalidate = 3600;
 
@@ -44,6 +45,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <StructuredData data={homepage?.seo?.structuredData} />
       <Hero data={heroData} />
 
       <section id="projects" className="section">

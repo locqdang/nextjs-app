@@ -3,6 +3,7 @@ import BlogAuthor from '../../../components/BlogAuthor';
 import BlogCoverImage from '../../../components/BlogCoverImage';
 import BlogParagraph from '../../../components/BlogParagraph';
 import RelatedBlogs from '../../../components/RelatedBlogs';
+import StructuredData from '../../../components/StructuredData';
 import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
 
 export const revalidate = 3600;
@@ -41,6 +42,7 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <main>
+      <StructuredData data={post?.seo?.structuredData} />
       <article className="blog-post">
         <header className="blog-post__hero">
           <p className="blog-post__date">{formatBlogDate(post.date ?? post.publishedAt)}</p>
