@@ -25,7 +25,11 @@ export default async function ProjectsPage() {
 
   return (
     <main>
-      <section className="section">
+      <section className="section projects-index">
+        <header className="projects-index__hero">
+          <p className="projects-index__eyebrow">Vietpolyglots Projects</p>
+          <h1>Projects</h1>
+        </header>
         <div className="grid">
           {projects?.map((project) => (
             <ProjectCard key={project.id ?? project.slug ?? project.name} project={project} />
