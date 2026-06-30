@@ -1,78 +1,99 @@
 import { logger, serializeError } from '../logger.js';
 
-const STRAPI_URL = process.env.STRAPI_URL || 'https://strapi.vietpolyglots.com';
+const STRAPI_PUBLIC_URL = process.env.STRAPI_URL || 'https://strapi.vietpolyglots.com';
+const STRAPI_INTERNAL_URL = process.env.STRAPI_INTERNAL_URL || 'http://192.168.0.61:9930';
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
+const STRAPI_API_BASES = Array.from(new Set([STRAPI_PUBLIC_URL, STRAPI_INTERNAL_URL].filter(Boolean)));
+
+function buildHeaders() {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (STRAPI_TOKEN) {
+    headers.Authorization = `Bearer ${STRAPI_TOKEN}`;
+  }
+
+  return headers;
+}
+
+function buildStrapiUrl(baseUrl, endpoint, options = {}) {
+  const url = new URL(`${baseUrl}/api/${endpoint}`);
+
+  if (options.populate) {
+    if (Array.isArray(options.populate)) {
+      options.populate.forEach((field, index) => {
+        url.searchParams.set(`populate[${index}]`, field);
+      });
+    } else {
+      url.searchParams.set('populate', options.populate);
+    }
+  }
+
+  if (options.filters) {
+    Object.entries(options.filters).forEach(([key, value]) => {
+      url.searchParams.set(`filters[${key}]`, value);
+    });
+  }
+
+  if (options.pagination) {
+    url.searchParams.set('pagination[page]', options.pagination.page || 1);
+    url.searchParams.set('pagination[pageSize]', options.pagination.pageSize || 25);
+  }
+
+  if (options.sort) {
+    url.searchParams.set('sort', options.sort);
+  }
+
+  if (options.queryParams) {
+    Object.entries(options.queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        url.searchParams.set(key, String(value));
+      }
+    });
+  }
+
+  return url;
+}
 
 /**
  * Format media URL from Strapi
  */
 export function formatMediaURL(url) {
   if (!url) return null;
-  return url.startsWith('/') ? STRAPI_URL + url : url;
+  return url.startsWith('/') ? STRAPI_PUBLIC_URL + url : url;
 }
 
 /**
  * Fetch data from Strapi API
  */
 export async function fetchFromStrapi(endpoint, options = {}) {
-  try {
-    const url = new URL(`${STRAPI_URL}/api/${endpoint}`);
+  let lastError = null;
 
-    if (options.populate) {
-      if (Array.isArray(options.populate)) {
-        options.populate.forEach((field, index) => {
-          url.searchParams.set(`populate[${index}]`, field);
-        });
-      } else {
-        url.searchParams.set('populate', options.populate);
+  for (const baseUrl of STRAPI_API_BASES) {
+    try {
+      const url = buildStrapiUrl(baseUrl, endpoint, options);
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Strapi API error: ${response.status} ${response.statusText}`);
       }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      logger.warn(
+        { error: serializeError(error), endpoint, baseUrl },
+        'Strapi fetch failed for base URL, trying next candidate if available'
+      );
     }
-
-    if (options.filters) {
-      Object.entries(options.filters).forEach(([key, value]) => {
-        url.searchParams.set(`filters[${key}]`, value);
-      });
-    }
-
-    if (options.pagination) {
-      url.searchParams.set('pagination[page]', options.pagination.page || 1);
-      url.searchParams.set('pagination[pageSize]', options.pagination.pageSize || 25);
-    }
-
-    if (options.sort) {
-      url.searchParams.set('sort', options.sort);
-    }
-
-    if (options.queryParams) {
-      Object.entries(options.queryParams).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          url.searchParams.set(key, String(value));
-        }
-      });
-    }
-
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (STRAPI_TOKEN) {
-      headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
-    }
-
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Strapi API error: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    logger.error({ error: serializeError(error), endpoint }, 'Error fetching from Strapi');
-    throw error;
   }
+
+  logger.error({ error: serializeError(lastError), endpoint }, 'Error fetching from Strapi');
+  throw lastError;
 }
 
 /**
@@ -96,14 +117,8 @@ export async function fetchStrapiEntries(contentType, options = {}) {
  */
 export async function createStrapiEntry(contentType, data) {
   try {
-    const url = `${STRAPI_URL}/api/${contentType}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (STRAPI_TOKEN) {
-      headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
-    }
+    const url = `${STRAPI_INTERNAL_URL}/api/${contentType}`;
+    const headers = buildHeaders();
 
     const response = await fetch(url, {
       method: 'POST',
@@ -128,14 +143,8 @@ export async function createStrapiEntry(contentType, data) {
  */
 export async function updateStrapiEntry(contentType, id, data) {
   try {
-    const url = `${STRAPI_URL}/api/${contentType}/${id}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (STRAPI_TOKEN) {
-      headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
-    }
+    const url = `${STRAPI_INTERNAL_URL}/api/${contentType}/${id}`;
+    const headers = buildHeaders();
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -160,14 +169,8 @@ export async function updateStrapiEntry(contentType, id, data) {
  */
 export async function deleteStrapiEntry(contentType, id) {
   try {
-    const url = `${STRAPI_URL}/api/${contentType}/${id}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    if (STRAPI_TOKEN) {
-      headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
-    }
+    const url = `${STRAPI_INTERNAL_URL}/api/${contentType}/${id}`;
+    const headers = buildHeaders();
 
     const response = await fetch(url, {
       method: 'DELETE',
