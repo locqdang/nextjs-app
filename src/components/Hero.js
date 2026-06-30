@@ -9,24 +9,27 @@ export default function Hero({ data }) {
   return (
     <section className="hero">
       <div className="hero__content">
-        <h1>{headline}</h1>
-        {subHeadline && <p className="hero__subheadline">{subHeadline}</p>}
-        {introText && <p className="hero__intro">{introText}</p>}
+        <div className="hero__panel">
+          <p className="hero__eyebrow">Vietpolyglots</p>
+          <h1>{headline}</h1>
+          {subHeadline && <p className="hero__subheadline">{subHeadline}</p>}
+          {introText && <p className="hero__intro">{introText}</p>}
 
-        {(b1?.label || b2?.label) && (
-          <div className="hero__cta">
-            {b1?.label && (
-              <a className="btn" href={b1?.url ?? 'projects'}>
-                {b1.label}
-              </a>
-            )}
-            {b2?.label && (
-              <a className="btn btn--ghost" href={b2?.url ?? '/video-meeting'}>
-                {b2.label}
-              </a>
-            )}
-          </div>
-        )}
+          {(b1?.label || b2?.label) && (
+            <div className="hero__cta">
+              {b1?.label && (
+                <a className="btn hero__btn" href={b1?.url ?? 'projects'}>
+                  {b1.label}
+                </a>
+              )}
+              {b2?.label && (
+                <a className="btn btn--ghost hero__btn hero__btn--ghost" href={b2?.url ?? '/video-meeting'}>
+                  {b2.label}
+                </a>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
