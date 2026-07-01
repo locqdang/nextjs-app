@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-type RichTextChild = {
+export type RichTextChild = {
   type?: string;
   text?: string;
   url?: string;
@@ -13,14 +13,17 @@ type RichTextChild = {
   children?: RichTextChild[];
 };
 
-type RichTextBlock = RichTextChild & {
+export type RichTextBlock = RichTextChild & {
   level?: number;
   format?: 'ordered' | 'unordered' | string;
 };
 
-type ParagraphRichTextProps = {
+export type ParagraphRichTextProps = {
   content?: RichTextBlock[] | null;
+  headingIds?: string[];
 };
+
+export type ParagraphRichTextContent = ParagraphRichTextProps['content'];
 
 const FRONTEND_ORIGIN = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '') || null;
 
@@ -137,7 +140,7 @@ function renderList(block: RichTextBlock, index: number): ReactNode {
   );
 }
 
-function renderBlock(block: RichTextBlock, index: number): ReactNode {
+function renderBlock(block: RichTextBlock, index: number, headingIds: string[] = []): ReactNode {
   if (!block) return null;
 
   if (block.type === 'paragraph') {
@@ -162,8 +165,9 @@ function renderBlock(block: RichTextBlock, index: number): ReactNode {
     if (!blockText(block)) return null;
     const headingLevel = Math.min(Math.max(block.level || 3, 3), 4);
     const HeadingTag = `h${headingLevel}` as 'h3' | 'h4';
+    const headingId = headingIds[index];
     return (
-      <HeadingTag key={`heading-${index}`}>
+      <HeadingTag key={`heading-${index}`} id={headingId}>
         {renderTextChildren(block.children, `heading-${index}`)}
       </HeadingTag>
     );
@@ -185,8 +189,8 @@ function renderBlock(block: RichTextBlock, index: number): ReactNode {
   return null;
 }
 
-export default function ParagraphRichText({ content }: ParagraphRichTextProps) {
+export default function ParagraphRichText({ content, headingIds = [] }: ParagraphRichTextProps) {
   if (!Array.isArray(content) || !content.length) return null;
 
-  return <>{content.map(renderBlock)}</>;
+  return <>{content.map((block, index) => renderBlock(block, index, headingIds))}</>;
 }

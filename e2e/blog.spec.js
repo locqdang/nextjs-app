@@ -87,6 +87,29 @@ test.describe('/blog/[slug]', () => {
     await expect(page.locator('.blog-post__section blockquote').first()).toBeVisible();
   });
 
+  test('renders a sticky table of contents on desktop blog posts', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1200 });
+    await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
+
+    const toc = page.locator('.blog-post__toc');
+    await expect(toc).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Table of contents' })).toBeVisible();
+    await expect(toc).toHaveCSS('position', 'sticky');
+
+    const firstTocLink = toc.locator('a').first();
+    await expect(firstTocLink).toBeVisible();
+    await expect(firstTocLink).toHaveAttribute('href', /^#/);
+
+    const before = await toc.boundingBox();
+    expect(before).not.toBeNull();
+
+    await page.evaluate(() => window.scrollTo({ top: 1400, behavior: 'instant' }));
+
+    const after = await toc.boundingBox();
+    expect(after).not.toBeNull();
+    expect(Math.abs(after.y - before.y)).toBeLessThan(8);
+  });
+
   test('renders the cover image on blog post pages when populated', async ({ page }) => {
     await page.goto('/blog/how-to-use-ai-to-learn-a-language-faster');
 

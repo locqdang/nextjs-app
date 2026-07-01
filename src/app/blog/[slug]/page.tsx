@@ -3,9 +3,24 @@ import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
 import BlogCoverImage from '../../../components/BlogCoverImage';
 import BlogParagraph from '../../../components/BlogParagraph';
+import BlogToc from '../../../components/BlogToc';
 import RelatedBlogs from '../../../components/RelatedBlogs';
 import StructuredData from '../../../components/StructuredData';
+import { createHeadingId, extractBlogTocItems } from '../../../lib/blog-toc';
 import { fetchBlogPostBySlug, fetchBlogPosts, formatBlogDate } from '../../../lib/blog-posts';
+
+function extractHeadingText(children: any[] = []) {
+  return children
+    .map((child) => {
+      if (!child || typeof child !== 'object') return '';
+      if ('type' in child && child.type === 'text') {
+        return 'text' in child ? child.text || '' : '';
+      }
+      return 'children' in child ? extractHeadingText(child.children || []) : '';
+    })
+    .join('')
+    .trim();
+}
 
 export const revalidate = 3600;
 
@@ -65,6 +80,9 @@ export default async function BlogPostPage({ params }) {
 
   if (!post) notFound();
 
+  const tocItems = extractBlogTocItems(post.paragraphs);
+  const usedHeadingIds = new Map<string, number>();
+
   return (
     <main>
       <StructuredData data={post.seo?.structuredData} />
@@ -78,10 +96,33 @@ export default async function BlogPostPage({ params }) {
 
         <BlogCoverImage title={post.title} coverImage={post.coverImage} />
 
-        <div className="blog-post__content">
-          {post.paragraphs.map((paragraph) => (
-            <BlogParagraph paragraph={paragraph} key={paragraph.id ?? paragraph.title} />
-          ))}
+        <div className="blog-post__body">
+          <div className="blog-post__content">
+            {post.paragraphs.map((paragraph) => {
+              const sectionId = paragraph.title
+                ? createHeadingId(paragraph.title, usedHeadingIds)
+                : undefined;
+              const richTextHeadingIds = (paragraph.richText || []).map((block) => {
+                if (block?.type !== 'heading') return undefined;
+
+                const text = extractHeadingText(block.children || []);
+                if (!text) return undefined;
+
+                return createHeadingId(text, usedHeadingIds);
+              });
+
+              return (
+                <BlogParagraph
+                  paragraph={paragraph}
+                  key={paragraph.id ?? paragraph.title}
+                  richTextHeadingIds={richTextHeadingIds}
+                  sectionId={sectionId}
+                />
+              );
+            })}
+          </div>
+
+          <BlogToc items={tocItems} />
         </div>
 
         {post.authors?.length ? (
