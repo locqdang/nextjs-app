@@ -24,27 +24,42 @@ type ParagraphRichTextProps = {
 
 const FRONTEND_ORIGIN = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '') || null;
 
-function normalizeLinkUrl(url?: string): string | null {
+function looksLikeExternalHostname(url: string): boolean {
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+([/?#:].*)?$/i.test(url);
+}
+
+export function normalizeLinkUrl(url?: string): string | null {
   if (!url) return null;
 
-  if (url.startsWith('/') || url.startsWith('#')) {
-    return url;
+  const trimmedUrl = url.trim();
+  if (!trimmedUrl) return null;
+
+  if (trimmedUrl.startsWith('/') || trimmedUrl.startsWith('#')) {
+    return trimmedUrl;
   }
 
-  try {
-    const parsed = new URL(url);
+  if (/^https?:\/\//i.test(trimmedUrl)) {
+    try {
+      const parsed = new URL(trimmedUrl);
 
-    if (FRONTEND_ORIGIN) {
-      const frontendOrigin = new URL(FRONTEND_ORIGIN).origin;
-      if (parsed.origin === frontendOrigin) {
-        return `${parsed.pathname}${parsed.search}${parsed.hash}` || '/';
+      if (FRONTEND_ORIGIN) {
+        const frontendOrigin = new URL(FRONTEND_ORIGIN).origin;
+        if (parsed.origin === frontendOrigin) {
+          return `${parsed.pathname}${parsed.search}${parsed.hash}` || '/';
+        }
       }
-    }
 
-    return url;
-  } catch {
-    return `/${url}`;
+      return trimmedUrl;
+    } catch {
+      return trimmedUrl;
+    }
   }
+
+  if (looksLikeExternalHostname(trimmedUrl)) {
+    return `https://${trimmedUrl}`;
+  }
+
+  return `/${trimmedUrl.replace(/^\/+/, '')}`;
 }
 
 function isExternalUrl(url: string): boolean {
