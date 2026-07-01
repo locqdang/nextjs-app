@@ -23,7 +23,10 @@ export default function Hero({ data }) {
                 </a>
               )}
               {b2?.label && (
-                <a className="btn btn--ghost hero__btn hero__btn--ghost" href={b2?.url ?? '/video-meeting'}>
+                <a
+                  className="btn btn--ghost hero__btn hero__btn--ghost"
+                  href={b2?.url ?? '/video-meeting'}
+                >
                   {b2.label}
                 </a>
               )}

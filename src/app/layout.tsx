@@ -28,9 +28,9 @@ function mergeNavbarPages(navbar: any, pages: any[] = []) {
   const homeGroup = dynamicMenu[homeIndex] ?? {};
   const subItems = Array.isArray(homeGroup.subItems) ? [...homeGroup.subItems] : [];
   const existingUrls = new Set(
-    [homeGroup.url, ...subItems.map((item) => item?.url)].filter(Boolean).map((url) =>
-      String(url).startsWith('/') ? String(url) : `/${String(url)}`
-    )
+    [homeGroup.url, ...subItems.map((item) => item?.url)]
+      .filter(Boolean)
+      .map((url) => (String(url).startsWith('/') ? String(url) : `/${String(url)}`))
   );
 
   for (const page of pages) {
