@@ -19,6 +19,29 @@ body {
   background: #d8e0d6;
 }
 
+a {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(29, 78, 216, 0.45);
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+}
+
+a:hover {
+  color: #1e40af;
+  text-decoration-color: currentColor;
+}
+
+a:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+
 /* Layout */
 main {
   max-width: var(--max);
@@ -454,10 +477,6 @@ main {
   margin: 0.75rem 0 0;
   padding-left: 1.25rem;
 }
-.legal-page__section a {
-  color: #1d4ed8;
-}
-
 .nav__toggle {
   display: inline-flex;
   gap: 6px;
