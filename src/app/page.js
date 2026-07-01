@@ -6,27 +6,65 @@ import StructuredData from '../components/StructuredData';
 
 export const revalidate = 3600;
 
-export default async function HomePage() {
-  // Fetch homepage content from Strapi; fall back gracefully if CMS is unavailable.
-  let fetchedHomePage = null;
+const HOMEPAGE_QUERY_PARAMS = {
+  'populate[hero][populate]': '*',
+  'populate[project0][populate]': '*',
+  'populate[project1][populate]': '*',
+  'populate[project2][populate]': '*',
+  'populate[blogPost0][populate]': '*',
+  'populate[blogPost1][populate]': '*',
+  'populate[blogPost2][populate]': '*',
+  'populate[seo][populate]': '*',
+};
+
+async function fetchHomePage() {
   try {
-    fetchedHomePage = await fetchFromStrapi('homepage', {
-      queryParams: {
-        'populate[hero][populate]': '*',
-        'populate[project0][populate]': '*',
-        'populate[project1][populate]': '*',
-        'populate[project2][populate]': '*',
-        'populate[blogPost0][populate]': '*',
-        'populate[blogPost1][populate]': '*',
-        'populate[blogPost2][populate]': '*',
-        'populate[seo][populate]': '*',
-      },
+    const fetchedHomePage = await fetchFromStrapi('homepage', {
+      queryParams: HOMEPAGE_QUERY_PARAMS,
     });
+
+    return fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
   } catch {
-    fetchedHomePage = null;
+    return {};
   }
-  // Normalize Strapi response shape (v4/v5 style) into one predictable object.
-  const homepage = fetchedHomePage?.data?.attributes ?? fetchedHomePage?.data ?? {};
+}
+
+export async function generateMetadata() {
+  const homepage = await fetchHomePage();
+  const title = homepage?.seo?.metaTitle || homepage?.hero?.headline || 'Vietpolyglots';
+  const description =
+    homepage?.seo?.metaDescription ||
+    homepage?.hero?.subHealine ||
+    homepage?.hero?.introText ||
+    'Vietpolyglots website';
+  const keywords = homepage?.seo?.keywords;
+  const image = homepage?.seo?.shareImage?.url
+    ? formatMediaURL(homepage.seo.shareImage.url)
+    : undefined;
+  const url = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://vietpolyglots.com';
+
+  return {
+    title,
+    description,
+    keywords: keywords || undefined,
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      ...(image ? { images: [{ url: image }] } : {}),
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      ...(image ? { images: [image] } : {}),
+    },
+  };
+}
+
+export default async function HomePage() {
+  const homepage = await fetchHomePage();
   const heroData = homepage?.hero ?? null;
   // Keep homepage project slots stable while ignoring empty entries.
   const featuredProjects = [homepage.project0, homepage.project1, homepage.project2].filter(
@@ -64,7 +102,7 @@ export default async function HomePage() {
         <div className="section__header">
           <h2>Let&apos;s work together</h2>
           <p>
-            Email me at <a href="mailto:locqdang@gmail.com">locqdang@gmail.com</a>
+            Email me at <a href="mailto:vietpolyglots@gmail.com">vietpolyglots@gmail.com</a>
           </p>
         </div>
       </section>

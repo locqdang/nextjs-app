@@ -79,7 +79,7 @@ function renderInlineNode(child: RichTextChild, key: string): ReactNode {
 
     if (isExternalUrl(href)) {
       return (
-        <a key={key} href={href} target="_blank" rel="noreferrer">
+        <a key={key} href={href} target="_blank" rel="nofollow noreferrer">
           {linkChildren}
         </a>
       );
