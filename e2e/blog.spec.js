@@ -95,6 +95,7 @@ test.describe('/blog/[slug]', () => {
     await expect(toc).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Table of contents' })).toBeVisible();
     await expect(toc).toHaveCSS('position', 'sticky');
+    await expect(toc).toHaveCSS('top', '96px');
 
     const firstTocLink = toc.locator('a').first();
     await expect(firstTocLink).toBeVisible();
@@ -107,7 +108,9 @@ test.describe('/blog/[slug]', () => {
 
     const after = await toc.boundingBox();
     expect(after).not.toBeNull();
-    expect(Math.abs(after.y - before.y)).toBeLessThan(8);
+    expect(after.y).toBeGreaterThanOrEqual(90);
+    expect(after.y).toBeLessThanOrEqual(102);
+    expect(after.y).toBeLessThan(before.y);
   });
 
   test('renders the cover image on blog post pages when populated', async ({ page }) => {
