@@ -97,7 +97,10 @@ function renderInlineNode(child: RichTextChild, key: string): ReactNode {
 
 function renderTextChildren(children: RichTextChild[] = [], keyPrefix = 'inline'): ReactNode[] {
   return children.map((child, index) =>
-    renderInlineNode(child, `${keyPrefix}-${child.type ?? 'node'}-${child.text ?? child.url ?? index}-${index}`)
+    renderInlineNode(
+      child,
+      `${keyPrefix}-${child.type ?? 'node'}-${child.text ?? child.url ?? index}-${index}`
+    )
   );
 }
 
@@ -135,7 +138,9 @@ function renderBlock(block: RichTextBlock, index: number): ReactNode {
       );
     }
 
-    return <p key={`paragraph-${index}`}>{renderTextChildren(block.children, `paragraph-${index}`)}</p>;
+    return (
+      <p key={`paragraph-${index}`}>{renderTextChildren(block.children, `paragraph-${index}`)}</p>
+    );
   }
 
   if (block.type === 'heading') {
@@ -151,7 +156,11 @@ function renderBlock(block: RichTextBlock, index: number): ReactNode {
 
   if (block.type === 'quote') {
     if (!blockText(block)) return null;
-    return <blockquote key={`quote-${index}`}>{renderTextChildren(block.children, `quote-${index}`)}</blockquote>;
+    return (
+      <blockquote key={`quote-${index}`}>
+        {renderTextChildren(block.children, `quote-${index}`)}
+      </blockquote>
+    );
   }
 
   if (block.type === 'list') {

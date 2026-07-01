@@ -3,7 +3,9 @@ import { logger, serializeError } from '../logger.js';
 const STRAPI_PUBLIC_URL = process.env.STRAPI_URL || 'https://strapi.vietpolyglots.com';
 const STRAPI_INTERNAL_URL = process.env.STRAPI_INTERNAL_URL || 'http://192.168.0.61:9930';
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
-const STRAPI_API_BASES = Array.from(new Set([STRAPI_PUBLIC_URL, STRAPI_INTERNAL_URL].filter(Boolean)));
+const STRAPI_API_BASES = Array.from(
+  new Set([STRAPI_PUBLIC_URL, STRAPI_INTERNAL_URL].filter(Boolean))
+);
 
 function buildHeaders() {
   const headers = {
