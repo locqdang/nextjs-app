@@ -65,7 +65,7 @@ export default function BlogAuthor({
                   className="blog-author__profile-link"
                   href={author.profile_link}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noreferrer nofollow"
                 >
                   View public profile
                 </a>
