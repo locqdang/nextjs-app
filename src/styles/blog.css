@@ -266,7 +266,7 @@
 }
 
 .blog-post {
-  max-width: 860px;
+  max-width: 1120px;
 }
 
 .blog-post__hero {
@@ -310,11 +310,90 @@
   text-align: center;
 }
 
+.blog-post__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+}
+
+.blog-post__content {
+  min-width: 0;
+}
+
+.blog-post__toc {
+  display: none;
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+  padding: 1.1rem 1rem;
+  border: 1px solid rgba(219, 228, 238, 0.95);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.blog-post__toc-card {
+  position: static;
+}
+
+.blog-post__toc-eyebrow {
+  margin: 0 0 0.45rem;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.blog-post__toc h2 {
+  margin: 0 0 0.9rem;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.blog-post__toc-nav {
+  max-height: calc(100vh - 8rem);
+  overflow: auto;
+}
+
+.blog-post__toc-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-post__toc-item {
+  margin: 0;
+}
+
+.blog-post__toc-item a {
+  color: #334155;
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.blog-post__toc-item a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.blog-post__toc-item--level-3 {
+  padding-left: 0.8rem;
+}
+
+.blog-post__toc-item--level-4 {
+  padding-left: 1.4rem;
+}
+
 .blog-post__section {
   margin-top: 2.5rem;
 }
 
 .blog-post__section h2 {
+  scroll-margin-top: 7rem;
   margin: 0 0 1rem;
   font-size: clamp(1.35rem, 3vw, 2rem);
 }
@@ -351,6 +430,7 @@
 
 .blog-post__section h3,
 .blog-post__section h4 {
+  scroll-margin-top: 7rem;
   margin: 1.5rem 0 0.75rem;
   color: #0f172a;
   line-height: 1.25;
@@ -465,4 +545,15 @@
 .related-blogs__list a:hover {
   color: #1d4ed8;
   text-decoration: underline;
+}
+
+@media (min-width: 1024px) {
+  .blog-post__body {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+
+  .blog-post__toc {
+    display: block;
+  }
 }

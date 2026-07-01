@@ -10,14 +10,20 @@ type BlogParagraphData = {
 
 type BlogParagraphProps = {
   paragraph: BlogParagraphData;
+  sectionId?: string;
+  richTextHeadingIds?: string[];
 };
 
-export default function BlogParagraph({ paragraph }: BlogParagraphProps) {
+export default function BlogParagraph({
+  paragraph,
+  sectionId,
+  richTextHeadingIds = [],
+}: BlogParagraphProps) {
   return (
     <section className="blog-post__section">
-      {paragraph.title ? <h2>{paragraph.title}</h2> : null}
+      {paragraph.title ? <h2 id={sectionId}>{paragraph.title}</h2> : null}
       <ParagraphMedia mediaBlock={paragraph.ParagraphMedia} />
-      <ParagraphRichText content={paragraph.richText} />
+      <ParagraphRichText content={paragraph.richText} headingIds={richTextHeadingIds} />
     </section>
   );
 }
