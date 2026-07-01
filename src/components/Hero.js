@@ -18,7 +18,7 @@ export default function Hero({ data }) {
           {(b1?.label || b2?.label) && (
             <div className="hero__cta">
               {b1?.label && (
-                <a className="btn hero__btn" href={b1?.url ?? 'projects'}>
+                <a className="btn hero__btn" href={b1?.url ?? '/projects'}>
                   {b1.label}
                 </a>
               )}
