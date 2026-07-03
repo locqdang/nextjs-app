@@ -30,7 +30,7 @@ Normalize the current Google One Tap behavior into canonical Spec Kit docs and f
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Preserve current architecture rather than mixing old Pages Router assumptions back in.
 - Keep redirect safety explicit.

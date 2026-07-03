@@ -5,6 +5,7 @@
 Represents one of the two top-level groups in the main navbar.
 
 **Variants**
+
 - public navigation group
 - service and account group
 
@@ -13,6 +14,7 @@ Represents one of the two top-level groups in the main navbar.
 Represents the actions shown based on authentication state.
 
 **Variants**
+
 - logged-out state
 - logged-in state
 

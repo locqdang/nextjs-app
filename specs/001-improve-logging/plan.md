@@ -30,7 +30,7 @@ Introduce a centralized server-side logger for the Next.js app, migrate critical
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Keep changes incremental and repo-local rather than introducing a separate backend service.
 - Prefer reversible infrastructure additions that do not block normal CI or local app development.
@@ -85,6 +85,7 @@ docs/
 ## Phase 0: Research Summary
 
 Research outcomes are recorded in `specs/001-improve-logging/research.md`. The key decisions are:
+
 - Use Pino for structured application logging.
 - Emit logs to stdout and collect them from Docker rather than sending logs from app code to Loki.
 - Use Grafana Alloy as the shipper, Loki as the log store, and Grafana as the local-only query UI.
@@ -99,6 +100,7 @@ Research outcomes are recorded in `specs/001-improve-logging/research.md`. The k
 ## Phase 2 Preview
 
 Task generation should follow this order:
+
 1. Add logger dependency and helper module.
 2. Add tests for error serialization, redaction, request context, and login-link gating.
 3. Migrate the listed route and data-helper files to the logger.

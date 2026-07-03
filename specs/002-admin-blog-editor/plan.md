@@ -30,7 +30,7 @@ Add a protected admin blog management area to the existing Next.js app so admins
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Reuse existing auth, logging, and data-access conventions instead of inventing a parallel admin stack.
 - Keep the feature small enough for incremental validation: manual editor first, AI assist second.
@@ -76,6 +76,7 @@ specs/
 ## Phase 0: Research Summary
 
 Research outcomes are recorded in `specs/002-admin-blog-editor/research.md`. The key decisions are:
+
 - Reuse JWT verification and MongoDB role checks for admin authorization.
 - Keep Strapi writes and n8n integration server-side only.
 - Use mocked n8n responses first, then connect to the real webhook after the contract is stable.
@@ -90,6 +91,7 @@ Research outcomes are recorded in `specs/002-admin-blog-editor/research.md`. The
 ## Phase 2 Preview
 
 Task generation should follow this order:
+
 1. Add admin authorization and payload-validation helpers.
 2. Build list, create, and edit API routes plus the basic admin UI.
 3. Add mocked AI-assist contract and editor integration.

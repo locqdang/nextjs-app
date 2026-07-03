@@ -8,7 +8,7 @@
 
 **Input**: Migrated from legacy requirements in `tickets/admin-ai-blog-editor/admin-ai-blog-editor.md`
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Admin manages blog posts manually (Priority: P1)
 
@@ -64,7 +64,7 @@ As the site operator, I want admin blog operations logged safely and validated c
 - What happens when the deployed Strapi version requires different publish semantics than a simple `publishedAt` write?
 - What happens when a non-admin user manually calls the admin API routes even if the client UI is hidden?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -88,7 +88,7 @@ As the site operator, I want admin blog operations logged safely and validated c
 - **FR-018**: The system MUST log admin blog list, create, update, authorization-failure, AI-assist, and Strapi-write events safely without logging JWTs, Strapi tokens, webhook secrets, full AI prompts by default, or full unpublished drafts by default.
 - **FR-019**: The system SHOULD include automated tests for authorization, payload validation, AI-response validation, slug behavior, and controlled failure handling.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Admin Blog Post**: A Strapi-backed blog entry managed through the admin UI, containing the public blog fields used by the site and optional AI draft linkage.
 - **Blog Editor Payload**: The validated request body used to create or update a blog post through the admin API.
@@ -96,7 +96,7 @@ As the site operator, I want admin blog operations logged safely and validated c
 - **AI Assist Response**: The validated n8n response containing `aiChatId`, draft content, and optional notes.
 - **Admin Authorization Context**: The verified JWT-derived user identity and role information used to permit or deny admin blog actions.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

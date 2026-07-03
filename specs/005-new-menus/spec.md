@@ -8,7 +8,7 @@
 
 **Input**: Migrated from legacy notes in `tickets/new-menus.md`
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - User understands the main site navigation at a glance (Priority: P1)
 
@@ -64,7 +64,7 @@ As a mobile HARO user, I want a simple local section switcher without overcrowdi
 - What happens when a user navigates between HARO and non-HARO routes on the same client session?
 - What happens when `Home` behavior differs between HARO context and general site context?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -82,14 +82,14 @@ As a mobile HARO user, I want a simple local section switcher without overcrowdi
 - **FR-012**: The project SHOULD decide whether the account trigger shows the user name when logged in.
 - **FR-013**: The project SHOULD confirm the desired `Home` destination behavior from HARO context.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Global Navbar Group**: One of the two top-level navigation groups shown in the main navbar.
 - **HARO Desktop Context**: The route state that switches desktop left-side navigation into HARO-specific links.
 - **HARO Mobile Section Switcher**: The compact local dropdown used to navigate HARO sections on mobile.
 - **Account Menu State**: The logged-out or logged-in account action set.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

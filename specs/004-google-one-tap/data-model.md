@@ -5,6 +5,7 @@
 Represents the intended in-app destination after successful login.
 
 **Fields**
+
 - requested target
 - validated app-relative target
 - fallback target
@@ -14,6 +15,7 @@ Represents the intended in-app destination after successful login.
 Represents the app-level SDK load and initialization state.
 
 **Fields**
+
 - script loaded state
 - SDK initialized state
 - current client eligibility inputs

@@ -30,7 +30,7 @@ Normalize the navigation redesign into canonical Spec Kit docs and focus impleme
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Keep the redesign grounded in the existing navbar component and route context.
 - Optimize for clarity over cleverness.

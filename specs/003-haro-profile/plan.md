@@ -30,7 +30,7 @@ Normalize the already-implemented HARO profile and Gmail mailbox connection work
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Keep the feature inside the existing app rather than splitting out a separate backend.
 - Preserve secure identity derivation from verified JWTs.
@@ -70,6 +70,7 @@ specs/
 ## Phase 0: Research Summary
 
 Research outcomes are recorded in `specs/003-haro-profile/research.md`. The key decisions are:
+
 - Treat the current implementation as the baseline rather than a future proposal.
 - Keep profile access secured by verified JWT identity.
 - Continue using `mailbox_connections` for mailbox secrets and `profiles` for profile data.
@@ -84,6 +85,7 @@ Research outcomes are recorded in `specs/003-haro-profile/research.md`. The key 
 ## Phase 2 Preview
 
 Task generation should follow this order:
+
 1. Verify and preserve the current working behavior.
 2. Improve callback-result UX on the profile page.
 3. Resolve or document the profile source-of-truth decision.

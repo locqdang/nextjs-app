@@ -8,7 +8,7 @@
 
 **Input**: Migrated from legacy requirements in `tickets/improve-logging/improve-logging.md`
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Safe production diagnostics (Priority: P1)
 
@@ -63,7 +63,7 @@ As the site operator, I want routine success logs reduced and misleading log mes
 - What happens when the Docker log shipper is up before the app container or Loki becomes temporarily unavailable?
 - What happens when a route attempts to log nested objects that contain token-like keys deep in the payload?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -84,14 +84,14 @@ As the site operator, I want routine success logs reduced and misleading log mes
 - **FR-015**: The system MUST document local development logging behavior, production logging behavior, data-safety rules, and the self-hosted logging stack.
 - **FR-016**: The system SHOULD include automated verification for sensitive logging behavior where practical.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Application Log Event**: A structured server-side log record containing level, timestamp, application context, safe metadata, and optional serialized error details.
 - **Request Log Context**: Safe request metadata attached to API logs, such as route, method, operation name, request ID, and hashed user identifier.
 - **Redaction Rule Set**: The set of field-matching and serialization rules used to suppress or replace sensitive values before they reach logs.
 - **Logging Stack Service**: Infrastructure components that collect, store, and query logs, including the Docker log shipper, Loki, and Grafana.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

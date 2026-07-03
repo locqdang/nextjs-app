@@ -8,7 +8,7 @@
 
 **Input**: Migrated from legacy implementation/status notes in `tickets/haro-profile.md`
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - User manages their HARO profile securely (Priority: P1)
 
@@ -64,7 +64,7 @@ As the site operator, I want the mailbox callback results, data source boundarie
 - What happens when legacy mailbox-related fields still exist on `profiles` after the newer `mailbox_connections` model is in use?
 - What happens when callback query parameters remain in the URL after the result has already been shown?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -86,14 +86,14 @@ As the site operator, I want the mailbox callback results, data source boundarie
 - **FR-016**: The project MUST document production-safe callback and frontend URL environment requirements.
 - **FR-017**: The feature MUST keep actual email sending, inbox sync, non-Google providers, and broader CRM functionality out of scope for this work.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **HARO Profile**: The app-managed profile record keyed by authenticated user identity and containing editable user-facing HARO profile fields.
 - **Mailbox Connection**: The server-side OAuth connection record that stores encrypted token material, connected mailbox identity, provider metadata, status, and timestamps.
 - **Authorization Context**: The verified JWT-derived identity used to authorize profile and mailbox operations.
 - **Mailbox Callback Result**: The success or failure state returned from the OAuth callback flow and surfaced to the profile page.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

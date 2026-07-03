@@ -8,7 +8,7 @@
 
 **Input**: Migrated from legacy notes in `tickets/google-one-tap.md`
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Logged-out user reaches intended destination after Google login (Priority: P1)
 
@@ -62,7 +62,7 @@ As the site operator, I want redirect handling and prompt behavior documented an
 - What happens when the login page mounts more than once during client-side navigation?
 - What happens when the One Tap prompt should be suppressed on certain routes but the SDK is already initialized?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -77,14 +77,14 @@ As the site operator, I want redirect handling and prompt behavior documented an
 - **FR-009**: The system SHOULD use `/` as the safe post-login fallback when no valid redirect target is present.
 - **FR-010**: The project SHOULD document or decide whether prompt behavior needs route-specific gating or suppression.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Login Redirect Target**: The app-relative destination requested before the user is sent to login.
 - **Google Initialization Context**: The app-level state responsible for loading and initializing Google Identity Services.
 - **Login Button Render Target**: The login-page DOM container where the Google button appears.
 - **One Tap Eligibility State**: The runtime conditions under which the prompt may appear on a page.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

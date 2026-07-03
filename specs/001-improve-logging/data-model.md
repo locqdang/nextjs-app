@@ -5,6 +5,7 @@
 Represents one structured log record emitted by the server-side application.
 
 **Fields**
+
 - `timestamp`: event time
 - `level`: debug, info, warn, or error
 - `message`: human-readable event summary
@@ -19,6 +20,7 @@ Represents one structured log record emitted by the server-side application.
 - `meta`: additional safe metadata after redaction
 
 **Validation rules**
+
 - Must not contain raw JWTs, OAuth tokens, passwords, or full sensitive request bodies.
 - Production records must be JSON-structured.
 - `userHash` must never equal the user’s plain email.
@@ -28,6 +30,7 @@ Represents one structured log record emitted by the server-side application.
 Represents the safe subset of an error that is allowed into logs.
 
 **Fields**
+
 - `name`
 - `message`
 - `code` (optional)
@@ -35,6 +38,7 @@ Represents the safe subset of an error that is allowed into logs.
 - `stack` (allowed only under the configured safe rules)
 
 **Validation rules**
+
 - Must not embed full request or response objects.
 - Must omit unrelated third-party config dumps.
 
@@ -43,6 +47,7 @@ Represents the safe subset of an error that is allowed into logs.
 Represents safe request-scoped metadata attached to route logs.
 
 **Fields**
+
 - `route`
 - `method`
 - `operation`
@@ -51,6 +56,7 @@ Represents safe request-scoped metadata attached to route logs.
 - `failureCategory` (optional)
 
 **Relationships**
+
 - One request context may be attached to many application log events for the same request.
 
 ## Redaction Rule Set
@@ -58,12 +64,14 @@ Represents safe request-scoped metadata attached to route logs.
 Represents the rules used before metadata is written to logs.
 
 **Fields**
+
 - `sensitiveKeyPatterns`
 - `loginLinkLoggingGate`
 - `productionModeBehavior`
 - `hashSaltDependency`
 
 **Validation rules**
+
 - Keys matching token, auth, password, secret, credential, jwt, and login-link patterns must be removed or replaced.
 - Production mode must always forbid login-link logging.
 
@@ -72,10 +80,12 @@ Represents the rules used before metadata is written to logs.
 Represents an infrastructure component in the self-hosted logging flow.
 
 **Variants**
+
 - `alloy` for collection and shipping
 - `loki` for storage
 - `grafana` for querying
 
 **Relationships**
+
 - Alloy collects app container stdout logs and forwards them to Loki.
 - Grafana queries Loki.
