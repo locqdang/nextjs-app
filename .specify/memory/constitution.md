@@ -1,73 +1,94 @@
-# [PROJECT_NAME] Constitution
-
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+Version change: template -> 1.0.0
+Modified principles:
+- Added I. Clarify and Specify Before Coding
+- Added II. Verification Plan Before Implementation
+- Added III. Test-First When Practical
+- Added IV. Contract-and-Flow-First Quality
+- Added V. Vietnamese Product, English Build Artifacts
+- Added VI. Observable, Reviewable Delivery
+Added sections:
+- Delivery Constraints
+- Workflow and Quality Gates
+Removed sections:
+- Placeholder principle and section tokens from the default template
+Templates reviewed:
+- .specify/templates/plan-template.md ✅ updated
+- .specify/templates/spec-template.md ✅ updated
+- .specify/templates/tasks-template.md ✅ updated
+- .specify/templates/constitution-template.md ✅ updated
+Follow-up TODOs:
+- none
+-->
+# VietPolyglots Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
+### I. Clarify and Specify Before Coding
+Every meaningful change MUST start with clarification, a written spec or ticket,
+and explicit acceptance criteria before implementation begins. The team MUST not
+jump straight from a rough idea to code when requirements, scope boundaries, or
+edge cases are still unclear.
 
-<!-- Example: I. Library-First -->
+### II. Verification Plan Before Implementation
+Lead MUST decide the verification plan at spec or planning time. Every
+substantial feature or bug fix MUST state what requires unit tests,
+integration tests, E2E coverage, and manual smoke checks. Builder executes that
+plan and may propose adjustments, but no material reduction in verification is
+allowed without updating the plan.
 
-[PRINCIPLE_1_DESCRIPTION]
+### III. Test-First When Practical
+When behavior is clear, stable, and cheaply expressed, Builder SHOULD write the
+failing test before production code. This applies especially to pure logic,
+validation, transformations, permission rules, API contracts, and reproducible
+bugs. Test-first is encouraged, but fake or overly brittle tests MUST NOT be
+written simply to satisfy process.
 
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### IV. Contract-and-Flow-First Quality
+The project MUST prefer the cheapest reliable proof. Unit tests cover isolated
+logic, integration tests cover contracts and cross-component behavior, and E2E
+checks cover critical user journeys and regressions that only appear in the
+real app. For user-facing web changes, lint/build plus realistic browser or E2E
+verification are required before calling the work done.
 
-### [PRINCIPLE_2_NAME]
+### V. Vietnamese Product, English Build Artifacts
+User-facing copy and experience for VietPolyglots SHOULD default to natural
+Vietnamese unless a feature explicitly targets another language. Internal build
+artifacts such as specs, plans, tasks, implementation notes, code comments, and
+technical docs MUST remain in English unless explicitly requested otherwise.
 
-<!-- Example: II. CLI Interface -->
+### VI. Observable, Reviewable Delivery
+Changes MUST be easy to verify and easy to review. Builder MUST report exact
+commands, outputs, and remaining risk. For production-facing changes, logging,
+error visibility, and smoke-testability are required, and Loc gets a review
+pause before commit or deploy.
 
-[PRINCIPLE_2_DESCRIPTION]
+## Delivery Constraints
+The default delivery sequence is: clarify, write the ticket or spec, define the
+verification plan, implement in small slices, run lint/build, run required
+automated tests, run E2E or browser verification for user-facing changes, pause
+for review, then deploy and smoke-test. Work that skips one of these gates MUST
+explain why.
 
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
-
-### [PRINCIPLE_3_NAME]
-
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-
-[PRINCIPLE_3_DESCRIPTION]
-
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
-
-### [PRINCIPLE_4_NAME]
-
-<!-- Example: IV. Integration Testing -->
-
-[PRINCIPLE_4_DESCRIPTION]
-
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
-
-### [PRINCIPLE_5_NAME]
-
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-
-[PRINCIPLE_5_DESCRIPTION]
-
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
-
-## [SECTION_2_NAME]
-
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Workflow and Quality Gates
+Lead owns scope, architecture, and required evidence. Builder owns code,
+execution, and proof. Important bugs MUST gain regression coverage at the
+cheapest reliable layer. Critical flows such as auth, persistence, major forms,
+CMS-backed rendering, and navigation MUST NOT rely on unit tests alone.
 
 ## Governance
+This constitution governs day-to-day delivery for VietPolyglots and supersedes
+informal habits when the two conflict.
 
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+- Amendments require a written rationale in the constitution itself.
+- Semantic versioning applies to this document: MAJOR for incompatible
+  governance changes, MINOR for new or materially expanded principles, PATCH for
+  clarification-only edits.
+- Every substantial feature plan and implementation review MUST check
+  constitution compliance, especially around verification planning and
+  user-facing E2E proof.
+- If a template or workflow drifts from this constitution, the constitution
+  wins and the template must be updated.
 
-[GOVERNANCE_RULES]
-
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-07-07 | **Last Amended**: 2026-07-07
