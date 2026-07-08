@@ -3,7 +3,9 @@ const FRONTEND_ORIGIN = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '')
 const CONTROL_CHARS = /[\u0000-\u001F\u007F]/g;
 
 function stripControlChars(value) {
-  return String(value || '').replace(CONTROL_CHARS, '').trim();
+  return String(value || '')
+    .replace(CONTROL_CHARS, '')
+    .trim();
 }
 
 export function sanitizeStructuredDataJson(value) {

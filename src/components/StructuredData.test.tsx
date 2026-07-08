@@ -15,7 +15,9 @@ describe('StructuredData', () => {
     );
 
     expect(html).toContain('<script type="application/ld+json">');
-    expect(html).toContain('\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e');
+    expect(html).toContain(
+      '\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e'
+    );
     expect(html).not.toContain('</script><script>alert(1)</script>');
     expect((html.match(/<script/g) || []).length).toBe(1);
   });

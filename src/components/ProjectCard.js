@@ -44,7 +44,12 @@ export default function ProjectCard({ project }) {
       {href && (
         <div className="card__footer">
           {isExternalUrl(href) ? (
-            <a className="btn btn--sm" href={href} target="_blank" rel="nofollow noopener noreferrer">
+            <a
+              className="btn btn--sm"
+              href={href}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
               View
             </a>
           ) : (

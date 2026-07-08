@@ -50,7 +50,9 @@ describe('security helpers', () => {
     });
 
     expect(escaped).not.toContain('</script>');
-    expect(escaped).toContain('\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e');
+    expect(escaped).toContain(
+      '\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e'
+    );
     expect(escaped).toContain('\\u2028');
     expect(escaped).toContain('\\u2029');
   });

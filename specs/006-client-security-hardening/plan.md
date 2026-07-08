@@ -10,6 +10,8 @@ Harden `vietpolyglots.com` against stored, reflected, and DOM-based client-side 
 
 This plan is intentionally based on the current repo state, not a blank slate. The branch already contains partial hardening work such as cookie session helpers, URL normalization helpers, JSON-LD escaping, header tests, and auth-session tests. Implementation should treat those changes as the baseline, verify them, then close the remaining gaps instead of rebuilding the same controls twice.
 
+As of the latest verified pass, the repo now has implemented and committed cookie-backed auth/session endpoints, redirect normalization, CSP/header hardening for dev and test compatibility, safe-link and JSON-LD protections across the touched components, updated Playwright auth expectations for cookie-based sessions, and passing `npm run test`, `npm run build`, plus the focused Playwright auth/security slice. The main remaining Spec Kit gaps are documentation artifacts (`research.md`, `data-model.md`, `quickstart.md`, `contracts/security-boundaries.md`), final bearer-fallback cleanup, broader route-by-route verification coverage, and any optional API integration additions not yet added under `src/tests/api/`.
+
 ## Technical Context
 
 **Language/Version**: JavaScript and TypeScript in a Next.js 16 application running on Node.js
@@ -155,6 +157,7 @@ Unsafe, malformed, unknown, or unvalidated values should become `null`, fall bac
 Goal: Produce the authoritative map required by FR-001 and SC-001.
 
 Scope:
+
 - Blog and Strapi content paths
 - Structured data and metadata
 - Navbar/menu and CTA links
@@ -165,6 +168,7 @@ Scope:
 - API query parameters and pagination/filter inputs
 
 Primary files to inspect/annotate:
+
 - `src/components/ParagraphRichText.tsx`
 - `src/components/StructuredData.tsx`
 - `src/components/Navbar.js`
@@ -180,6 +184,7 @@ Primary files to inspect/annotate:
 - `src/app/haro/pitches/page.js`
 
 Deliverable:
+
 - Documented source-to-context matrix with a named control for every path.
 
 ### Workstream B: Finish output-context hardening for browser rendering
@@ -187,6 +192,7 @@ Deliverable:
 Goal: Ensure all untrusted content is safe in text, attribute, link, and script contexts.
 
 Expected actions:
+
 - Verify every link-bearing component uses `normalizeLinkUrl` consistently.
 - Confirm external links set safe `rel` and target behavior.
 - Confirm same-origin absolute URLs normalize to root-relative paths where appropriate.
@@ -195,6 +201,7 @@ Expected actions:
 - Ensure any metadata or JSON-LD generation code never interpolates raw strings into executable HTML/script contexts.
 
 Likely file targets:
+
 - `src/components/ParagraphRichText.tsx`
 - `src/components/StructuredData.tsx`
 - `src/components/Navbar.js`
@@ -210,6 +217,7 @@ Likely file targets:
 Goal: Eliminate localStorage-readable session exposure and ensure redirect destinations are same-origin only.
 
 Expected actions:
+
 - Verify `src/lib/auth.tsx` never reads/writes `localStorage` or `sessionStorage` for tokens.
 - Verify login and verify-login client flows rely on cookie-backed `/api/auth/session` state and `Set-Cookie` responses.
 - Validate all post-login redirects through `normalizeRedirectPath`.
@@ -218,6 +226,7 @@ Expected actions:
 - Ensure mailbox OAuth start/callback/disconnect routes authenticate from the server-managed session boundary.
 
 Likely file targets:
+
 - `src/lib/auth.tsx`
 - `src/lib/auth/session.js`
 - `src/lib/auth/createMagicLoginLink.js`
@@ -242,6 +251,7 @@ Likely file targets:
 Goal: Make the browser default to a safer execution environment for both public and authenticated routes.
 
 Expected actions:
+
 - Re-check `Content-Security-Policy` source list against the actual scripts, frames, images, and connect endpoints in use.
 - Decide whether to stage with `Content-Security-Policy-Report-Only` before strict enforcement.
 - Keep `X-Content-Type-Options`, `Referrer-Policy`, frame restrictions, and `Permissions-Policy` explicit.
@@ -249,6 +259,7 @@ Expected actions:
 - Verify whether page routes need any additional cache directives beyond current API rules for private content.
 
 Primary file targets:
+
 - `next.config.mjs`
 - `src/app/app-shell.tsx`
 - Any API routes returning authenticated HARO/mailbox data
@@ -258,6 +269,7 @@ Primary file targets:
 Goal: Prevent future regressions in every distinct security context named by the spec.
 
 Expected actions:
+
 - Extend unit tests for URL normalization and redirect normalization edge cases.
 - Keep explicit tests for JSON-LD/script escaping.
 - Extend auth-session tests for cookie attributes, expiry, clearing, and any final removal of bearer fallback.
@@ -267,6 +279,7 @@ Expected actions:
 - Keep header assertions for representative public and API routes.
 
 Likely test targets:
+
 - `src/tests/lib/security.test.js`
 - `src/tests/lib/auth-session.test.js`
 - `src/tests/next-config-security-headers.test.js`

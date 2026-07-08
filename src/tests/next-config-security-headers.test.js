@@ -35,7 +35,9 @@ describe('next security headers', () => {
     const appHeaders = headersToMap(appRule.headers);
     const apiHeaders = headersToMap(apiRule.headers);
 
-    expect(apiHeaders.get('Content-Security-Policy')).toBe(appHeaders.get('Content-Security-Policy'));
+    expect(apiHeaders.get('Content-Security-Policy')).toBe(
+      appHeaders.get('Content-Security-Policy')
+    );
     expect(apiHeaders.get('Referrer-Policy')).toBe(appHeaders.get('Referrer-Policy'));
     expect(apiHeaders.get('X-Content-Type-Options')).toBe('nosniff');
     expect(apiHeaders.get('X-Frame-Options')).toBe('DENY');

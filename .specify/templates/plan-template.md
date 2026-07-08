@@ -39,6 +39,7 @@
 ## Verification Strategy
 
 **Lead Test Decision**:
+
 - **Unit**: [logic that must be covered with unit tests, or N/A]
 - **Integration**: [contracts/boundaries that must be covered, or N/A]
 - **E2E**: [critical user journeys that require real flow coverage, or N/A]
@@ -122,7 +123,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

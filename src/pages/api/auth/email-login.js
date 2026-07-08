@@ -26,7 +26,10 @@ export default async function handler(req, res) {
 
   try {
     const safeRedirectPath = normalizeRedirectPath(redirectPath);
-    const { loginLink, user } = await createMagicLoginLink({ email, redirectPath: safeRedirectPath });
+    const { loginLink, user } = await createMagicLoginLink({
+      email,
+      redirectPath: safeRedirectPath,
+    });
 
     const userLog = createApiLogger(req, {
       route: '/api/auth/email-login',

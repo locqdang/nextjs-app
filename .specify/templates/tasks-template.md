@@ -85,8 +85,8 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write the failing tests first when the Verification Plan says test-first is practical.**
 
-- [ ] T011 [P] [US1] Unit test for [logic] in tests/unit/test_[name].py (if required)
-- [ ] T012 [P] [US1] Contract or integration test for [boundary/user journey] in tests/integration/test_[name].py (if required)
+- [ ] T011 [P] [US1] Unit test for [logic] in tests/unit/test\_[name].py (if required)
+- [ ] T012 [P] [US1] Contract or integration test for [boundary/user journey] in tests/integration/test\_[name].py (if required)
 - [ ] T013 [US1] E2E or browser verification task for [critical flow] (if required)
 
 ### Implementation for User Story 1
@@ -110,8 +110,8 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2
 
-- [ ] T020 [P] [US2] Unit test for [logic] in tests/unit/test_[name].py (if required)
-- [ ] T021 [P] [US2] Contract or integration test for [boundary/user journey] in tests/integration/test_[name].py (if required)
+- [ ] T020 [P] [US2] Unit test for [logic] in tests/unit/test\_[name].py (if required)
+- [ ] T021 [P] [US2] Contract or integration test for [boundary/user journey] in tests/integration/test\_[name].py (if required)
 - [ ] T022 [US2] E2E or browser verification task for [critical flow] (if required)
 
 ### Implementation for User Story 2
@@ -133,8 +133,8 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3
 
-- [ ] T027 [P] [US3] Unit test for [logic] in tests/unit/test_[name].py (if required)
-- [ ] T028 [P] [US3] Contract or integration test for [boundary/user journey] in tests/integration/test_[name].py (if required)
+- [ ] T027 [P] [US3] Unit test for [logic] in tests/unit/test\_[name].py (if required)
+- [ ] T028 [P] [US3] Contract or integration test for [boundary/user journey] in tests/integration/test\_[name].py (if required)
 - [ ] T029 [US3] E2E or browser verification task for [critical flow] (if required)
 
 ### Implementation for User Story 3

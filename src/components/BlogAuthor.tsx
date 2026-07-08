@@ -39,13 +39,14 @@ export default function BlogAuthor({
         const name = author.name || author.title || 'Vietpolyglots';
         const profileLink = normalizeLinkUrl(author.profile_link);
         const isExternalProfileLink = profileLink ? isExternalUrl(profileLink) : false;
-        const nameNode = profileLink && isExternalProfileLink ? (
-          <a href={profileLink} target="_blank" rel="nofollow noopener noreferrer">
-            {name}
-          </a>
-        ) : (
-          name
-        );
+        const nameNode =
+          profileLink && isExternalProfileLink ? (
+            <a href={profileLink} target="_blank" rel="nofollow noopener noreferrer">
+              {name}
+            </a>
+          ) : (
+            name
+          );
         const photoSize = compact ? 32 : showBio ? 64 : 44;
 
         return (

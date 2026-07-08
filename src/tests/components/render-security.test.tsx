@@ -51,7 +51,9 @@ describe('render-path security hardening', () => {
     );
 
     expect(html).toContain('type="application/ld+json"');
-    expect(html).toContain('\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e');
+    expect(html).toContain(
+      '\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e'
+    );
     expect(html.match(/<script/g)?.length).toBe(1);
   });
 });

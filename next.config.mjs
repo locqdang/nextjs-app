@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const allowInlineScripts =
   process.env.NODE_ENV !== 'production' || process.env.E2E_TEST_MODE === '1';
-const allowDevEval =
-  process.env.NODE_ENV !== 'production' || process.env.E2E_TEST_MODE === '1';
+const allowDevEval = process.env.NODE_ENV !== 'production' || process.env.E2E_TEST_MODE === '1';
 const enableUpgradeInsecureRequests = process.env.NODE_ENV === 'production';
 
 const securityHeaders = [
@@ -48,7 +47,7 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()'
+    value: 'camera=(), microphone=(), geolocation=()',
   },
 ];
 

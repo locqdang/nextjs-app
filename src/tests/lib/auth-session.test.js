@@ -93,7 +93,11 @@ describe('auth session helpers', () => {
     process.env.AUTH_COOKIE_NAME = 'vp_session';
 
     const { createSessionToken, readSession } = await loadSessionModule();
-    const token = createSessionToken({ id: 'user-123', email: 'person@example.com', name: 'Person' });
+    const token = createSessionToken({
+      id: 'user-123',
+      email: 'person@example.com',
+      name: 'Person',
+    });
     const session = readSession(createRequest(`vp_session=${encodeURIComponent(token)}`));
 
     expect(session).toMatchObject({
@@ -109,7 +113,11 @@ describe('auth session helpers', () => {
     process.env.JWT_SECRET = 'test-secret';
 
     const { createSessionToken, readSession } = await loadSessionModule();
-    const token = createSessionToken({ id: 'user-456', email: 'legacy@example.com', name: 'Legacy' });
+    const token = createSessionToken({
+      id: 'user-456',
+      email: 'legacy@example.com',
+      name: 'Legacy',
+    });
     const session = readSession(createRequest('', `Bearer ${token}`));
 
     expect(session?.user.email).toBe('legacy@example.com');

@@ -22,19 +22,23 @@ export default function Hero({ data }) {
 
           {(b1?.label || b2?.label) && (
             <div className="hero__cta">
-              {b1?.label && (
-                isExternalUrl(primaryHref) ? (
-                  <a className="btn hero__btn" href={primaryHref} target="_blank" rel="nofollow noopener noreferrer">
+              {b1?.label &&
+                (isExternalUrl(primaryHref) ? (
+                  <a
+                    className="btn hero__btn"
+                    href={primaryHref}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
                     {b1.label}
                   </a>
                 ) : (
                   <Link className="btn hero__btn" href={primaryHref}>
                     {b1.label}
                   </Link>
-                )
-              )}
-              {b2?.label && (
-                isExternalUrl(secondaryHref) ? (
+                ))}
+              {b2?.label &&
+                (isExternalUrl(secondaryHref) ? (
                   <a
                     className="btn btn--ghost hero__btn hero__btn--ghost"
                     href={secondaryHref}
@@ -47,8 +51,7 @@ export default function Hero({ data }) {
                   <Link className="btn btn--ghost hero__btn hero__btn--ghost" href={secondaryHref}>
                     {b2.label}
                   </Link>
-                )
-              )}
+                ))}
             </div>
           )}
         </div>
