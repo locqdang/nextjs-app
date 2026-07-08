@@ -109,7 +109,7 @@ describe('auth session helpers', () => {
     });
   });
 
-  it('still accepts bearer auth while routes are migrated', async () => {
+  it('rejects bearer auth when no session cookie is present', async () => {
     process.env.JWT_SECRET = 'test-secret';
 
     const { createSessionToken, readSession } = await loadSessionModule();
@@ -120,7 +120,7 @@ describe('auth session helpers', () => {
     });
     const session = readSession(createRequest('', `Bearer ${token}`));
 
-    expect(session?.user.email).toBe('legacy@example.com');
+    expect(session).toBeNull();
   });
 
   it('returns null for invalid session data', async () => {

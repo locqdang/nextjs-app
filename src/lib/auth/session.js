@@ -99,13 +99,7 @@ export function createClearedSessionCookie() {
 
 export function readSessionToken(req) {
   const cookies = parseCookies(req.headers?.cookie || '');
-  const cookieToken = cookies[SESSION_COOKIE_NAME];
-  if (cookieToken) {
-    return cookieToken;
-  }
-
-  const auth = req.headers?.authorization || '';
-  return auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  return cookies[SESSION_COOKIE_NAME] || null;
 }
 
 export function readSession(req) {
