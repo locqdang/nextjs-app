@@ -1,11 +1,9 @@
-import jwt from 'jsonwebtoken';
 import { findMany, countDocuments, findOne } from '../../../lib/data/haro';
 import { findOne as findAuthUser } from '../../../lib/data/mongodb';
 import { ObjectId } from 'mongodb';
 import { createApiLogger } from '../../../lib/api-logging';
+import { readSession } from '../../../lib/auth/session';
 import { serializeError } from '../../../lib/logger';
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 function normalizeEmail(email) {
   return String(email || '')
@@ -97,16 +95,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const auth = req.headers.authorization || '';
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+    const session = readSession(req);
 
-    if (!token) {
+    if (!session?.user?.email) {
       baseLog.warn({ reason: 'missing_token' }, 'HARO pitches auth failure');
       return res.status(401).json({ error: 'Missing token' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const email = normalizeEmail(decoded.email);
+    const email = normalizeEmail(session.user.email);
 
     if (!email) {
       baseLog.warn({ reason: 'invalid_token_payload' }, 'HARO pitches auth failure');

@@ -1,14 +1,7 @@
-/**
- * Email Login API Route (with Auto-Registration)
- * POST /api/auth/email-login
- *
- * Body: { email }
- * Response: { success, message }
- */
-
 import { createMagicLoginLink } from '../../../lib/auth/createMagicLoginLink';
 import { createApiLogger } from '../../../lib/api-logging';
 import { canLogLoginLinks, serializeError } from '../../../lib/logger';
+import { normalizeRedirectPath } from '../../../lib/security';
 
 const N8N_WEBHOOK_URL = process.env.N8N_LOGIN_WEBHOOK_URL;
 
@@ -18,19 +11,22 @@ export default async function handler(req, res) {
     operation: 'email_login',
   });
 
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { email, redirectPath } = req.body;
 
-  // Validate input
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
 
   try {
-    const { loginLink, user } = await createMagicLoginLink({ email, redirectPath });
+    const safeRedirectPath = normalizeRedirectPath(redirectPath);
+    const { loginLink, user } = await createMagicLoginLink({ email, redirectPath: safeRedirectPath });
 
     const userLog = createApiLogger(req, {
       route: '/api/auth/email-login',
@@ -38,7 +34,6 @@ export default async function handler(req, res) {
       userEmail: user.email,
     });
 
-    // Intent: normal production path sends the magic link through n8n, not server logs.
     if (N8N_WEBHOOK_URL) {
       try {
         await fetch(N8N_WEBHOOK_URL, {
@@ -54,10 +49,8 @@ export default async function handler(req, res) {
         log.info({ result: 'login_link_sent' }, 'Email login requested');
       } catch (webhookError) {
         userLog.error({ error: serializeError(webhookError) }, 'n8n login webhook failed');
-        // Continue even if webhook fails - token is still created.
       }
     } else if (canLogLoginLinks()) {
-      // Intent: local-only escape hatch for development when n8n is unavailable.
       userLog.warn(
         { loginLink },
         'Development login link generated because n8n webhook is unavailable'

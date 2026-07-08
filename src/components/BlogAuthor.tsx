@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { isExternalUrl, normalizeLinkUrl } from '../lib/security';
 
 type BlogAuthorData = {
   id?: string | number;
@@ -36,8 +37,10 @@ export default function BlogAuthor({
       {authors.map((author) => {
         const photoUrl = author.photo?.formats?.thumbnail?.url ?? author.photo?.url;
         const name = author.name || author.title || 'Vietpolyglots';
-        const nameNode = author.profile_link ? (
-          <a href={author.profile_link} target="_blank" rel="noreferrer">
+        const profileLink = normalizeLinkUrl(author.profile_link);
+        const isExternalProfileLink = profileLink ? isExternalUrl(profileLink) : false;
+        const nameNode = profileLink && isExternalProfileLink ? (
+          <a href={profileLink} target="_blank" rel="nofollow noopener noreferrer">
             {name}
           </a>
         ) : (
@@ -60,12 +63,12 @@ export default function BlogAuthor({
               <p className="blog-author__label">{showBio ? 'The author' : 'Written by'}</p>
               <p className="blog-author__name">{nameNode}</p>
               {showBio && author.bio ? <p className="blog-author__bio">{author.bio}</p> : null}
-              {showBio && author.profile_link ? (
+              {showBio && profileLink && isExternalProfileLink ? (
                 <a
                   className="blog-author__profile-link"
-                  href={author.profile_link}
+                  href={profileLink}
                   target="_blank"
-                  rel="noreferrer nofollow"
+                  rel="nofollow noopener noreferrer"
                 >
                   View public profile
                 </a>

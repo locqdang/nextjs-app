@@ -1,3 +1,5 @@
+import { sanitizeStructuredDataJson } from '../lib/security';
+
 type JsonLdValue = Record<string, unknown> | unknown[];
 
 type StructuredDataProps = {
@@ -26,10 +28,12 @@ export default function StructuredData({ data }: StructuredDataProps) {
 
   if (!jsonLd) return null;
 
+  // Deliberate raw-script exception: JSON-LD stays inert because sanitizeStructuredDataJson
+  // escapes script-breaking characters before the payload enters the script context.
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      dangerouslySetInnerHTML={{ __html: sanitizeStructuredDataJson(jsonLd) }}
     />
   );
 }

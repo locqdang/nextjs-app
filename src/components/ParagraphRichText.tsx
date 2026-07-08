@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { isExternalUrl, normalizeLinkUrl } from '../lib/security';
 
 export type RichTextChild = {
   type?: string;
@@ -24,50 +25,6 @@ export type ParagraphRichTextProps = {
 };
 
 export type ParagraphRichTextContent = ParagraphRichTextProps['content'];
-
-const FRONTEND_ORIGIN = process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/\/$/, '') || null;
-
-function looksLikeExternalHostname(url: string): boolean {
-  return /^[a-z0-9-]+(\.[a-z0-9-]+)+([/?#:].*)?$/i.test(url);
-}
-
-export function normalizeLinkUrl(url?: string): string | null {
-  if (!url) return null;
-
-  const trimmedUrl = url.trim();
-  if (!trimmedUrl) return null;
-
-  if (trimmedUrl.startsWith('/') || trimmedUrl.startsWith('#')) {
-    return trimmedUrl;
-  }
-
-  if (/^https?:\/\//i.test(trimmedUrl)) {
-    try {
-      const parsed = new URL(trimmedUrl);
-
-      if (FRONTEND_ORIGIN) {
-        const frontendOrigin = new URL(FRONTEND_ORIGIN).origin;
-        if (parsed.origin === frontendOrigin) {
-          return `${parsed.pathname}${parsed.search}${parsed.hash}` || '/';
-        }
-      }
-
-      return trimmedUrl;
-    } catch {
-      return trimmedUrl;
-    }
-  }
-
-  if (looksLikeExternalHostname(trimmedUrl)) {
-    return `https://${trimmedUrl}`;
-  }
-
-  return `/${trimmedUrl.replace(/^\/+/, '')}`;
-}
-
-function isExternalUrl(url: string): boolean {
-  return /^https?:\/\//.test(url);
-}
 
 function extractText(node?: RichTextChild | null): string {
   if (!node) return '';
@@ -97,7 +54,7 @@ function renderInlineNode(child: RichTextChild, key: string): ReactNode {
 
     if (isExternalUrl(href)) {
       return (
-        <a key={key} href={href} target="_blank" rel="nofollow noreferrer">
+        <a key={key} href={href} target="_blank" rel="nofollow noopener noreferrer">
           {linkChildren}
         </a>
       );
@@ -147,7 +104,6 @@ function renderBlock(block: RichTextBlock, index: number, headingIds: string[] =
     if (!blockText(block)) return null;
 
     const onlyChild = block.children?.length === 1 ? block.children[0] : null;
-    // Strapi represents code blocks as code-marked paragraph text, so promote them to <pre> for readability.
     if (onlyChild?.code) {
       return (
         <pre key={`code-${index}`}>

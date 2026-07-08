@@ -1,1 +1,3 @@
-{ "feature_directory": "specs/005-new-menus" }
+{
+  "feature_directory": "specs/006-client-security-hardening"
+}

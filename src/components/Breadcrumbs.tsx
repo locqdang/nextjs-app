@@ -1,5 +1,14 @@
 import Link from 'next/link';
 
+function decodeBreadcrumbPart(part: string) {
+  try {
+    return decodeURIComponent(part);
+  } catch {
+    // Malformed path segments should render inert text instead of crashing breadcrumb rendering.
+    return part;
+  }
+}
+
 export default function Breadcrumbs({ pathname }: { pathname: string }) {
   const parts = pathname.split('/').filter(Boolean);
 
@@ -9,7 +18,7 @@ export default function Breadcrumbs({ pathname }: { pathname: string }) {
       const href = '/' + parts.slice(0, index + 1).join('/');
 
       return {
-        label: decodeURIComponent(part).replaceAll('-', ' ').toUpperCase(),
+        label: decodeBreadcrumbPart(part).replaceAll('-', ' ').toUpperCase(),
         href,
       };
     }),

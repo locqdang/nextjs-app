@@ -165,12 +165,9 @@ export default function HaroProfileClient() {
         return;
       }
 
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/haro/profile', {
         cache: 'no-store',
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        credentials: 'same-origin',
       });
 
       const data = (await response.json().catch(() => null)) as ProfileApiResponse | null;
@@ -236,13 +233,12 @@ export default function HaroProfileClient() {
     setMessage('');
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/haro/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
+        credentials: 'same-origin',
         body: JSON.stringify(form),
       });
 
@@ -290,13 +286,9 @@ export default function HaroProfileClient() {
     setMessage('');
 
     try {
-      // Read the app auth token so backend can identify which user is connecting a mailbox.
-      const token = localStorage.getItem('token');
       // Ask backend to create a Google OAuth consent URL for this user.
       const response = await fetch('/api/haro/mailbox/google/start', {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        credentials: 'same-origin',
       });
 
       const data = (await response.json().catch(() => null)) as {
@@ -322,12 +314,9 @@ export default function HaroProfileClient() {
     setMessage('');
 
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch('/api/haro/mailbox/disconnect', {
         method: 'POST',
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        credentials: 'same-origin',
       });
 
       const data = (await response.json().catch(() => null)) as { message?: string } | null;

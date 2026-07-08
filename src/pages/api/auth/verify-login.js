@@ -1,20 +1,16 @@
-/**
- * Verify Login Token API Route
- * POST /api/auth/verify-login
- */
-
-import jwt from 'jsonwebtoken';
 import { connectToMongoDB } from '../../../lib/data/mongodb';
 import { createApiLogger } from '../../../lib/api-logging';
 import { serializeError } from '../../../lib/logger';
-
-const JWT_SECRET = process.env.JWT_SECRET;
+import { createSessionToken, setSessionCookie } from '../../../lib/auth/session';
 
 export default async function handler(req, res) {
   const log = createApiLogger(req, {
     route: '/api/auth/verify-login',
     operation: 'auth_verify_login',
   });
+
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
 
   if (req.method !== 'POST') {
     log.warn({ method: req.method }, 'Invalid auth/verify-login method');
@@ -59,21 +55,13 @@ export default async function handler(req, res) {
 
     await tokensCollection.updateOne({ token }, { $set: { used: true, usedAt: new Date() } });
 
-    const jwtToken = jwt.sign(
-      {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const sessionToken = createSessionToken(user);
+    setSessionCookie(res, sessionToken);
 
     log.info({ userId: user._id?.toString() }, 'Verify-login token accepted');
 
     res.status(200).json({
       success: true,
-      token: jwtToken,
       user: {
         id: user._id.toString(),
         email: user.email,

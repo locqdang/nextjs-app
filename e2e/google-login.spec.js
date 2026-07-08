@@ -74,11 +74,11 @@ test.describe('google one tap login', () => {
 
     await page.waitForURL('**/haro');
     await expect(page).toHaveURL(/\/haro$/);
+    await expect(
+      page.getByRole('heading', { name: 'Manage your HARO workflow from one place' })
+    ).toBeVisible();
 
-    const token = await page.evaluate(() => window.localStorage.getItem('token'));
-    const user = await page.evaluate(() => window.localStorage.getItem('user'));
-
-    expect(token).toBe('google-token');
-    expect(user).toContain('google-e2e@example.com');
+    await page.getByRole('button', { name: 'Account' }).click();
+    await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
   });
 });

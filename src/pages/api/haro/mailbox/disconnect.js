@@ -1,16 +1,10 @@
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { findOne, updateOne } from '../../../../lib/data/haro';
+import { readSession } from '../../../../lib/auth/session';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 const ENCRYPTION_SECRET = process.env.MAILBOX_TOKEN_ENCRYPTION_KEY || process.env.JWT_SECRET || '';
 const MAILBOX_COLLECTION = 'mailbox_connections';
-
-function getBearerToken(req) {
-  const auth = req.headers.authorization || '';
-  return auth.startsWith('Bearer ') ? auth.slice(7) : null;
-}
 
 function normalizeEmail(email) {
   return typeof email === 'string' ? email.trim().toLowerCase() : '';
@@ -66,15 +60,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify app JWT and resolve mailbox owner from signed-in user context.
-    const token = getBearerToken(req);
+    const session = readSession(req);
 
-    if (!token) {
+    if (!session?.user?.email) {
       return res.status(401).json({ message: 'Missing token' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const email = normalizeEmail(decoded.email);
+    const email = normalizeEmail(session.user.email);
 
     if (!email) {
       return res.status(401).json({ message: 'Invalid token payload' });
