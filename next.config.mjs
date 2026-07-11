@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
-const allowInlineScripts =
-  process.env.NODE_ENV !== 'production' || process.env.E2E_TEST_MODE === '1';
+// Intent: App Router hydration still emits inline bootstrap scripts. Until this repo moves
+// to a nonce-based CSP via middleware, production must allow inline scripts or pages can
+// render as blank shells because the browser blocks Next's bootstrap.
+const allowInlineScripts = true;
 const allowDevEval = process.env.NODE_ENV !== 'production' || process.env.E2E_TEST_MODE === '1';
 const enableUpgradeInsecureRequests = process.env.NODE_ENV === 'production';
 
