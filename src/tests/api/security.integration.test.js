@@ -13,12 +13,7 @@ vi.mock('../../lib/data/mongodb', () => ({
   findOne: vi.fn(),
 }));
 
-import {
-  countDocuments,
-  findMany,
-  findOne as findHaroOne,
-  updateOne,
-} from '../../lib/data/haro';
+import { countDocuments, findMany, findOne as findHaroOne, updateOne } from '../../lib/data/haro';
 import { findOne as findAuthUser } from '../../lib/data/mongodb';
 
 async function loadHandlers() {
