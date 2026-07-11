@@ -1,9 +1,7 @@
-import jwt from 'jsonwebtoken';
 import { findOne, insertOne, updateOne } from '../../../lib/data/haro';
 import { createApiLogger } from '../../../lib/api-logging';
+import { readSession } from '../../../lib/auth/session';
 import { serializeError } from '../../../lib/logger';
-
-const JWT_SECRET = process.env.JWT_SECRET;
 const MAILBOX_COLLECTION = 'mailbox_connections';
 const ALLOWED_STATUSES = new Set(['active', 'inactive']);
 const ALLOWED_EXPERTISE_VALUES = [
@@ -35,11 +33,6 @@ const ALLOWED_EXPERTISE_VALUES = [
   'Engineering / Manufacturing',
 ];
 const ALLOWED_EXPERTISE_SET = new Set(ALLOWED_EXPERTISE_VALUES);
-
-function getBearerToken(req) {
-  const auth = req.headers.authorization || '';
-  return auth.startsWith('Bearer ') ? auth.slice(7) : null;
-}
 
 function normalizeEmail(email) {
   return typeof email === 'string' ? email.trim().toLowerCase() : '';
@@ -126,15 +119,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const token = getBearerToken(req);
+    const session = readSession(req);
 
-    if (!token) {
+    if (!session?.user?.email) {
       baseLog.warn({ reason: 'missing_token' }, 'HARO profile auth failure');
       return res.status(401).json({ message: 'Missing token' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const email = normalizeEmail(decoded.email);
+    const email = normalizeEmail(session.user.email);
 
     if (!email) {
       baseLog.warn({ reason: 'invalid_token_payload' }, 'HARO profile auth failure');

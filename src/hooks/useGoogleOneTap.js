@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../lib/auth';
 import { usePathname, useRouter } from 'next/navigation';
+import { normalizeRedirectPath } from '../lib/security';
 
 export function renderGoogleLoginButton() {
   // Skip rendering until Google Identity script is available on window.
@@ -53,11 +54,11 @@ export function useGoogleOneTap(googleReady) {
           return;
         }
 
-        // Persist session client-side, then continue to intended destination.
-        login(data.token, data.user);
+        // Mirror server session into client state, then continue to intended destination.
+        login(null, data.user);
         const redirectPath =
-          new URLSearchParams(window.location.search).get('redirect') ||
-          window.location.pathname ||
+          normalizeRedirectPath(new URLSearchParams(window.location.search).get('redirect')) ||
+          normalizeRedirectPath(window.location.pathname) ||
           '/';
         router.push(redirectPath);
       } catch (err) {

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth';
 import { formatMediaURL } from '../lib/data/strapi';
+import { isExternalUrl, normalizeLinkUrl } from '../lib/security';
 
 const NAVBAR = {
   brand: 'Vietpolyglots',
@@ -48,11 +49,7 @@ const NAVBAR = {
 };
 
 function normalizeUrl(url) {
-  if (!url) return null;
-  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('#')) {
-    return url;
-  }
-  return url.startsWith('/') ? url : `/${url}`;
+  return normalizeLinkUrl(url);
 }
 
 function normalizeItem(item) {
@@ -197,6 +194,21 @@ export default function Navbar({ data = NAVBAR }) {
         <span key={key} className="nav__link nav__link--muted">
           {item.label}
         </span>
+      );
+    }
+
+    if (isExternalUrl(item.url)) {
+      return (
+        <a
+          key={key}
+          href={item.url}
+          className="nav__link"
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          onClick={closeMenus}
+        >
+          {item.label}
+        </a>
       );
     }
 

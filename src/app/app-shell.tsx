@@ -15,7 +15,6 @@ type AppShellProps = {
 };
 
 export default function AppShell({ children, navbarData = null }: AppShellProps) {
-  // Track when Google Identity script has loaded before initializing One Tap.
   const [googleReady, setGoogleReady] = useState(false);
   useGoogleOneTap(googleReady);
 
@@ -23,19 +22,14 @@ export default function AppShell({ children, navbarData = null }: AppShellProps)
 
   return (
     <>
-      <Script id="gtm" strategy="afterInteractive">
-        {`
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-TNTD5HRS');
-        `}
-      </Script>
+      <Script
+        id="gtm-loader"
+        src="https://www.googletagmanager.com/gtm.js?id=GTM-TNTD5HRS"
+        strategy="afterInteractive"
+      />
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
-        // Mark Google SDK ready so One Tap can be initialized safely.
         onLoad={() => setGoogleReady(true)}
       />
       <Navbar data={navbarData ?? undefined} />

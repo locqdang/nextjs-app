@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { createApiLogger } from '../../../../../lib/api-logging';
+import { readSession } from '../../../../../lib/auth/session';
 import { serializeError } from '../../../../../lib/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -12,11 +13,6 @@ const GOOGLE_MAILBOX_CALLBACK_URL =
   (FRONTEND_URL ? `${FRONTEND_URL.replace(/\/$/, '')}/api/haro/mailbox/google/callback` : '');
 
 const GOOGLE_SCOPES = ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/gmail.send'];
-
-function getBearerToken(req) {
-  const auth = req.headers.authorization || '';
-  return auth.startsWith('Bearer ') ? auth.slice(7) : null;
-}
 
 function normalizeEmail(email) {
   return typeof email === 'string' ? email.trim().toLowerCase() : '';
@@ -45,15 +41,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Read and verify app JWT so we know which signed-in user is initiating mailbox connect.
-    const token = getBearerToken(req);
+    const session = readSession(req);
 
-    if (!token) {
+    if (!session?.user?.email) {
       return res.status(401).json({ message: 'Missing token' });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const email = normalizeEmail(decoded.email);
+    const email = normalizeEmail(session.user.email);
 
     if (!email) {
       return res.status(401).json({ message: 'Invalid token payload' });

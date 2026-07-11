@@ -8,14 +8,19 @@ type User = Record<string, unknown>;
 
 type AuthContextValue = {
   user: User | null;
-  token: string | null;
+  token: null;
   loading: boolean;
-  login: (newToken: string, newUser: User) => void;
-  logout: () => void;
+  login: (_newToken: string | null, newUser: User) => void;
+  logout: () => Promise<void>;
 };
 
 type AuthProviderProps = {
   children: ReactNode;
+};
+
+type SessionResponse = {
+  authenticated?: boolean;
+  user?: User | null;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -23,39 +28,61 @@ const privateRoutes = ['/video-meeting', '/haro'];
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Hydrate auth state from localStorage once on client mount.
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    let cancelled = false;
 
-    if (storedToken && storedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser) as User);
-    }
+    const loadSession = async () => {
+      try {
+        const response = await fetch('/api/auth/session', {
+          cache: 'no-store',
+          credentials: 'same-origin',
+        });
 
-    setLoading(false);
+        const data = (await response.json().catch(() => null)) as SessionResponse | null;
+
+        if (!cancelled && response.ok && data?.authenticated && data.user) {
+          setUser(data.user);
+        } else if (!cancelled) {
+          setUser(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadSession();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    setToken(newToken);
+  const login = (_newToken: string | null, newUser: User) => {
     setUser(newUser);
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
-  const logout = () => {
-    setToken(null);
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
+    } catch {
+      // Best effort, local auth state is still cleared below.
+    }
+
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
   };
 
-  // Memoize context value to avoid unnecessary child re-renders.
-  const value = useMemo(() => ({ user, token, loading, login, logout }), [user, token, loading]);
+  const value = useMemo(() => ({ user, token: null, loading, login, logout }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -78,7 +105,6 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  // Redirect anonymous users trying to open protected routes.
   useEffect(() => {
     if (!loading && !user && isPrivateRoute) {
       const redirect = encodeURIComponent(pathname || '/');

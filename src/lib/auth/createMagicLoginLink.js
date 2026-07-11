@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { connectToMongoDB } from '../data/mongodb';
+import { normalizeRedirectPath } from '../security';
 
 const DEFAULT_FRONTEND_URL = 'http://127.0.0.1:3100';
 
@@ -47,9 +48,7 @@ export async function createMagicLoginLink({ email, redirectPath = '/' }) {
 
   const loginUrl = new URL('/verify-login', normalizeFrontendUrl());
   loginUrl.searchParams.set('token', token);
-  if (redirectPath) {
-    loginUrl.searchParams.set('redirect', redirectPath);
-  }
+  loginUrl.searchParams.set('redirect', normalizeRedirectPath(redirectPath));
 
   return {
     loginLink: loginUrl.toString(),

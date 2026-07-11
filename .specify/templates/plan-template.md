@@ -36,11 +36,26 @@
 
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
+## Verification Strategy
+
+**Lead Test Decision**:
+
+- **Unit**: [logic that must be covered with unit tests, or N/A]
+- **Integration**: [contracts/boundaries that must be covered, or N/A]
+- **E2E**: [critical user journeys that require real flow coverage, or N/A]
+- **Manual Smoke**: [required post-build/post-deploy checks, or N/A]
+
+**Test-First Targets**: [behaviors that should start with a failing test before code, or N/A]
+
 ## Constitution Check
 
-_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
+_Gate: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-[Gates determined based on constitution file]
+- Spec or ticket exists and scope is explicit.
+- Verification strategy is defined by Lead before implementation.
+- Test-first targets are identified when behavior is clear enough.
+- User-facing flows needing browser or E2E proof are identified.
+- Observability, review pause, and deploy smoke requirements are captured.
 
 ## Project Structure
 

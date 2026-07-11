@@ -103,6 +103,25 @@ _Example of marking unclear requirements:_
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
+## Verification Plan _(mandatory)_
+
+<!--
+  ACTION REQUIRED: Lead decides the required evidence before implementation starts.
+  Builder executes this plan and can propose changes if implementation reveals
+  different risks.
+-->
+
+### Required Evidence
+
+- **Unit Tests**: [isolated logic that must be covered, or N/A]
+- **Integration Tests**: [contracts/boundaries that must be covered, or N/A]
+- **E2E Coverage**: [critical real flows that must be covered, or N/A]
+- **Manual Smoke Checks**: [required browser/runtime/deploy checks, or N/A]
+
+### Test-First Expectations
+
+- [Behavior or bug that should begin with a failing test, or explain why test-first is not practical]
+
 ## Success Criteria _(mandatory)_
 
 <!--

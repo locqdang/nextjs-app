@@ -20,7 +20,7 @@ export default function VerifyLoginClient({ token, redirectPath }: VerifyLoginCl
 
     const verifyToken = async () => {
       try {
-        const response = await fetch('/api/auth/verify-login/', {
+        const response = await fetch('/api/auth/verify-login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default function VerifyLoginClient({ token, redirectPath }: VerifyLoginCl
 
         setStatus('success');
         setMessage('Login successful. Redirecting...');
-        login(data.token, data.user);
+        login(null, data.user);
 
         setTimeout(() => {
           router.push(redirectPath);

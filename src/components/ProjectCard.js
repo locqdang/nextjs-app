@@ -1,6 +1,7 @@
 // components/ProjectCard.jsx
 import Link from 'next/link';
 import Image from 'next/image';
+import { isExternalUrl, normalizeLinkUrl } from '../lib/security';
 
 export default function ProjectCard({ project }) {
   const img =
@@ -8,7 +9,7 @@ export default function ProjectCard({ project }) {
 
   const logoUrl = img?.url ?? null;
   const logoAlt = project.logo?.alternativeText || project.name || 'Logo';
-  const href = project.url || '';
+  const href = normalizeLinkUrl(project.url);
   const logoWidth = img?.width ?? 200;
   const logoHeight = img?.height ?? 80;
 
@@ -42,9 +43,20 @@ export default function ProjectCard({ project }) {
 
       {href && (
         <div className="card__footer">
-          <Link className="btn btn--sm" href={href} rel="nofollow">
-            View
-          </Link>
+          {isExternalUrl(href) ? (
+            <a
+              className="btn btn--sm"
+              href={href}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
+              View
+            </a>
+          ) : (
+            <Link className="btn btn--sm" href={href}>
+              View
+            </Link>
+          )}
         </div>
       )}
     </article>

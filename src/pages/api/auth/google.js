@@ -1,22 +1,19 @@
-/**
- * Google OAuth Callback Handler
- * POST /api/auth/google
- */
-
-import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { findOne, insertOne } from '../../../lib/data/mongodb.js';
 import { createApiLogger } from '../../../lib/api-logging';
 import { serializeError } from '../../../lib/logger';
+import { createSessionToken, setSessionCookie } from '../../../lib/auth/session';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const JWT_SECRET = process.env.JWT_SECRET;
 
 export default async function handleGoogleLogin(req, res) {
   const log = createApiLogger(req, {
     route: '/api/auth/google',
     operation: 'auth_google',
   });
+
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
 
   if (req.method !== 'POST') {
     log.warn({ method: req.method }, 'Invalid auth/google method');
@@ -55,15 +52,8 @@ export default async function handleGoogleLogin(req, res) {
       user = { ...newUser, _id: result.insertedId };
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const sessionToken = createSessionToken(user);
+    setSessionCookie(res, sessionToken);
 
     const { password, ...userWithoutPassword } = user;
 
@@ -71,7 +61,6 @@ export default async function handleGoogleLogin(req, res) {
 
     res.status(200).json({
       success: true,
-      token,
       user: userWithoutPassword,
     });
   } catch (error) {

@@ -24,7 +24,6 @@ export default function HaroPitchesPage() {
         // Lock UI while fetching the current page of pitches from protected API.
         setLoading(true);
 
-        const token = localStorage.getItem('token');
         const params = new URLSearchParams({
           page: String(currentPage),
           limit: String(limit),
@@ -35,9 +34,7 @@ export default function HaroPitchesPage() {
         }
 
         const res = await fetch(`/api/haro/pitches?${params.toString()}`, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
+          credentials: 'same-origin',
         });
         const data = await res.json();
         if (!res.ok) {
