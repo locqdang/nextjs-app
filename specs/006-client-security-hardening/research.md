@@ -43,8 +43,16 @@
 - `script-src`: `https://www.googletagmanager.com`, `https://accounts.google.com`, `https://apis.google.com`
 - `img-src`: `https://strapi.vietpolyglots.com`, `https://www.googletagmanager.com`, `https://ssl.gstatic.com`, `https://*.googleusercontent.com`
 - `connect-src`: `https://strapi.vietpolyglots.com`, `https://accounts.google.com`, `https://www.googleapis.com`, `https://oauth2.googleapis.com`, `https://*.google.com`
-- `frame-src`: `https://accounts.google.com`
+- `frame-src`: `https://accounts.google.com`, `https://cal.vietpolyglots.com`
 - `form-action`: `https://accounts.google.com`
+
+### Self-hosted Cal.com boundary
+
+- `src/components/Booking.js` embeds `https://cal.vietpolyglots.com/loc/meet-loc` in an iframe.
+- The parent application requires exact `https://cal.vietpolyglots.com` permission in `frame-src`.
+- A request nonce authorizes trusted inline scripts in the parent application, but does not authorize the Cal.com iframe or remote resources.
+- Add this origin to `script-src`, `connect-src`, `img-src`, `style-src`, or `font-src` only if production-browser evidence shows that the parent page directly requests those resource classes. Do not add wildcard Cal.com hosts or broad `https:` allowances.
+- If framing is refused, correct `frame-ancestors` or `X-Frame-Options` on the self-hosted Cal.com response. The parent nonce cannot override Cal.com's response headers.
 
 ### Current enforcement strategy
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import BlogAuthor from '../../../components/BlogAuthor';
 import BlogCoverImage from '../../../components/BlogCoverImage';
@@ -74,6 +75,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   const { slug } = await params;
   const post = await fetchBlogPostBySlug(slug);
   const posts = await fetchBlogPosts();
@@ -85,7 +87,7 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <main>
-      <StructuredData data={post.seo?.structuredData} />
+      <StructuredData data={post.seo?.structuredData} nonce={nonce} />
       <article className="blog-post">
         <header className="blog-post__hero">
           <p className="blog-post__date">{formatBlogDate(post.date ?? post.publishedAt)}</p>

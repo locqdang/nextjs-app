@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import '../styles/globals.css';
 import '../styles/blog.css';
 import '../styles/breadcrumbs.css';
@@ -90,13 +91,16 @@ async function getNavbarData() {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   const navbarData = await getNavbarData();
 
   return (
     <html lang="en">
       <body>
         <Providers>
-          <AppShell navbarData={navbarData}>{children}</AppShell>
+          <AppShell nonce={nonce} navbarData={navbarData}>
+            {children}
+          </AppShell>
         </Providers>
       </body>
     </html>

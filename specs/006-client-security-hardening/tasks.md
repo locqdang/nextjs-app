@@ -105,7 +105,7 @@
 
 ## Phase 5: User Story 3 - Security headers reduce browser attack surface (Priority: P2)
 
-**Goal**: Enforce consistent browser security headers and a CSP that supports only the required first-party and Google integrations.
+**Goal**: Enforce consistent browser security headers and nonce-based CSP that supports only required first-party, Google, Strapi, and exact self-hosted Cal.com integrations.
 
 **Independent Test**: Inspect representative public pages, login pages, and authenticated API routes to verify expected CSP and related headers are present, compatible, and restrictive.
 
@@ -113,6 +113,7 @@
 
 - [x] T040 [P] [US3] Extend header assertions for public and API route classes in `src/tests/next-config-security-headers.test.js`
 - [x] T041 [US3] Add verification steps for CSP-compatible Google integrations in `specs/006-client-security-hardening/quickstart.md`
+- [x] T057 [P] [US3] Extend CSP header tests for exact `https://cal.vietpolyglots.com` `frame-src` access and rejection of wildcard or broad scheme allowances in `src/tests/csp.test.ts`
 
 ### Implementation for User Story 3
 
@@ -120,8 +121,10 @@
 - [x] T043 [US3] Align third-party script and identity loading with the final CSP decision in `src/app/app-shell.tsx`
 - [x] T044 [US3] Review cache-control behavior for authenticated HARO responses in `src/pages/api/haro/profile.js`, `src/pages/api/haro/pitches.js`, and mailbox OAuth routes
 - [x] T045 [US3] Document justified CSP exceptions, Google dependencies, and report-only or enforcement strategy in `specs/006-client-security-hardening/research.md` and `specs/006-client-security-hardening/contracts/security-boundaries.md`
+- [x] T058 [US3] Add exact `https://cal.vietpolyglots.com` to the final CSP `frame-src` in `src/lib/security/csp.ts`, adding other Cal.com directives only when browser evidence proves they are necessary
+- [x] T059 [US3] Verify the self-hosted Cal.com response permits framing by `https://vietpolyglots.com` through `frame-ancestors` and does not send conflicting `X-Frame-Options`; record the result in `specs/006-client-security-hardening/quickstart.md`
 
-**Checkpoint**: CSP and security-header enforcement are implemented, cache policy is reviewed, and the supporting CSP/security docs are in place.
+**Checkpoint**: Nonce CSP, static security headers, exact Cal.com iframe compatibility, and production-style verification are complete.
 
 ---
 
@@ -135,6 +138,7 @@
 
 - [x] T046 [P] [US4] Map each required context from `specs/006-client-security-hardening/spec.md` to an automated test in `specs/006-client-security-hardening/quickstart.md`
 - [ ] T047 [US4] Add any missing integration or browser regressions needed to cover text, URL, redirect, script/JSON-LD, cookie-session, and header contexts in `src/tests/` and the existing Playwright suite
+- [x] T060 [US4] Extend `e2e/video-meeting.spec.js` to verify the exact Cal.com iframe URL, the `Meet Loc` booking UI, visible availability, and no Cal.com-related CSP console errors under nonce enforcement
 
 ### Implementation for User Story 4
 
@@ -156,6 +160,7 @@
 - [x] T054 Run `npm run build` from the repository root and fix any build or CSP-related regressions required by this feature
 - [x] T055 Run the required Playwright or browser verification for login, blog, HARO profile, HARO pitches, and representative public routes
 - [x] T056 Run the final validation flow from `specs/006-client-security-hardening/quickstart.md` and record outcomes in the same file or an adjacent implementation note
+- [x] T061 Re-run the final nonce-CSP validation from `specs/006-client-security-hardening/quickstart.md`, including authenticated `/video-meeting`, and record Cal.com frame, availability, and CSP outcomes after T057-T060 land
 
 ---
 

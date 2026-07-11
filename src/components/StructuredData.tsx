@@ -4,6 +4,7 @@ type JsonLdValue = Record<string, unknown> | unknown[];
 
 type StructuredDataProps = {
   data?: string | JsonLdValue | null;
+  nonce?: string;
 };
 
 function normalizeStructuredData(data: StructuredDataProps['data']): JsonLdValue | null {
@@ -23,7 +24,7 @@ function normalizeStructuredData(data: StructuredDataProps['data']): JsonLdValue
   return null;
 }
 
-export default function StructuredData({ data }: StructuredDataProps) {
+export default function StructuredData({ data, nonce }: StructuredDataProps) {
   const jsonLd = normalizeStructuredData(data);
 
   if (!jsonLd) return null;
@@ -32,6 +33,7 @@ export default function StructuredData({ data }: StructuredDataProps) {
   // escapes script-breaking characters before the payload enters the script context.
   return (
     <script
+      nonce={nonce}
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: sanitizeStructuredDataJson(jsonLd) }}
     />

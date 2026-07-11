@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 import BlogParagraph from '../../components/BlogParagraph';
 import StructuredData from '../../components/StructuredData';
@@ -47,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   const page = await fetchAboutPage();
 
   if (!page) {
@@ -58,7 +60,7 @@ export default async function AboutPage() {
   return (
     <main>
       <div className="blog-post">
-        <StructuredData data={page.seo?.structuredData} />
+        <StructuredData data={page.seo?.structuredData} nonce={nonce} />
         <header className="blog-post__hero">
           <p className="blog-index__eyebrow">About Vietpolyglots</p>
           <h1>{page.title || 'About'}</h1>
