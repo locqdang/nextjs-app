@@ -43,10 +43,13 @@ npx vitest run src/tests/lib/security.test.js src/tests/lib/auth-session.test.js
 ## Verify CSP and security headers
 
 1. Run `src/tests/next-config-security-headers.test.js`.
-2. Confirm the site-wide CSP includes only the required Google and Strapi origins.
+2. Confirm the site-wide CSP includes only required Google and Strapi origins plus exact `https://cal.vietpolyglots.com` access in `frame-src`.
 3. Confirm `Referrer-Policy`, `X-Content-Type-Options`, `X-Frame-Options`, and `Permissions-Policy` are present.
 4. Confirm API routes inherit the global security headers and add non-cacheable response headers.
-5. For Google compatibility, confirm the production header shape retains:
+5. Sign in and open `/video-meeting`; confirm the iframe source is exactly `https://cal.vietpolyglots.com/loc/meet-loc`, booking availability loads, and no Cal.com-related CSP violation appears.
+6. Add Cal.com to `script-src`, `connect-src`, `img-src`, `style-src`, or `font-src` only for resource classes directly requested by the parent page and proven necessary through production-browser evidence.
+7. If framing is refused, inspect Cal.com's own `Content-Security-Policy: frame-ancestors` and `X-Frame-Options`; fix the self-hosted Cal.com response because the parent nonce cannot override it.
+8. For Google compatibility, confirm the production header shape retains:
    - GTM script source
    - Google Identity script, frame, connect, and form-action sources
 
@@ -112,3 +115,15 @@ npm run test -- src/tests/api/security.integration.test.js
 - Blog-detail rendering keeps malicious text and unsafe links inert
 - JSON-LD output remains a single inert script block
 - Global CSP and related browser security headers remain present in the build-tested config
+
+### Nonce CSP and Cal.com verification, 2026-07-11
+
+- `npm test`: passed, 14 files and 53 tests green after nonce CSP implementation.
+- `npm run build`: passed with the middleware/proxy route recognized and 25/25 pages generated.
+- Two production HTTP requests received distinct 32-character nonces; all 26 nonce-bearing scripts in each response matched that response's CSP nonce.
+- Production `script-src` contains neither `unsafe-inline` nor `unsafe-eval`.
+- Browser verification confirmed React hydration, GTM loading, Google Identity script loading, and Google Identity stylesheet loading after allowing exact `https://accounts.google.com` access in `style-src`.
+- `curl -I https://cal.vietpolyglots.com/loc/meet-loc` returned HTTP 200 with no conflicting `X-Frame-Options` or `frame-ancestors` response restriction.
+- `npm run test:e2e -- e2e/video-meeting.spec.js`: passed 2/2. The authenticated flow verified the exact Cal.com iframe URL, visible `Meet Loc` and `30m` booking UI, visible appointment times, and no Cal.com-related CSP console errors.
+- Google Identity cannot complete sign-in on `127.0.0.1` because that localhost origin is not authorized for the production OAuth client; this is an OAuth origin restriction, not a CSP violation.
+- The Cal.com deployment emitted an unrelated Google Analytics certificate error while loaded directly; its booking calendar and availability still rendered.

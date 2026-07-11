@@ -3,6 +3,7 @@ import ProjectCard from '../components/ProjectCard';
 import { fetchFromStrapi } from '../lib/data';
 import { formatMediaURL } from '../lib/data/strapi';
 import StructuredData from '../components/StructuredData';
+import { headers } from 'next/headers';
 
 export const revalidate = 3600;
 
@@ -64,6 +65,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   const homepage = await fetchHomePage();
   const heroData = homepage?.hero ?? null;
   // Keep homepage project slots stable while ignoring empty entries.
@@ -83,7 +85,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      <StructuredData data={homepage?.seo?.structuredData} />
+      <StructuredData data={homepage?.seo?.structuredData} nonce={nonce} />
       <Hero data={heroData} />
 
       <section id="projects" className="section">

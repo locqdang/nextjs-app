@@ -12,9 +12,10 @@ import Breadcrumbs from '../components/Breadcrumbs';
 type AppShellProps = {
   children: ReactNode;
   navbarData?: any;
+  nonce?: string;
 };
 
-export default function AppShell({ children, navbarData = null }: AppShellProps) {
+export default function AppShell({ children, navbarData = null, nonce }: AppShellProps) {
   const [googleReady, setGoogleReady] = useState(false);
   useGoogleOneTap(googleReady);
 
@@ -24,10 +25,12 @@ export default function AppShell({ children, navbarData = null }: AppShellProps)
     <>
       <Script
         id="gtm-loader"
+        nonce={nonce}
         src="https://www.googletagmanager.com/gtm.js?id=GTM-TNTD5HRS"
         strategy="afterInteractive"
       />
       <Script
+        nonce={nonce}
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
         onLoad={() => setGoogleReady(true)}

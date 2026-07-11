@@ -50,13 +50,14 @@ All users receive consistent browser security headers that reduce XSS impact, bl
 
 **Why this priority**: Defense-in-depth protects users if a rendering bug or dependency issue appears later.
 
-**Independent Test**: Request representative public, login, blog, and HARO pages and verify expected headers are present and compatible with current Google Tag Manager and Google Identity usage.
+**Independent Test**: Request representative public, login, blog, HARO, and `/video-meeting` pages and verify expected headers are present and compatible with Google Tag Manager, Google Identity, and the self-hosted Cal.com iframe at `https://cal.vietpolyglots.com`.
 
 **Acceptance Scenarios**:
 
 1. **Given** a browser requests any page, **When** response headers are inspected, **Then** Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, frame controls, and permissions restrictions are present.
-2. **Given** Google Tag Manager and Google Identity scripts are required, **When** CSP is enforced, **Then** only the minimum necessary Google script, frame, connect, and image sources are allowed.
-3. **Given** an inline or injected script not covered by the policy is present, **When** the page loads, **Then** the browser blocks the script and reports or logs the violation for debugging.
+2. **Given** Google Tag Manager, Google Identity, and the self-hosted Cal.com booking interface are required, **When** CSP is enforced, **Then** only the minimum necessary Google and `https://cal.vietpolyglots.com` sources are allowed.
+3. **Given** an authenticated user opens `/video-meeting`, **When** nonce-based CSP is enforced, **Then** the iframe at `https://cal.vietpolyglots.com/loc/meet-loc` renders and availability loads.
+4. **Given** an inline or injected script not covered by the policy is present, **When** the page loads, **Then** the browser blocks the script and reports or logs the violation for debugging.
 
 ---
 
@@ -80,7 +81,7 @@ Developers can change blog rendering, auth, HARO forms, and headers with automat
 - URL-bearing fields can appear in blog links, images, SEO metadata, HARO profile website, LinkedIn URL, headshot URL, OAuth callback URLs, login redirect query params, and API filter params.
 - Login redirect parameters may point to absolute URLs, protocol-relative URLs, encoded absolute URLs, backslash variants, or JavaScript/data URLs; only same-origin relative destinations are allowed.
 - JSON-LD script content is a deliberate `dangerouslySetInnerHTML` use; escaping must cover `<`, script terminators, and any additional characters required to keep script context inert.
-- Third-party script requirements for Google Tag Manager and Google Identity may conflict with strict CSP; the accepted solution must document any required nonce/hash or source allowlist.
+- Third-party requirements for Google Tag Manager, Google Identity, and self-hosted Cal.com may conflict with strict CSP; the solution must document the required nonce/hash and minimum exact source allowlist. A nonce does not replace the Cal.com iframe origin allowlist.
 - HARO pitch and profile data may originate from external email/query ingestion pipelines rather than direct UI entry; stored data must still be treated as untrusted at render time.
 - Development environments may use HTTP; cookie Secure behavior may differ locally but production behavior must be enforced and tested.
 
@@ -108,13 +109,16 @@ Developers can change blog rendering, auth, HARO forms, and headers with automat
 - **FR-018**: System MUST add regression tests for output escaping by context, unsafe URL rejection, redirect validation, cookie attributes, protected route/API behavior, security headers, and the existing JSON-LD raw script exception.
 - **FR-019**: System MUST document any deliberate exceptions, such as required Google scripts or JSON-LD rendering, with the exact risk control and test that covers the exception.
 - **FR-020**: System MUST fail closed: when an input value cannot be validated for its render or navigation context, it is omitted, replaced with a safe fallback, or rendered as plain text rather than passed through.
+- **FR-024**: System MUST permit the existing Cal.com booking iframe only from `https://cal.vietpolyglots.com`, including `frame-src` and only additional CSP directives proven necessary by browser/network verification; wildcard Cal.com or broad scheme allowances MUST NOT be introduced.
+- **FR-025**: System MUST preserve `/video-meeting` authentication behavior and verify `https://cal.vietpolyglots.com/loc/meet-loc` renders and loads availability under final nonce-based production CSP.
 
 ### File and Module Targets Identified During Inspection
 
 - `src/components/ParagraphRichText.tsx`: rich-text text rendering, link URL normalization, external link attributes.
 - `src/components/StructuredData.tsx`: JSON-LD `dangerouslySetInnerHTML` exception.
 - `src/app/blog/[slug]/page.tsx`, `src/components/BlogParagraph.tsx`, `src/components/BlogAuthor.tsx`, `src/components/BlogCoverImage.tsx`, `src/components/RelatedBlogs.tsx`, `src/components/BlogToc.tsx`, `src/components/Breadcrumbs.tsx`: CMS/blog rendering contexts.
-- `src/app/app-shell.tsx` and any app/middleware/config location used for headers: Google Tag Manager, Google Identity script loading, global headers.
+- `src/app/app-shell.tsx` and any app/middleware/config location used for headers: Google Tag Manager, Google Identity script loading, global headers, and nonce propagation.
+- `src/app/video-meeting/page.js`, `src/components/Booking.js`, and `e2e/video-meeting.spec.js`: authenticated Cal.com iframe integration.
 - `src/lib/auth.tsx`, `src/app/login/page.tsx`, `src/app/login/login-client.tsx`, `src/app/verify-login/page.tsx`, `src/app/verify-login/verify-login-client.tsx`, `src/hooks/useGoogleOneTap.js`: client auth state, redirects, Google One Tap/button behavior.
 - `src/pages/api/auth/email-login.js`, `src/pages/api/auth/verify-login.js`, `src/pages/api/auth/google.js`, `src/lib/auth/createMagicLoginLink.js`: session creation, magic link creation, redirect propagation.
 - `src/app/haro/profile/HaroProfileClient.tsx`, `src/pages/api/haro/profile.js`: user-editable profile fields and authenticated profile API.
@@ -144,7 +148,7 @@ Developers can change blog rendering, auth, HARO forms, and headers with automat
 ### Out of Scope
 
 - Full dependency vulnerability remediation unrelated to XSS/client-side security unless required for this hardening work.
-- Replacing Google Tag Manager or Google Identity as product integrations; the feature should constrain them safely rather than remove them.
+- Replacing Google Tag Manager, Google Identity, or self-hosted Cal.com as product integrations; the feature should constrain them safely rather than remove them.
 - Broader account authorization redesign beyond the changes needed to protect session credentials and preserve existing protected HARO behavior.
 - Server-side NoSQL injection review except for direct query parameters touched while hardening input validation.
 

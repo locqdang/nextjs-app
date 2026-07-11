@@ -32,9 +32,9 @@
 
 ## CSP contract
 
-- Production CSP is enforced from `next.config.mjs`.
+- Production CSP is generated per request by `middleware.ts` through the canonical builder in `src/lib/security/csp.ts`; `next.config.mjs` retains only static security headers.
 - Production policy must avoid broad `unsafe-inline` and `unsafe-eval` allowances.
-- Retained third-party origins are limited to the documented Google Identity, GTM, and Strapi dependencies.
+- Retained third-party origins are limited to documented Google Identity, GTM, Strapi, and exact self-hosted Cal.com dependencies.
 
 ## Logging contract
 
@@ -55,6 +55,13 @@
 - **Why they exist**: Google Tag Manager and Google Identity are retained product dependencies.
 - **Risk control**: explicit CSP allowlists only for the required Google origins.
 - **Coverage**: `src/tests/next-config-security-headers.test.js`, Playwright auth verification.
+
+### Self-hosted Cal.com iframe
+
+- **Why it exists**: authenticated users book meetings through `https://cal.vietpolyglots.com/loc/meet-loc` on `/video-meeting`.
+- **Risk control**: allow exact `https://cal.vietpolyglots.com` in `frame-src`; add it to other directives only when direct parent-page requests prove they are necessary. No wildcard host or broad scheme allowance.
+- **Framing dependency**: Cal.com must permit `https://vietpolyglots.com` through its own `frame-ancestors` policy and must not send conflicting `X-Frame-Options`.
+- **Coverage**: CSP header tests and `e2e/video-meeting.spec.js` verify the exact iframe source, loaded booking UI or availability signal, and absence of Cal.com-related CSP blocking.
 
 ### Development and E2E CSP relaxations
 
