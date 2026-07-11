@@ -18,12 +18,16 @@ describe('request-scoped content security policy', () => {
       isE2E: false,
     });
 
-    const scriptDirective = policy.split('; ').find((directive) => directive.startsWith('script-src'));
+    const scriptDirective = policy
+      .split('; ')
+      .find((directive) => directive.startsWith('script-src'));
 
     expect(scriptDirective).toContain("script-src 'self' 'nonce-test_nonce_0123456789abcdefghi'");
     expect(scriptDirective).not.toContain("'unsafe-inline'");
     expect(scriptDirective).not.toContain("'unsafe-eval'");
-    expect(policy).toContain('frame-src \'self\' https://accounts.google.com https://cal.vietpolyglots.com');
+    expect(policy).toContain(
+      "frame-src 'self' https://accounts.google.com https://cal.vietpolyglots.com"
+    );
     expect(policy).toContain("style-src 'self' 'unsafe-inline' https://accounts.google.com");
     expect(policy).not.toContain('*.cal.vietpolyglots.com');
     expect(policy).not.toContain('script-src https:');

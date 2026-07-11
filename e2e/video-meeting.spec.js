@@ -16,7 +16,10 @@ test.describe('/video-meeting', () => {
     const cspViolations = [];
     page.on('console', (message) => {
       const text = message.text();
-      if (/content security policy|violates.*csp/i.test(text) && /cal\.vietpolyglots\.com/i.test(text)) {
+      if (
+        /content security policy|violates.*csp/i.test(text) &&
+        /cal\.vietpolyglots\.com/i.test(text)
+      ) {
         cspViolations.push(text);
       }
     });
@@ -29,10 +32,7 @@ test.describe('/video-meeting', () => {
     await expect(page.getByRole('heading', { name: 'Book a Video Meeting' })).toBeVisible();
 
     const bookingFrame = page.locator('iframe[title="Book a video meeting"]');
-    await expect(bookingFrame).toHaveAttribute(
-      'src',
-      'https://cal.vietpolyglots.com/loc/meet-loc'
-    );
+    await expect(bookingFrame).toHaveAttribute('src', 'https://cal.vietpolyglots.com/loc/meet-loc');
 
     const cal = page.frameLocator('iframe[title="Book a video meeting"]');
     await expect(cal.getByText('Meet Loc', { exact: true })).toBeVisible({ timeout: 30_000 });

@@ -98,7 +98,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="en">
       <body>
         <Providers>
-          <AppShell nonce={nonce} navbarData={navbarData}>{children}</AppShell>
+          <AppShell nonce={nonce} navbarData={navbarData}>
+            {children}
+          </AppShell>
         </Providers>
       </body>
     </html>
