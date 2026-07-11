@@ -19,10 +19,10 @@
 **Purpose**: Align the working branch and Spec Kit artifacts before implementation continues.
 
 - [x] T001 Reconcile current hardening branch changes against `specs/006-client-security-hardening/spec.md` and `specs/006-client-security-hardening/plan.md`
-- [ ] T002 Create the untrusted-input inventory and control matrix in `specs/006-client-security-hardening/research.md`
-- [ ] T003 Create the validation and state entity reference in `specs/006-client-security-hardening/data-model.md`
-- [ ] T004 Create the executable verification guide in `specs/006-client-security-hardening/quickstart.md`
-- [ ] T005 Create the browser-safety contract notes in `specs/006-client-security-hardening/contracts/security-boundaries.md`
+- [x] T002 Create the untrusted-input inventory and control matrix in `specs/006-client-security-hardening/research.md`
+- [x] T003 Create the validation and state entity reference in `specs/006-client-security-hardening/data-model.md`
+- [x] T004 Create the executable verification guide in `specs/006-client-security-hardening/quickstart.md`
+- [x] T005 Create the browser-safety contract notes in `specs/006-client-security-hardening/contracts/security-boundaries.md`
 
 ---
 
@@ -66,7 +66,7 @@
 - [x] T021 [P] [US1] Route project card links through safe URL normalization in `src/components/ProjectCard.js`
 - [x] T022 [P] [US1] Fail closed on unsafe author/profile links in `src/components/BlogAuthor.tsx`
 - [x] T023 [P] [US1] Fail closed on unsafe breadcrumb targets in `src/components/Breadcrumbs.tsx`
-- [ ] T024 [US1] Verify blog detail rendering remains inert across `src/app/blog/[slug]/page.tsx` and related blog components
+- [x] T024 [US1] Verify blog detail rendering remains inert across `src/app/blog/[slug]/page.tsx` and related blog components
 - [x] T025 [US1] Verify HARO profile rendering remains text-safe in `src/app/haro/profile/HaroProfileClient.tsx`
 - [x] T026 [US1] Verify HARO pitches rendering remains text-safe in `src/app/haro/pitches/page.js` and `src/components/HaroPitch.js`
 
@@ -83,7 +83,7 @@
 ### Tests for User Story 2
 
 - [x] T027 [P] [US2] Extend redirect-validation and session bootstrap coverage in `src/tests/lib/security.test.js` and `src/tests/lib/auth-session.test.js`
-- [ ] T028 [P] [US2] Add API session/login/logout integration coverage in `src/tests/api/`
+- [x] T028 [P] [US2] Add API session/login/logout integration coverage in `src/tests/api/`
 - [x] T029 [US2] Add browser regression coverage for cookie-backed login and absence of client token storage in the Playwright auth specs under `tests/` or the repo’s existing E2E location
 
 ### Implementation for User Story 2
@@ -97,9 +97,9 @@
 - [x] T036 [US2] Finish session introspection and logout cookie clearing in `src/pages/api/auth/session.js` and `src/pages/api/auth/logout.js`
 - [x] T037 [US2] Migrate protected HARO profile and pitches routes to canonical cookie-session auth in `src/pages/api/haro/profile.js` and `src/pages/api/haro/pitches.js`
 - [x] T038 [US2] Migrate mailbox OAuth auth checks to canonical cookie-session auth in `src/pages/api/haro/mailbox/google/start.js`, `src/pages/api/haro/mailbox/google/callback.js`, and `src/pages/api/haro/mailbox/disconnect.js`
-- [ ] T039 [US2] Remove or time-box any remaining bearer-token compatibility in `src/lib/auth/session.js` and dependent routes once tests prove cookie-only flows work
+- [x] T039 [US2] Remove or time-box any remaining bearer-token compatibility in `src/lib/auth/session.js` and dependent routes once tests prove cookie-only flows work
 
-**Checkpoint**: Cookie-backed login, logout, redirect handling, and protected HARO flows are verified end to end; API integration coverage and final bearer-fallback removal are still open.
+**Checkpoint**: Cookie-backed login, logout, redirect handling, and protected HARO flows are verified end to end; API integration coverage and bearer-fallback removal are complete.
 
 ---
 
@@ -112,16 +112,16 @@
 ### Tests for User Story 3
 
 - [x] T040 [P] [US3] Extend header assertions for public and API route classes in `src/tests/next-config-security-headers.test.js`
-- [ ] T041 [US3] Add verification steps for CSP-compatible Google integrations in `specs/006-client-security-hardening/quickstart.md`
+- [x] T041 [US3] Add verification steps for CSP-compatible Google integrations in `specs/006-client-security-hardening/quickstart.md`
 
 ### Implementation for User Story 3
 
 - [x] T042 [US3] Tighten CSP source allowlists and related browser headers in `next.config.mjs`
 - [x] T043 [US3] Align third-party script and identity loading with the final CSP decision in `src/app/app-shell.tsx`
-- [ ] T044 [US3] Review cache-control behavior for authenticated HARO responses in `src/pages/api/haro/profile.js`, `src/pages/api/haro/pitches.js`, and mailbox OAuth routes
-- [ ] T045 [US3] Document justified CSP exceptions, Google dependencies, and report-only or enforcement strategy in `specs/006-client-security-hardening/research.md` and `specs/006-client-security-hardening/contracts/security-boundaries.md`
+- [x] T044 [US3] Review cache-control behavior for authenticated HARO responses in `src/pages/api/haro/profile.js`, `src/pages/api/haro/pitches.js`, and mailbox OAuth routes
+- [x] T045 [US3] Document justified CSP exceptions, Google dependencies, and report-only or enforcement strategy in `specs/006-client-security-hardening/research.md` and `specs/006-client-security-hardening/contracts/security-boundaries.md`
 
-**Checkpoint**: CSP and security-header enforcement are implemented and regression-tested; cache-policy review and supporting docs remain open.
+**Checkpoint**: CSP and security-header enforcement are implemented, cache policy is reviewed, and the supporting CSP/security docs are in place.
 
 ---
 
@@ -133,16 +133,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T046 [P] [US4] Map each required context from `specs/006-client-security-hardening/spec.md` to an automated test in `specs/006-client-security-hardening/quickstart.md`
+- [x] T046 [P] [US4] Map each required context from `specs/006-client-security-hardening/spec.md` to an automated test in `specs/006-client-security-hardening/quickstart.md`
 - [ ] T047 [US4] Add any missing integration or browser regressions needed to cover text, URL, redirect, script/JSON-LD, cookie-session, and header contexts in `src/tests/` and the existing Playwright suite
 
 ### Implementation for User Story 4
 
 - [x] T048 [US4] Remove duplicate or obsolete pre-hardening tests and consolidate final coverage around the canonical security helpers and browser journeys in `src/components/`, `src/tests/`, and the E2E suite
-- [ ] T049 [US4] Update `specs/006-client-security-hardening/quickstart.md` with the final verification commands and expected outcomes
-- [ ] T050 [US4] Update `specs/006-client-security-hardening/research.md` with the final input inventory, control mapping, and any remaining accepted limitations
+- [x] T049 [US4] Update `specs/006-client-security-hardening/quickstart.md` with the final verification commands and expected outcomes
+- [x] T050 [US4] Update `specs/006-client-security-hardening/research.md` with the final input inventory, control mapping, and any remaining accepted limitations
 
-**Checkpoint**: Core regression coverage has been consolidated in code, but the traceability docs for the full hardening matrix are still open.
+**Checkpoint**: Core regression coverage is consolidated in code, and the traceability docs are in place; only any additional missing browser or integration gaps remain to be assessed.
 
 ---
 
@@ -150,12 +150,12 @@
 
 **Purpose**: Finalize verification, documentation, and residual cleanup across all stories.
 
-- [ ] T051 [P] Audit production logging paths to ensure security and auth errors never log raw tokens, cookies, magic links, or full malicious payloads in `src/lib/logger.js` and affected API routes
-- [ ] T052 Run `npm run lint` from the repository root and fix any new issues required by this feature
+- [x] T051 [P] Audit production logging paths to ensure security and auth errors never log raw tokens, cookies, magic links, or full malicious payloads in `src/lib/logger.js` and affected API routes
+- [x] T052 Run `npm run lint` from the repository root and fix any new issues required by this feature
 - [x] T053 Run `npm run test` from the repository root and fix any failing unit or integration regressions required by this feature
 - [x] T054 Run `npm run build` from the repository root and fix any build or CSP-related regressions required by this feature
 - [x] T055 Run the required Playwright or browser verification for login, blog, HARO profile, HARO pitches, and representative public routes
-- [ ] T056 Run the final validation flow from `specs/006-client-security-hardening/quickstart.md` and record outcomes in the same file or an adjacent implementation note
+- [x] T056 Run the final validation flow from `specs/006-client-security-hardening/quickstart.md` and record outcomes in the same file or an adjacent implementation note
 
 ---
 

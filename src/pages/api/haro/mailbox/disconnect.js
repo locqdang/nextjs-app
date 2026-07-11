@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import { findOne, updateOne } from '../../../../lib/data/haro';
+import { createApiLogger } from '../../../../lib/api-logging';
 import { readSession } from '../../../../lib/auth/session';
+import { serializeError } from '../../../../lib/logger';
 
 const ENCRYPTION_SECRET = process.env.MAILBOX_TOKEN_ENCRYPTION_KEY || process.env.JWT_SECRET || '';
 const MAILBOX_COLLECTION = 'mailbox_connections';
@@ -10,7 +12,7 @@ function normalizeEmail(email) {
   return typeof email === 'string' ? email.trim().toLowerCase() : '';
 }
 
-function decryptValue(value) {
+function decryptValue(value, log) {
   // Best-effort decrypt for stored mailbox tokens; return null when unavailable/invalid.
   if (!value || !ENCRYPTION_SECRET) {
     return null;
@@ -31,12 +33,12 @@ function decryptValue(value) {
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     return decrypted.toString('utf8');
   } catch (error) {
-    console.error('Failed to decrypt mailbox token:', error);
+    log?.warn({ error: serializeError(error) }, 'Failed to decrypt mailbox token');
     return null;
   }
 }
 
-async function revokeGoogleToken(token) {
+async function revokeGoogleToken(token, log) {
   // Revoke token at Google so disconnected mailbox cannot keep API access.
   if (!token) {
     return;
@@ -46,7 +48,7 @@ async function revokeGoogleToken(token) {
   try {
     await client.revokeToken(token);
   } catch (error) {
-    console.error('Failed to revoke Google token:', error);
+    log?.warn({ error: serializeError(error) }, 'Failed to revoke Google token');
   }
 }
 
@@ -55,7 +57,13 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
 
+  const baseLog = createApiLogger(req, {
+    route: '/api/haro/mailbox/disconnect',
+    operation: 'haro_mailbox_disconnect',
+  });
+
   if (req.method !== 'POST') {
+    baseLog.warn({ method: req.method }, 'HARO mailbox disconnect invalid method');
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
@@ -63,14 +71,22 @@ export default async function handler(req, res) {
     const session = readSession(req);
 
     if (!session?.user?.email) {
+      baseLog.warn({ reason: 'missing_token' }, 'HARO mailbox disconnect auth failure');
       return res.status(401).json({ message: 'Missing token' });
     }
 
     const email = normalizeEmail(session.user.email);
 
     if (!email) {
+      baseLog.warn({ reason: 'invalid_token_payload' }, 'HARO mailbox disconnect auth failure');
       return res.status(401).json({ message: 'Invalid token payload' });
     }
+
+    const log = createApiLogger(req, {
+      route: '/api/haro/mailbox/disconnect',
+      operation: 'haro_mailbox_disconnect',
+      userEmail: email,
+    });
 
     const connection = await findOne(MAILBOX_COLLECTION, {
       owner_email: email,
@@ -78,13 +94,14 @@ export default async function handler(req, res) {
     });
 
     if (!connection) {
+      log.warn({ reason: 'missing_mailbox_connection' }, 'HARO mailbox disconnect missing mailbox');
       return res.status(404).json({ message: 'Mailbox connection not found.' });
     }
 
-    const accessToken = decryptValue(connection.access_token_enc);
-    const refreshToken = decryptValue(connection.refresh_token_enc);
+    const accessToken = decryptValue(connection.access_token_enc, log);
+    const refreshToken = decryptValue(connection.refresh_token_enc, log);
 
-    await revokeGoogleToken(refreshToken || accessToken);
+    await revokeGoogleToken(refreshToken || accessToken, log);
 
     await updateOne(
       MAILBOX_COLLECTION,
@@ -110,7 +127,7 @@ export default async function handler(req, res) {
       mailbox: { status: 'disconnected' },
     });
   } catch (error) {
-    console.error('HARO mailbox disconnect error:', error);
+    baseLog.error({ error: serializeError(error) }, 'HARO mailbox disconnect error');
     return res.status(401).json({ message: 'Unauthorized' });
   }
 }
